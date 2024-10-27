@@ -1,0 +1,32 @@
+include:
+  - postgres.compose.yaml
+
+services:
+  miniflux:
+    image: miniflux/miniflux:latest
+    container_name: miniflux
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls=true"
+    restart: always
+    #ports:
+    #  - "80:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    secrets:
+      - source: miniflux__pgpass
+        target: pgpass
+    environment:
+      - PGPASSFILE=/run/secrets/pgpass
+      - RUN_MIGRATIONS=1
+      - "BASE_URL=https://miniflux.${DOMAIN}"
+      - POLLING_PARSING_ERROR_LIMIT=0
+      - DATABASE_URL=${APPS__MINIFLUX__DATABASE_URL}
+    healthcheck:
+      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+
+secrets:
+  miniflux__pgpass:
+    environment: APPS__MINIFLUX__PGPASS

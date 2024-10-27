@@ -1,0 +1,39 @@
+services:
+  postgres:
+    container_name: postgres
+    image: docker.io/postgres:16
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    # port: 5432
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.05"
+          memory: 64M
+        limits:
+          memory: 512M
+    secrets:
+      - postgres_password
+    volumes:
+      - "$PWD/volumes/postgres-data:/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+#  pgbackweb:
+#    image: eduardolat/pgbackweb:latest
+#    ports:
+#      - "8085:8085" # Access the web interface at http://localhost:8085
+#    volumes:
+#      - ./backups:/backups # If you only use S3 destinations, you don't need this volume
+#    environment:
+#      PBW_ENCRYPTION_KEY: "my_secret_key" # Change this to a strong key
+#      PBW_POSTGRES_CONN_STRING: "postgresql://postgres:password@postgres:5432/pgbackweb?sslmode=disable"
+#      TZ: "America/Guatemala" # Set your timezone, optional
+#    depends_on:
+#      - postgres
+
+secrets:
+  postgres_password:
+    environment: POSTGRES__POSTGRES_PASSWORD
