@@ -3,7 +3,7 @@ include:
 
 services:
   miniflux:
-    image: miniflux/miniflux:latest
+    image: miniflux/miniflux:latest@sha256:5950f5395ba02125c0d04b4287e6ab0467715112b9dcdc435ce89a52f595d473
     container_name: miniflux
     labels:
       - "traefik.enable=true"
