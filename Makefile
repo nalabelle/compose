@@ -20,7 +20,7 @@ podman-down:
 
 .PHONY: deploy down
 deploy: .deploy
-.deploy: compose.yaml compose/*.compose.yaml secrets.env
+.deploy: compose.yaml */compose.yaml secrets.env
 	@podman compose --env-file=secrets.env up -d;
 	@date -u +"%Y-%m-%dT%H:%M:%SZ" > $@
 down:

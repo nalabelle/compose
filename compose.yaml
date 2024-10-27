@@ -1,4 +1,4 @@
 include:
-  - compose/proxy.compose.yaml
-  - compose/postgres.compose.yaml
-  - compose/apps.compose.yaml
+  - proxy/compose.yaml
+  - postgres/compose.yaml
+  - apps/compose.yaml
