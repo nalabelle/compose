@@ -11,20 +11,16 @@ STACKS_DIRS = $(filter-out ./volumes/, $(filter %/, $(wildcard ./*/)))
 STACKS = $(STACKS_DIRS:./%/=%)
 
 .PHONY: clean
-clean: down podman-down
+clean: down
 	@rm -f secrets.env
-
-.PHONY: podman-down
-podman-down:
-	@podman rm -af
 
 .PHONY: deploy down
 deploy: .deploy
 .deploy: compose.yaml */compose.yaml secrets.env
-	@podman compose --env-file=secrets.env up -d;
+	@docker compose --env-file=secrets.env up -d;
 	@date -u +"%Y-%m-%dT%H:%M:%SZ" > $@
 down:
-	@podman compose --env-file=secrets.env down || true;
+	@docker compose --env-file=secrets.env down || true;
 	@rm -f .deploy
 
 %.env: %.env.tpl
