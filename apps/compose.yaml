@@ -41,6 +41,6 @@ services:
       - MF_API_KEY=${APPS__MINIFLUX_SIDEKICK__API_KEY}
       - MF_API_ENDPOINT=http://miniflux:8080
       - MF_KILLFILE_PATH=/config/killfile
-      - MF_REFRESH_INTERVAL="*/5 * * * *"
+      - MF_REFRESH_INTERVAL=*/5 * * * *
     volumes:
       - "$PWD/volumes/miniflux-sidekick-config:/config"
