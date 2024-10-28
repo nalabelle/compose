@@ -2,6 +2,7 @@ services:
   traefik:
     container_name: traefik
     image: "traefik:v3.2@sha256:64473d350aeafa60257aed5f03eb6aec4558a2434d2cf8ab6f97fd3f5f8eb47c"
+    restart: always
     labels:
       traefik.enable: "true"
       traefik.http.routers.traefik.service: traefik
@@ -59,6 +60,7 @@ services:
 
   whoami:
     image: "traefik/whoami@sha256:43a68d10b9dfcfc3ffbfe4dd42100dc9aeaf29b3a5636c856337a5940f1b4f1c"
+    restart: always
     container_name: "whoami"
     # port: 80
     labels:
