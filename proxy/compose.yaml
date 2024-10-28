@@ -55,7 +55,7 @@ services:
       - cf_zone_api_token
     volumes:
       - "$PWD/volumes/traefik-data:/data"
-      - "/run/user/3001/podman/podman.sock:/var/run/docker.sock:ro"
+      - "$DOCKER_SOCKET:/var/run/docker.sock:ro"
 
   whoami:
     image: "traefik/whoami@sha256:43a68d10b9dfcfc3ffbfe4dd42100dc9aeaf29b3a5636c856337a5940f1b4f1c"
