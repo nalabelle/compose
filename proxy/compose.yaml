@@ -54,7 +54,7 @@ services:
       - cf_dns_api_token
       - cf_zone_api_token
     volumes:
-      - "$PWD/../volumes/traefik-data:/data"
+      - "$PWD/volumes/traefik-data:/data"
       - "/run/user/3001/podman/podman.sock:/var/run/docker.sock:ro"
 
   whoami:

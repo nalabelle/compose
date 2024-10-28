@@ -1,10 +1,8 @@
-
 # General
 DOMAIN={{ op://Applications/ACME_DNS_STACKS_APPS/DOMAIN }}
 
 # APPS
-APPS__MINIFLUX__DATABASE_URL=postgres://{{ op://Applications/MINIFLUX/POSTGRES_USERNAME }}@postgres/miniflux?sslmode=disable
-APPS__MINIFLUX__PGPASS=*:*:*:{{ op://Applications/MINIFLUX/POSTGRES_USERNAME }}:{{ op://Applications/MINIFLUX/POSTGRES_PASSWORD }}
+APPS__MINIFLUX__DATABASE_URL=postgres://{{ op://Applications/MINIFLUX/POSTGRES_USERNAME }}:{{ op://Applications/MINIFLUX/POSTGRES_PASSWORD }}@postgres/miniflux?sslmode=disable
 
 # Postgres
 POSTGRES__POSTGRES_PASSWORD={{ op://Applications/POSTGRES/password }}
