@@ -3,6 +3,7 @@ DOMAIN={{ op://Applications/ACME_DNS_STACKS_APPS/DOMAIN }}
 
 # APPS
 APPS__MINIFLUX__DATABASE_URL=postgres://{{ op://Applications/MINIFLUX/POSTGRES_USERNAME }}:{{ op://Applications/MINIFLUX/POSTGRES_PASSWORD }}@postgres/miniflux?sslmode=disable
+APPS__MINIFLUX_SIDEKICK__API_KEY={{ op://Applications/MINIFLUX_SIDEKICK/password }}
 
 # Postgres
 POSTGRES__POSTGRES_PASSWORD={{ op://Applications/POSTGRES/password }}

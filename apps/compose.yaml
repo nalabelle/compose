@@ -18,3 +18,28 @@ services:
       - DATABASE_URL=${APPS__MINIFLUX__DATABASE_URL}
     healthcheck:
       test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.05"
+          memory: 24M
+        limits:
+          memory: 128M
+  miniflux-sidekick:
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.02"
+          memory: 20M
+        limits:
+          memory: 128M
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1729902975@sha256:8321665f43fe86f4e328bff2a30b5ed16499fc5192cc701697623d35c60b3a89
+    environment:
+      - MF_LOG_LEVEL=debug
+      - MF_ENVIRONMENT=prod
+      - MF_API_KEY=${APPS__MINIFLUX_SIDEKICK__API_KEY}
+      - MF_API_ENDPOINT=http://miniflux
+      - MF_KILLFILE_PATH=/config/killfile
+      - MF_REFRESH_INTERVAL="*/5 * * * *"
+    volumes:
+      - "$PWD/volumes/miniflux-sidekick-config:/config"
