@@ -25,4 +25,4 @@ services:
     labels:
       ofelia.enabled: "true"
       ofelia.job-exec.db-backup.schedule: "@every 12h"
-      ofelia.job-exec.db-backup.command: "kopia snapshot /volumes"
+      ofelia.job-exec.db-backup.command: "kopia snapshot create /volumes"
