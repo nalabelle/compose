@@ -17,7 +17,7 @@ services:
       - infinity
     restart: "unless-stopped"
     volumes:
-      - ${VOLUMES?}/volumes:/volumes:ro
+      - ${VOLUMES?}:/volumes:ro
       # Don't put kopia in with the volumes or it'll loop itself
       - $HOME/.kopia:/app
     environment:

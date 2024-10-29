@@ -44,7 +44,7 @@ services:
       - MF_KILLFILE_PATH=/config/killfile
       - MF_REFRESH_INTERVAL=*/1 * * * *
     volumes:
-      - "${VOLUMES?}/volumes/miniflux-sidekick-config:/config"
+      - "${VOLUMES?}/miniflux-sidekick-config:/config"
 
   libreddit:
     image: registry-1.docker.io/libreddit/libreddit:latest@sha256:a62c62cd1774c16e9457dcdf98afe2875be13ca777873975d9ce864351fba52a
@@ -79,9 +79,9 @@ services:
       - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.${DOMAIN?}
     # ports: 80
     volumes:
-      - ${VOLUMES?}/files/wallabag/99-custom.ini:/etc/php81/conf.d/99-custom.ini
-      - ${VOLUMES?}/volumes/wallabag/data:/var/www/wallabag/data
-      - ${VOLUMES?}/volumes/wallabag/images:/var/www/wallabag/web/assets/images
+      - ${PWD?}/files/wallabag/99-custom.ini:/etc/php81/conf.d/99-custom.ini
+      - ${VOLUMES?}/wallabag/data:/var/www/wallabag/data
+      - ${VOLUMES?}/wallabag/images:/var/www/wallabag/web/assets/images
     healthcheck:
       test:
         [
