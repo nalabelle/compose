@@ -13,9 +13,9 @@ services:
         condition: service_healthy
     environment:
       - RUN_MIGRATIONS=1
-      - "BASE_URL=https://miniflux.${DOMAIN}"
+      - "BASE_URL=https://miniflux.${DOMAIN?}"
       - POLLING_PARSING_ERROR_LIMIT=0
-      - DATABASE_URL=${APPS__MINIFLUX__DATABASE_URL}
+      - DATABASE_URL=${APPS__MINIFLUX__DATABASE_URL?}
     healthcheck:
       test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
     # port: 8080
@@ -39,9 +39,69 @@ services:
     environment:
       - MF_LOG_LEVEL=debug
       - MF_ENVIRONMENT=prod
-      - MF_API_KEY=${APPS__MINIFLUX_SIDEKICK__API_KEY}
+      - MF_API_KEY=${APPS__MINIFLUX_SIDEKICK__API_KEY?}
       - MF_API_ENDPOINT=http://miniflux:8080
       - MF_KILLFILE_PATH=/config/killfile
-      - MF_REFRESH_INTERVAL=*/5 * * * *
+      - MF_REFRESH_INTERVAL=*/1 * * * *
     volumes:
-      - "$PWD/volumes/miniflux-sidekick-config:/config"
+      - "${PWD?}/volumes/miniflux-sidekick-config:/config"
+
+  wallabag:
+    image: wallabag/wallabag
+    restart: unless-stopped
+    container_name: wallabag
+    labels:
+      - "traefik.enable=true"
+    environment:
+      - SYMFONY__ENV__DATABASE_DRIVER=pdo_pgsql
+      - SYMFONY__ENV__DATABASE_HOST=postgres
+      - SYMFONY__ENV__DATABASE_NAME=wallabag
+      - SYMFONY__ENV__DATABASE_PASSWORD=${APPS__WALLABAG__POSTGRES_PASSWORD?}
+      - SYMFONY__ENV__DATABASE_PORT=5432
+      - SYMFONY__ENV__DATABASE_USER=${APPS__WALLABAG__POSTGRES_USERNAME?}
+      - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.${DOMAIN?}
+    # ports: 80
+    volumes:
+      - ${PWD?}/files/wallabag/99-custom.ini:/etc/php81/conf.d/99-custom.ini
+      - ${PWD?}/volumes/wallabag/data:/var/www/wallabag/data
+      - ${PWD?}/volumes/wallabag/images:/var/www/wallabag/web/assets/images
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost/api/info",
+        ]
+      interval: 1m
+      timeout: 3s
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.02"
+          memory: 20M
+        limits:
+          memory: 256M
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.02"
+          memory: 20M
+        limits:
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 3s
