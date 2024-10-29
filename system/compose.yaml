@@ -1,6 +1,6 @@
 services:
   ofelia:
-    image: mcuadros/ofelia:latest
+    image: mcuadros/ofelia:latest@sha256:5dbbf5378f65a43c49859bc6342cbec4a13fabd0474ad7398d6d906181fb7529
     restart: always
     container_name: ofelia
     command: daemon --docker -f label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
@@ -8,7 +8,7 @@ services:
       - $DOCKER_SOCKET:/var/run/docker.sock:ro
 
   kopia:
-    image: kopia/kopia:latest
+    image: kopia/kopia:latest@sha256:51784ce0961940846f4f47cab2d4f58e2e0cb467de357f9a80279b149a00c06e
     container_name: kopia
     user: "0:0"
     entrypoint: sleep

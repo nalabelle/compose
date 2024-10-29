@@ -48,7 +48,7 @@ services:
 
   libreddit:
     # used to be libreddit, swapped to redlib
-    image: quay.io/redlib/redlib:latest
+    image: quay.io/redlib/redlib:latest@sha256:a3f1eca3ebfc043eea4bc8274b1e9fe86ec15d0efa13536bd519f36eb18f763d
     restart: unless-stopped
     container_name: libreddit
     environment:
@@ -65,7 +65,7 @@ services:
           memory: 256M
 
   wallabag:
-    image: wallabag/wallabag
+    image: wallabag/wallabag@sha256:d482b139bab164afef0e8bbfbeb7c55cd3e10e848b95d7d167e4ffcbc847f4b9
     restart: unless-stopped
     container_name: wallabag
     labels:
@@ -109,7 +109,7 @@ services:
         condition: service_healthy
 
   redis:
-    image: redis:alpine
+    image: redis:alpine@sha256:de13e74e14b98eb96bdf886791ae47686c3c5d29f9d5f85ea55206843e3fce26
     container_name: redis
     restart: unless-stopped
     deploy:
