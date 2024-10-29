@@ -31,3 +31,6 @@ down:
 
 %.toml: %.toml.tpl
 	op inject -f -i $< -o $@
+
+.env: .env.default
+	cp $< $@

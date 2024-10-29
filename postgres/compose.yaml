@@ -19,8 +19,8 @@ services:
     secrets:
       - postgres_password
     volumes:
-      - "$PWD/volumes/postgres-data:/var/lib/postgresql/data:z"
-      - "$PWD/files/postgres/db-backup:/usr/local/bin/db-backup"
+      - "${VOLUMES?}/volumes/postgres-data:/var/lib/postgresql/data:z"
+      - "${VOLUMES?}/files/postgres/db-backup:/usr/local/bin/db-backup"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s

@@ -1,4 +1,5 @@
-/.devbox
-secrets.env
-/volumes
 .deploy
+/.devbox
+/.env
+/volumes
+secrets.env

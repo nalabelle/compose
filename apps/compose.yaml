@@ -44,7 +44,7 @@ services:
       - MF_KILLFILE_PATH=/config/killfile
       - MF_REFRESH_INTERVAL=*/1 * * * *
     volumes:
-      - "${PWD?}/volumes/miniflux-sidekick-config:/config"
+      - "${VOLUMES?}/volumes/miniflux-sidekick-config:/config"
 
   wallabag:
     image: wallabag/wallabag
@@ -62,9 +62,9 @@ services:
       - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.${DOMAIN?}
     # ports: 80
     volumes:
-      - ${PWD?}/files/wallabag/99-custom.ini:/etc/php81/conf.d/99-custom.ini
-      - ${PWD?}/volumes/wallabag/data:/var/www/wallabag/data
-      - ${PWD?}/volumes/wallabag/images:/var/www/wallabag/web/assets/images
+      - ${VOLUMES?}/files/wallabag/99-custom.ini:/etc/php81/conf.d/99-custom.ini
+      - ${VOLUMES?}/volumes/wallabag/data:/var/www/wallabag/data
+      - ${VOLUMES?}/volumes/wallabag/images:/var/www/wallabag/web/assets/images
     healthcheck:
       test:
         [
