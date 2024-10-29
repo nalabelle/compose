@@ -46,6 +46,23 @@ services:
     volumes:
       - "${VOLUMES?}/volumes/miniflux-sidekick-config:/config"
 
+  libreddit:
+    image: registry-1.docker.io/libreddit/libreddit:latest@sha256:a62c62cd1774c16e9457dcdf98afe2875be13ca777873975d9ce864351fba52a
+    restart: unless-stopped
+    container_name: libreddit
+    environment:
+      - LIBREDDIT_DEFAULT_THEME=black
+    labels:
+      - "traefik.enable=true"
+    # ports: 8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.02"
+          memory: 20M
+        limits:
+          memory: 256M
+
   wallabag:
     image: wallabag/wallabag
     restart: unless-stopped
