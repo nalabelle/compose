@@ -5,8 +5,7 @@
     "shellcheck@latest",
     "shfmt@latest",
     "gnumake@latest",
-    "_1password@latest",
-    "docker-compose@latest"
+    "_1password@latest"
   ],
   "shell": {
     "init_hook": [

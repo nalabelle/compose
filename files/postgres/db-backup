@@ -1,0 +1,48 @@
+#!/bin/bash
+set -o pipefail
+set -eu
+
+echo ""
+
+BACKUP=/var/lib/postgresql/data/backup
+mkdir -p "$BACKUP"
+
+declare -a FAILED
+FAILED=()
+
+dump_db() {
+  local db_name
+  db_name=$1
+  completed="true"
+
+  echo "${db_name}: Starting"
+  pg_dump -Fd -f "${WORK_DIR}/${db_name}" "${db_name}" || completed="false"
+  if [[ "$completed" == "true" ]]; then
+    echo "${db_name}: Completed"
+    if [ -d "$BACKUP/$db_name" ]; then
+      rm "$BACKUP/$db_name/"*
+    fi
+    mv -t "$BACKUP/" "${WORK_DIR}/${db_name}"
+  else
+    FAILED+=("${db_name}")
+    echo "${db_name}: Failed"
+  fi
+}
+
+cleanup() {
+  rm -r "$WORK_DIR"
+}
+
+WORK_DIR=$(mktemp -d)
+trap cleanup EXIT
+
+mkdir -p "${WORK_DIR}"
+
+for db in $(psql -At -c "SELECT datname FROM pg_database WHERE NOT datistemplate;"); do
+  dump_db "${db}"
+done
+
+if [ ${#FAILED[@]} -gt 0 ]; then
+  echo "FAILED: ${FAILED[*]}"
+  exit 1
+fi

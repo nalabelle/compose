@@ -1,3 +1,6 @@
+include:
+  - ../system/compose.yaml
+
 services:
   postgres:
     container_name: postgres
@@ -17,23 +20,17 @@ services:
       - postgres_password
     volumes:
       - "$PWD/volumes/postgres-data:/var/lib/postgresql/data:z"
+      - "$PWD/files/postgres/db-backup:/usr/local/bin/db-backup"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-#  pgbackweb:
-#    image: eduardolat/pgbackweb:latest
-#    ports:
-#      - "8085:8085" # Access the web interface at http://localhost:8085
-#    volumes:
-#      - ./backups:/backups # If you only use S3 destinations, you don't need this volume
-#    environment:
-#      PBW_ENCRYPTION_KEY: "my_secret_key" # Change this to a strong key
-#      PBW_POSTGRES_CONN_STRING: "postgresql://postgres:password@postgres:5432/pgbackweb?sslmode=disable"
-#      TZ: "America/Guatemala" # Set your timezone, optional
-#    depends_on:
-#      - postgres
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.db-backup.schedule: "@every 12h"
+      ofelia.job-exec.db-backup.user: "postgres"
+      ofelia.job-exec.db-backup.command: "/usr/local/bin/db-backup"
 
 secrets:
   postgres_password:
