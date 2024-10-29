@@ -16,11 +16,11 @@ clean: down
 
 .PHONY: deploy down
 deploy: .deploy
-.deploy: compose.yaml */compose.yaml secrets.env
-	@docker compose --env-file=secrets.env up -d;
+.deploy: compose.yaml */compose.yaml secrets.env .env
+	@docker compose --env-file=secrets.env --env-file=.env up -d;
 	@date -u +"%Y-%m-%dT%H:%M:%SZ" > $@
 down:
-	@docker compose --env-file=secrets.env down || true;
+	@docker compose --env-file=secrets.env --env-file=.env down || true;
 	@rm -f .deploy
 
 %.env: %.env.tpl
@@ -34,3 +34,7 @@ down:
 
 .env: .env.default
 	cp $< $@
+
+.git/hooks/post-update: .hooks/post-update
+	git config receive.denyCurrentBranch updateInstead
+	ln -s ../../$< $@
