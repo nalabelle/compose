@@ -1,9 +1,8 @@
 services:
   ofelia:
     image: mcuadros/ofelia:latest@sha256:5dbbf5378f65a43c49859bc6342cbec4a13fabd0474ad7398d6d906181fb7529
-    restart: always
+    restart: unless-stopped
     container_name: ofelia
-    command: daemon --docker -f label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
     volumes:
       - $DOCKER_SOCKET:/var/run/docker.sock:ro
       - ${CONFIG?}/ofelia/config.ini:/etc/ofelia/config.ini
@@ -16,7 +15,7 @@ services:
     hostname: compose-$BACKUP_HOSTNAME
     command:
       - infinity
-    restart: "unless-stopped"
+    restart: unless-stopped
     volumes:
       - ${VOLUMES?}:/volumes:ro
       # Don't put kopia in with the volumes or it'll loop itself
