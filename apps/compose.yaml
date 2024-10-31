@@ -80,7 +80,7 @@ services:
       - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.${DOMAIN?}
     # ports: 80
     volumes:
-      - ${PWD?}/files/wallabag/99-custom.ini:/etc/php81/conf.d/99-custom.ini
+      - ${CONFIG?}/wallabag/99-custom.ini:/etc/php81/conf.d/99-custom.ini
       - ${VOLUMES?}/wallabag/data:/var/www/wallabag/data
       - ${VOLUMES?}/wallabag/images:/var/www/wallabag/web/assets/images
     healthcheck:

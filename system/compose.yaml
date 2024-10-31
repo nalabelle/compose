@@ -6,6 +6,7 @@ services:
     command: daemon --docker -f label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
     volumes:
       - $DOCKER_SOCKET:/var/run/docker.sock:ro
+      - ${CONFIG?}/ofelia/config.ini:/etc/ofelia/config.ini
 
   kopia:
     image: kopia/kopia:latest@sha256:51784ce0961940846f4f47cab2d4f58e2e0cb467de357f9a80279b149a00c06e
@@ -22,7 +23,3 @@ services:
       - $HOME/.kopia:/app
     environment:
       KOPIA_PERSIST_CREDENTIALS_ON_CONNECT: "true"
-    labels:
-      ofelia.enabled: "true"
-      ofelia.job-exec.db-backup.schedule: "@every 12h"
-      ofelia.job-exec.db-backup.command: "kopia snapshot create /volumes"

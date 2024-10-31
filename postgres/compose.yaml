@@ -19,18 +19,13 @@ services:
     secrets:
       - postgres_password
     volumes:
-      - "${PWD?}/files/postgres/db-backup:/usr/local/bin/db-backup"
+      - "${CONFIG?}/postgres/db-backup:/usr/local/bin/db-backup"
       - "${VOLUMES?}/postgres-data:/var/lib/postgresql/data"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-    labels:
-      ofelia.enabled: "true"
-      ofelia.job-exec.db-backup.schedule: "@every 12h"
-      ofelia.job-exec.db-backup.user: "postgres"
-      ofelia.job-exec.db-backup.command: "/usr/local/bin/db-backup"
 
 secrets:
   postgres_password:
