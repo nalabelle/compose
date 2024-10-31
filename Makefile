@@ -16,7 +16,7 @@ clean: down
 
 .PHONY: deploy down
 deploy: .deploy
-.deploy: compose.yaml */compose.yaml secrets.env .env
+.deploy: compose.yaml */compose.yaml secrets.env
 	@docker compose --env-file=secrets.env --env-file=.env up -d;
 	@date -u +"%Y-%m-%dT%H:%M:%SZ" > $@
 down:
@@ -31,9 +31,6 @@ down:
 
 %.toml: %.toml.tpl
 	op inject -f -i $< -o $@
-
-.env: .env.default
-	cp $< $@
 
 .git/hooks/post-update: .hooks/post-update
 	git config receive.denyCurrentBranch updateInstead
