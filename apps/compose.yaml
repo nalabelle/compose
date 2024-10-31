@@ -123,3 +123,25 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 20s
       timeout: 3s
+
+  grist:
+    image: registry-1.docker.io/gristlabs/grist:1.2.0@sha256:0760be099f4d5c9e14f38748b2c2b28e5a44480c9590641c198bb16e69fb7973
+    container_name: grist
+    environment:
+      - APP_HOME_URL=https://grist.${DOMAIN?}
+      - GRIST_SINGLE_ORG=${ORG?}
+    labels:
+      - "traefik.enable=true"
+    entrypoint:
+      - node
+      - ./sandbox/supervisor.mjs
+    #ports: 8484
+    volumes:
+      - ${VOLUMES?}/grist:/persist
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.05"
+          memory: 64M
+        limits:
+          memory: 512M
