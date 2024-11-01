@@ -3,7 +3,7 @@ include:
 
 services:
   miniflux:
-    image: miniflux/miniflux:latest@sha256:5950f5395ba02125c0d04b4287e6ab0467715112b9dcdc435ce89a52f595d473
+    image: miniflux/miniflux:latest@sha256:7d3e21d8c81b6ee3b1a177bba0099821c4eaa0ab38e7a7c0be461ed271e6c33f
     container_name: miniflux
     labels:
       - "traefik.enable=true"
@@ -35,7 +35,7 @@ services:
           memory: 20M
         limits:
           memory: 128M
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1729902975@sha256:8321665f43fe86f4e328bff2a30b5ed16499fc5192cc701697623d35c60b3a89
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1729902975@sha256:2d05281f2bd0eb59c8261252ccc9f9115872c8ee25b3c34211d46e8ff766a86b
     environment:
       - MF_LOG_LEVEL=debug
       - MF_ENVIRONMENT=prod
@@ -48,7 +48,7 @@ services:
 
   libreddit:
     # used to be libreddit, swapped to redlib
-    image: quay.io/redlib/redlib:latest@sha256:a3f1eca3ebfc043eea4bc8274b1e9fe86ec15d0efa13536bd519f36eb18f763d
+    image: quay.io/redlib/redlib:latest@sha256:42db7afd24d3e55ceccb38f6e91ecfd44d78f381a04848bb4de67dae1836a3e4
     restart: unless-stopped
     container_name: libreddit
     environment:
@@ -125,7 +125,7 @@ services:
       timeout: 3s
 
   grist:
-    image: registry-1.docker.io/gristlabs/grist:1.2.0@sha256:0760be099f4d5c9e14f38748b2c2b28e5a44480c9590641c198bb16e69fb7973
+    image: registry-1.docker.io/gristlabs/grist:1.2.1@sha256:a96916d6a70601ab86fba6eb1fef7023b206001f023622c4f22616ecfd01588c
     container_name: grist
     environment:
       - APP_HOME_URL=https://grist.${DOMAIN?}
