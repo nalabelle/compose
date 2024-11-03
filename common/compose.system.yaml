@@ -68,7 +68,7 @@ services:
       - "traefik.http.routers.whoami.tls=true"
 
   scheduler:
-    image: premoweb/chadburn:1.0.7
+    image: premoweb/chadburn:1.0.7@sha256:096be3c00f39db7d7d33763432456ab8bdc79f0f5da7ec20fec5ff071f3e841f
     restart: unless-stopped
     container_name: scheduler
     command:
