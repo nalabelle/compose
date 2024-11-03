@@ -2,36 +2,71 @@ SHELL := bash
 .SHELLFLAGS := -eu -o pipefail -c
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
-GROOT := $(shell git rev-parse --show-toplevel 2> /dev/null)
 print-%: ; @echo $*=$($*)
 
-# List all directories except volumes
-STACKS_DIRS = $(filter-out ./volumes/, $(filter %/, $(wildcard ./*/)))
-# Remove the ./ and / from the directories
-STACKS = $(STACKS_DIRS:./%/=%)
+SECRET_TARGETS := \
+	apps/miniflux/database_url \
+	common/kopia/repository.config \
+	common/kopia/repository.config.kopia-password \
+	common/postgres/password \
+	common/proxy/cf_dns_api_token \
+	common/proxy/cf_zone_api_token \
+	services/discord-bot/discord_api_token \
+	services/discord-bot/forecast_api_key \
+	services/discord-bot/google_api_key \
+	services/discord-bot/google_client_id \
+	services/discord-bot/google_client_secret
+
+ENV_TARGETS := \
+	apps/miniflux-sidekick.env \
+	apps/wallabag.env
+
+HOSTNAME:=$(shell hostname)
+
+
+.DEFAULT_GOAL:=help
+.PHONY: help
+help:
+	grep -E '^[/.a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: clean
-clean: down
-	@rm -f secrets.env
+clean: clean-secrets ## Remove all generated files
 
-.PHONY: deploy down
-deploy: .deploy
-.deploy: compose.yaml */compose.yaml secrets.env
-	@docker compose --env-file=secrets.env --env-file=.env up -d;
-	@date -u +"%Y-%m-%dT%H:%M:%SZ" > $@
-down:
-	@docker compose --env-file=secrets.env --env-file=.env down || true;
-	@rm -f .deploy
-
-%.env: %.env.tpl
-	op inject -f -i $< -o $@
-
-%.yaml: %.yaml.tpl
-	op inject -f -i $< -o $@
-
-%.toml: %.toml.tpl
-	op inject -f -i $< -o $@
-
-.git/hooks/post-update: .hooks/post-update
+.git/hooks/post-update: .hooks/post-update ## Install git post-update hook to make this a push target
 	git config receive.denyCurrentBranch updateInstead
 	ln -s ../../$< $@
+
+.PHONY: secrets clean-secrets
+secrets:  _secrets .env ## Load secrets from 1password
+	@true
+clean-secrets:
+	@rm .env
+	@rm -rf _secrets
+
+_secrets: $(addprefix _secrets/, $(SECRET_TARGETS)) $(addprefix _secrets/, $(ENV_TARGETS)) .env
+_secrets/%:
+	@$(eval $@_PATH = op://Applications/$(notdir $(patsubst %/,%,$(basename $(dir $(dir $@)))))/$(notdir $@))
+	@$(eval $@_PATH_SUFFIXED = op://Applications/$(notdir $(patsubst %/,%,$(basename $(dir $(dir $@)))))_$(HOSTNAME)/$(notdir $@))
+	@mkdir -p $(dir $@)
+	@ \
+		{ op read --force --out-file $@ ${$@_PATH_SUFFIXED} > /dev/null 2>&1 \
+			&& printf '%s < %s\n' $@ ${$@_PATH_SUFFIXED}; } \
+		|| \
+		{ op read --force --out-file $@ ${$@_PATH} > /dev/null \
+			&& printf '%s < %s\n' $@ ${$@_PATH}; }
+
+_secrets/%env: env/%env.tpl
+	@mkdir -p $(dir $@)
+	@op inject -f -i $< -o $@ > /dev/null
+	@printf '%s < %s\n' $@ $<
+
+%env: %env.tpl
+	@op inject -f -i $< -o $@ > /dev/null
+
+.env: .env.local .env.tpl
+# ensure we're not clobbering .env for now
+	@test ! -f .env
+	@cp .env.local $@
+	@echo "" >> $@
+	@op inject -f -i .env.tpl >> $@

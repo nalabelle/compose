@@ -1,11 +1,16 @@
 include:
-  - ../system/compose.yaml
+  - compose.system.yaml # For backup schedueler
 
 services:
   postgres:
     container_name: postgres
     image: docker.io/postgres:17@sha256:8d3be35b184e70d81e54cbcbd3df3c0b47f37d06482c0dd1c140db5dbcc6a808
     restart: always
+    labels:
+      - chadburn.enabled=true
+      - chadburn.job-exec.db-backup.schedule="@every 12h"
+      - chadburn.job-exec.db-backup.command="/usr/local/bin/db-backup"
+      - chadburn.job-exec.db-backup.user="postgres"
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     # port: 5432
@@ -16,10 +21,13 @@ services:
           memory: 64M
         limits:
           memory: 512M
+    configs:
+      - source: postgres_db-backup
+        target: /usr/local/bin/db-backup
+        mode: 0555
     secrets:
       - postgres_password
     volumes:
-      - "${CONFIG?}/postgres/db-backup:/usr/local/bin/db-backup"
       - "${VOLUMES?}/postgres-data:/var/lib/postgresql/data"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -27,6 +35,10 @@ services:
       timeout: 5s
       retries: 5
 
+configs:
+  postgres_db-backup:
+    file: ${CONFIGS?}/postgres/db-backup
+
 secrets:
   postgres_password:
-    environment: POSTGRES__POSTGRES_PASSWORD
+    file: ${SECRETS?}/common/postgres/password

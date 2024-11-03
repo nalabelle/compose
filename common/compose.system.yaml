@@ -8,8 +8,8 @@ services:
       traefik.http.routers.traefik.service: traefik
       traefik.http.services.traefik.loadbalancer.server.port: "8080"
       traefik.tls.stores.default.defaultgeneratedcert.resolver: "letsencrypt"
-      traefik.tls.stores.default.defaultgeneratedcert.domain.main: "${DOMAIN}"
-      traefik.tls.stores.default.defaultgeneratedcert.domain.sans: "*.${DOMAIN}"
+      traefik.tls.stores.default.defaultgeneratedcert.domain.main: "${DOMAIN?}"
+      traefik.tls.stores.default.defaultgeneratedcert.domain.sans: "*.${DOMAIN?}"
     command:
       - --log.level=DEBUG
       - --accesslog=true
@@ -20,7 +20,7 @@ services:
       - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
-      - --certificatesresolvers.letsencrypt.acme.email=${PROXY__CERT_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.email=${EMAIL?}
       - --certificatesresolvers.letsencrypt.acme.storage=/data/letsencrypt-acme.json
       - --entrypoints.web=true
       - --entrypoints.web.address=:80
@@ -30,11 +30,11 @@ services:
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.http.tls.certresolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN?}
+      - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN?}
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
-      - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName}}.${DOMAIN}`)
+      - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName}}.${DOMAIN?}`)
     environment:
       CF_DNS_API_TOKEN_FILE: /run/secrets/cf_dns_api_token
       CF_ZONE_API_TOKEN_FILE: /run/secrets/cf_zone_api_token
@@ -45,17 +45,16 @@ services:
           memory: 20M
         limits:
           memory: 50M
-
     ports:
       - "8000:80"
       - "4430:443"
       # Uncomment this to access traefik dashboard directly
       # - "8080:8080"
     secrets:
-      - cf_dns_api_token
-      - cf_zone_api_token
+      - traefik-cf_dns_api_token
+      - traefik-cf_zone_api_token
     volumes:
-      - "$DOCKER_SOCKET:/var/run/docker.sock:ro"
+      - "${DOCKER_SOCKET?}:/var/run/docker.sock:ro"
       - "${VOLUMES?}/traefik-data:/data"
 
   whoami:
@@ -68,8 +67,55 @@ services:
       - "traefik.http.routers.whoami.entrypoints=websecure"
       - "traefik.http.routers.whoami.tls=true"
 
+  scheduler:
+    image: premoweb/chadburn:1.0.7
+    restart: unless-stopped
+    container_name: scheduler
+    command:
+      - daemon
+      - --config=/etc/scheduler/config.ini
+    configs:
+      - source: scheduler
+        target: /etc/scheduler/config.ini
+        mode: 0444
+    volumes:
+      - ${DOCKER_SOCKET?}:/var/run/docker.sock
+
+  kopia:
+    image: kopia/kopia:latest@sha256:51784ce0961940846f4f47cab2d4f58e2e0cb467de357f9a80279b149a00c06e
+    container_name: kopia
+    user: "0:0"
+    labels:
+      - chadburn.enabled=true
+      - chadburn.job-exec.db-backup.schedule="@every 12h"
+      - chadburn.job-exec.db-backup.command="kopia snapshot create /volumes"
+    entrypoint: sleep
+    command:
+      - infinity
+    restart: unless-stopped
+    volumes:
+      - ${VOLUMES?}:/volumes:ro
+      # Don't put kopia in with the volumes or it'll loop itself
+      - ${CACHE?}/kopia/cache:/app/cache
+      - ${CACHE?}/kopia/logs:/app/logs
+    environment:
+      KOPIA_PERSIST_CREDENTIALS_ON_CONNECT: "true"
+    secrets:
+      - source: kopia-repository-config
+        target: /app/repository.config
+      - source: kopia-password
+        target: /app/repository.config.kopia-password
+
+configs:
+  scheduler:
+    content: ""
+
 secrets:
-  cf_dns_api_token:
-    environment: PROXY__CF_DNS_API_TOKEN
-  cf_zone_api_token:
-    environment: PROXY__CF_ZONE_API_TOKEN
+  kopia-repository-config:
+    file: ${SECRETS?}/common/kopia/repository.config
+  kopia-password:
+    file: ${SECRETS?}/common/kopia/repository.config.kopia-password
+  traefik-cf_dns_api_token:
+    file: ${SECRETS?}/common/proxy/cf_dns_api_token
+  traefik-cf_zone_api_token:
+    file: ${SECRETS?}/common/proxy/cf_zone_api_token

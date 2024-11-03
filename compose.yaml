@@ -1,5 +1,0 @@
-include:
-  - proxy/compose.yaml
-  - postgres/compose.yaml
-  - apps/compose.yaml
-  - services/compose.yaml

@@ -1,3 +1,5 @@
+name: services
+
 services:
   discord-bot:
     image: ghcr.io/nalabelle/discord-bot:main-20220927080556@sha256:0eb8df9ef5c1d1d068338c07a6a4925e11df172a0aa27a09fa51828fc251646f
@@ -7,18 +9,17 @@ services:
       - --config
       - /app/config/config.yaml
     secrets:
-      - source: DISCORD_API_TOKEN
+      - source: discord_api_token
         target: /secrets/discord_api_token
-      - source: FORECAST_API_KEY
+      - source: forecast_api_key
         target: /secrets/forecast_api_key
-      - source: GOOGLE_API_KEY
+      - source: google_api_key
         target: /secrets/google_api_key
-      - source: GOOGLE_CLIENT_ID
+      - source: google_client_id
         target: /secrets/google_client_id
-      - source: GOOGLE_CLIENT_SECRET
+      - source: google_client_secret
         target: /secrets/google_client_secret
     volumes:
-      - $DOCKER_SOCKET:/var/run/docker.sock:ro
       - ${VOLUMES?}/discord-bot/config:/app/config
       - ${VOLUMES?}/discord-bot/data:/app/data
     deploy:
@@ -30,13 +31,13 @@ services:
           memory: 24M
 
 secrets:
-  DISCORD_API_TOKEN:
-    environment: SERVICES__DISCORD_BOT__DISCORD_API_TOKEN
-  FORECAST_API_KEY:
-    environment: SERVICES__DISCORD_BOT__FORECAST_API_KEY
-  GOOGLE_API_KEY:
-    environment: SERVICES__DISCORD_BOT__GOOGLE_API_KEY
-  GOOGLE_CLIENT_ID:
-    environment: SERVICES__DISCORD_BOT__GOOGLE_CLIENT_ID
-  GOOGLE_CLIENT_SECRET:
-    environment: SERVICES__DISCORD_BOT__GOOGLE_CLIENT_SECRET
+  discord_api_token:
+    file: ${SECRETS?}/services/discord-bot/discord_api_token
+  forecast_api_key:
+    file: ${SECRETS?}/services/discord-bot/forecast_api_key
+  google_api_key:
+    file: ${SECRETS?}/services/discord-bot/google_api_key
+  google_client_id:
+    file: ${SECRETS?}/services/discord-bot/google_client_id
+  google_client_secret:
+    file: ${SECRETS?}/services/discord-bot/google_client_secret

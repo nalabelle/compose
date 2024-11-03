@@ -1,5 +1,8 @@
+name: apps
+
 include:
-  - ../postgres/compose.yaml
+  - common/compose.postgres.yaml #miniflux db
+  - common/compose.system.yaml
 
 services:
   miniflux:
@@ -14,8 +17,10 @@ services:
     environment:
       - RUN_MIGRATIONS=1
       - "BASE_URL=https://miniflux.${DOMAIN?}"
-      - POLLING_PARSING_ERROR_LIMIT=0
-      - DATABASE_URL=${APPS__MINIFLUX__DATABASE_URL?}
+      - POLLING_PARSING_ERROR_LIMIT=99
+      - DATABASE_URL_FILE=/run/secrets/miniflux-database_url
+    secrets:
+      - miniflux-database_url
     healthcheck:
       test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
     # port: 8080
@@ -36,13 +41,7 @@ services:
         limits:
           memory: 128M
     image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1729902975@sha256:2d05281f2bd0eb59c8261252ccc9f9115872c8ee25b3c34211d46e8ff766a86b
-    environment:
-      - MF_LOG_LEVEL=debug
-      - MF_ENVIRONMENT=prod
-      - MF_API_KEY=${APPS__MINIFLUX_SIDEKICK__API_KEY?}
-      - MF_API_ENDPOINT=http://miniflux:8080
-      - MF_KILLFILE_PATH=/config/killfile
-      - MF_REFRESH_INTERVAL=*/1 * * * *
+    env_file: _secrets/apps/miniflux-sidekick.env
     volumes:
       - "${VOLUMES?}/miniflux-sidekick-config:/config"
 
@@ -70,17 +69,13 @@ services:
     container_name: wallabag
     labels:
       - "traefik.enable=true"
-    environment:
-      - SYMFONY__ENV__DATABASE_DRIVER=pdo_pgsql
-      - SYMFONY__ENV__DATABASE_HOST=postgres
-      - SYMFONY__ENV__DATABASE_NAME=wallabag
-      - SYMFONY__ENV__DATABASE_PASSWORD=${APPS__WALLABAG__POSTGRES_PASSWORD?}
-      - SYMFONY__ENV__DATABASE_PORT=5432
-      - SYMFONY__ENV__DATABASE_USER=${APPS__WALLABAG__POSTGRES_USERNAME?}
-      - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.${DOMAIN?}
+    env_file: _secrets/apps/wallabag.env
     # ports: 80
+    configs:
+      - source: wallabag_99-custom
+        target: /etc/php81/conf.d/99-custom.ini
+        mode: 0444
     volumes:
-      - ${CONFIG?}/wallabag/99-custom.ini:/etc/php81/conf.d/99-custom.ini
       - ${VOLUMES?}/wallabag/data:/var/www/wallabag/data
       - ${VOLUMES?}/wallabag/images:/var/www/wallabag/web/assets/images
     healthcheck:
@@ -145,3 +140,12 @@ services:
           memory: 64M
         limits:
           memory: 512M
+
+configs:
+  wallbag_99-custom:
+    content: |
+      memory_limit=200M
+
+secrets:
+  miniflux-database_url:
+    file: ${SECRETS?}/apps/miniflux/database_url
