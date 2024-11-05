@@ -8,6 +8,7 @@ services:
   miniflux:
     image: miniflux/miniflux:latest@sha256:7d3e21d8c81b6ee3b1a177bba0099821c4eaa0ab38e7a7c0be461ed271e6c33f
     container_name: miniflux
+    init: true
     labels:
       - "traefik.enable=true"
     restart: always
@@ -33,6 +34,7 @@ services:
           memory: 128M
   miniflux-sidekick:
     container_name: miniflux-sidekick
+    init: true
     deploy:
       resources:
         reservations:
@@ -49,6 +51,7 @@ services:
     # used to be libreddit, swapped to redlib
     image: quay.io/redlib/redlib:latest@sha256:42db7afd24d3e55ceccb38f6e91ecfd44d78f381a04848bb4de67dae1836a3e4
     restart: unless-stopped
+    init: true
     container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
@@ -66,6 +69,7 @@ services:
   wallabag:
     image: wallabag/wallabag@sha256:d482b139bab164afef0e8bbfbeb7c55cd3e10e848b95d7d167e4ffcbc847f4b9
     restart: unless-stopped
+    init: true
     container_name: wallabag
     labels:
       - "traefik.enable=true"
@@ -106,6 +110,7 @@ services:
   redis:
     image: redis:alpine@sha256:de13e74e14b98eb96bdf886791ae47686c3c5d29f9d5f85ea55206843e3fce26
     container_name: redis
+    init: true
     restart: unless-stopped
     deploy:
       resources:
@@ -122,6 +127,7 @@ services:
   grist:
     image: registry-1.docker.io/gristlabs/grist:1.2.1@sha256:a96916d6a70601ab86fba6eb1fef7023b206001f023622c4f22616ecfd01588c
     container_name: grist
+    init: true
     environment:
       - APP_HOME_URL=https://grist.${DOMAIN?}
       - GRIST_SINGLE_ORG=${ORG?}

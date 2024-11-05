@@ -8,6 +8,7 @@ services:
   home-assistant:
     image: ghcr.io/home-assistant/home-assistant:2024.10@sha256:103da063b0bbe4d6e9c0f6bb01db91d02b0707d15276b9807835d180478f78b9
     container_name: home-assistant
+    init: true
     restart: unless-stopped
     entrypoint:
       - exec
@@ -43,6 +44,7 @@ services:
   zigbee2mqtt:
     image: ghcr.io/koenkk/zigbee2mqtt:1.41.0@sha256:8643f5d454fb2209a1ce765cb0726b57b92e38ac293af95f068760473af4cf5d
     container_name: zigbee2mqtt
+    init: true
     restart: unless-stopped
     # port: 8080
     labels:
@@ -61,6 +63,7 @@ services:
   mosquitto:
     image: registry-1.docker.io/library/eclipse-mosquitto:2.0.20@sha256:090d745b6435d10a31acb82eee999ec36a2d7f416cc4f578c0a298c42af2ea14
     container_name: mosquitto
+    init: true
     restart: unless-stopped
     entrypoint:
       - mosquitto
@@ -80,6 +83,7 @@ services:
   tasmoadmin:
     image: ghcr.io/tasmoadmin/tasmoadmin:v4.1.3@sha256:5737d0d5deb9f0d62a88eac7ae0d03ad0bda9a00ae57cd6a8b77b82e562381b1
     container_name: tasmoadmin
+    init: true
     restart: unless-stopped
     labels:
       - traefik.enable=true

@@ -3,6 +3,7 @@ services:
     container_name: traefik
     image: "traefik:v3.2@sha256:66e37237b371f2b25ce5f247cc371976929dcb18c041e05685f1de1df6422b72"
     restart: always
+    init: true
     labels:
       traefik.enable: "true"
       traefik.http.routers.traefik.service: traefik
@@ -57,20 +58,11 @@ services:
       - "${DOCKER_SOCKET?}:/var/run/docker.sock:ro"
       - "${VOLUMES?}/traefik-data:/data"
 
-  whoami:
-    image: "traefik/whoami@sha256:43a68d10b9dfcfc3ffbfe4dd42100dc9aeaf29b3a5636c856337a5940f1b4f1c"
-    restart: always
-    container_name: "whoami"
-    # port: 80
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.tls=true"
-
   scheduler:
     image: premoweb/chadburn:1.0.7@sha256:096be3c00f39db7d7d33763432456ab8bdc79f0f5da7ec20fec5ff071f3e841f
     restart: unless-stopped
     container_name: scheduler
+    init: true
     command:
       - daemon
       - --config=/etc/scheduler/config.ini
@@ -85,6 +77,7 @@ services:
     image: kopia/kopia:latest@sha256:51784ce0961940846f4f47cab2d4f58e2e0cb467de357f9a80279b149a00c06e
     container_name: kopia
     user: "0:0"
+    init: true
     labels:
       - chadburn.enabled=true
       - chadburn.job-exec.db-backup.schedule="@every 12h"
