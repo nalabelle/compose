@@ -4,6 +4,11 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 print-%: ; @echo $*=$($*)
 
+COMPOSE_SOURCES := $(wildcard compose.*.yaml)
+COMPOSE_STACKS := $(patsubst compose.%.yaml,%, $(COMPOSE_SOURCES))
+COMPOSE_TARGETS := $(patsubst %,deploy-%, $(COMPOSE_STACKS))
+COMPOSE_TARGETS_DOWN := $(patsubst %,down-%, $(COMPOSE_STACKS))
+
 SECRET_TARGETS := \
 	apps/miniflux/database_url \
 	common/kopia/repository.config \
@@ -68,3 +73,11 @@ _secrets/%env: env/%env.tpl
 		&& echo "# LOCAL OVERRIDES" >> $@ \
 		&& cat .env.local >> $@; } \
 		|| true
+
+.PHONY: $(COMPOSE_TARGETS)
+$(COMPOSE_TARGETS): deploy-%: compose.%.yaml _secrets ## Deploy stack
+	@docker compose -f $< up -d
+
+.PHONY: $(COMPOSE_TARGETS_DOWN)
+$(COMPOSE_TARGETS_DOWN): down-%: compose.%.yaml .env ## Un-deploy stack
+	@docker compose -f $< down
