@@ -11,8 +11,8 @@ COMPOSE_TARGETS_DOWN := $(patsubst %,down-%, $(COMPOSE_STACKS))
 
 SECRET_TARGETS := \
 	apps/miniflux/database_url \
-	common/kopia/repository.config \
-	common/kopia/repository.config.kopia-password \
+	common/kopia/password \
+	common/kopia/server-url \
 	common/postgres/password \
 	common/proxy/cf_dns_api_token \
 	common/proxy/cf_zone_api_token \
@@ -60,7 +60,7 @@ _secrets/%:
 		|| \
 		{ op read --force --out-file $@ ${$@_PATH} > /dev/null \
 			&& printf '%s < %s\n' $@ ${$@_PATH}; }
-	# If these are overly strict, they can't be read by the apps
+# If these are overly strict, they can't be read by the apps
 	@chmod 644 $@
 
 _secrets/%env: env/%env.tpl

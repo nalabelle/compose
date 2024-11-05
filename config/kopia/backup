@@ -1,0 +1,12 @@
+#!/bin/env bash
+set -eu
+set -o pipefail
+
+kopia repository connect server \
+  --url="$(cat /run/secrets/kopia-server-url)" \
+  --password="$(cat /run/secrets/kopia-password)" \
+  --override-hostname="compose"
+
+kopia snapshot create \
+  --password="$(cat /run/secrets/kopia-password)" \
+  "$KOPIA_SNAPSHOT_PATH"

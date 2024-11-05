@@ -81,33 +81,39 @@ services:
     labels:
       - chadburn.enabled=true
       - chadburn.job-exec.db-backup.schedule="@every 12h"
-      - chadburn.job-exec.db-backup.command="kopia snapshot create /volumes"
+      - chadburn.job-exec.db-backup.command="/usr/local/bin/kopia/backup"
     entrypoint: sleep
     command:
       - infinity
     restart: unless-stopped
     volumes:
-      - ${VOLUMES?}:/volumes:ro
+      - ${VOLUMES?}:/${COMPOSE_PROJECT_NAME:?}:ro
       # Don't put kopia in with the volumes or it'll loop itself
       - ${CACHE?}/kopia/cache:/app/cache
       - ${CACHE?}/kopia/logs:/app/logs
     environment:
-      KOPIA_PERSIST_CREDENTIALS_ON_CONNECT: "true"
+      KOPIA_LOG_DIR: /app/logs
+      KOPIA_CACHE_DIRECTORY: /app/cache
+      KOPIA_SNAPSHOT_PATH: /${COMPOSE_PROJECT_NAME:?}
+    configs:
+      - source: kopia-backup
+        target: /usr/local/bin/kopia-backup
+        mode: 0555
     secrets:
-      - source: kopia-repository-config
-        target: /app/repository.config
-      - source: kopia-password
-        target: /app/repository.config.kopia-password
+      - kopia-password
+      - kopia-server-url
 
 configs:
   scheduler:
     content: ""
+  kopia-backup:
+    file: ${CONFIGS?}/kopia/backup
 
 secrets:
-  kopia-repository-config:
-    file: ${SECRETS?}/common/kopia/repository.config
+  kopia-server-url:
+    file: ${SECRETS?}/common/kopia/server-url
   kopia-password:
-    file: ${SECRETS?}/common/kopia/repository.config.kopia-password
+    file: ${SECRETS?}/common/kopia/password
   traefik-cf_dns_api_token:
     file: ${SECRETS?}/common/proxy/cf_dns_api_token
   traefik-cf_zone_api_token:
