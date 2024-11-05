@@ -60,6 +60,8 @@ _secrets/%:
 		|| \
 		{ op read --force --out-file $@ ${$@_PATH} > /dev/null \
 			&& printf '%s < %s\n' $@ ${$@_PATH}; }
+	# If these are overly strict, they can't be read by the apps
+	@chmod 644 $@
 
 _secrets/%env: env/%env.tpl
 	@mkdir -p $(dir $@)
