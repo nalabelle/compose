@@ -1,7 +1,7 @@
 # Note: .env is read automatically by docker compose
 DOCKER_SOCKET=/var/run/docker.sock
 VOLUMES=${PWD}/volumes
-CONFIG=${PWD}/config
+CONFIGS=${PWD}/config
 CACHE=${PWD}/.cache
 SECRETS=${PWD}/_secrets
 
