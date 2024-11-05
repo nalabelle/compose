@@ -5,6 +5,7 @@ services:
     image: ghcr.io/nalabelle/discord-bot:main-20220927080556@sha256:0eb8df9ef5c1d1d068338c07a6a4925e11df172a0aa27a09fa51828fc251646f
     container_name: discord-bot
     restart: unless-stopped
+    init: true
     command:
       - --config
       - /app/config/config.yaml
