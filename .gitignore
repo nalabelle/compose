@@ -2,5 +2,6 @@
 /.deploy
 /.devbox
 /.env
+/.env.local
 /_secrets
 /volumes

@@ -64,9 +64,10 @@ _secrets/%env: env/%env.tpl
 %env: %env.tpl
 	@op inject -f -i $< -o $@ > /dev/null
 
-.env: .env.local .env.tpl
-# ensure we're not clobbering .env for now
-	@test ! -f .env
-	@cp .env.local $@
-	@echo "" >> $@
-	@op inject -f -i .env.tpl >> $@
+.env: .env.tpl $(wildcard .env.local) ## Create .env file with secrets from .env.tpl
+	@envsubst < <(op inject -i .env.tpl) > $@
+	@{ test -f .env.local \
+		&& echo "" >> $@ \
+		&& echo "# LOCAL OVERRIDES" >> $@ \
+		&& cat .env.local >> $@; } \
+		|| true
