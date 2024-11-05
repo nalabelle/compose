@@ -32,6 +32,7 @@ services:
           memory: 1G
     healthcheck:
       test:
+        - CMD
         - curl
         - --fail
         - -s
