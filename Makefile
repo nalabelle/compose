@@ -61,9 +61,6 @@ _secrets/%env: env/%env.tpl
 	@op inject -f -i $< -o $@ > /dev/null
 	@printf '%s < %s\n' $@ $<
 
-%env: %env.tpl
-	@op inject -f -i $< -o $@ > /dev/null
-
 .env: .env.tpl $(wildcard .env.local) ## Create .env file with secrets from .env.tpl
 	@envsubst < <(op inject -i .env.tpl) > $@
 	@{ test -f .env.local \
