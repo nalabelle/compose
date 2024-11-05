@@ -148,7 +148,7 @@ services:
           memory: 512M
 
 configs:
-  wallbag_99-custom:
+  wallabag_99-custom:
     content: |
       memory_limit=200M
 
