@@ -39,8 +39,8 @@ services:
       - --providers.docker.exposedbydefault=false
       - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName}}.${DOMAIN:?}`)
     environment:
-      CF_DNS_API_TOKEN_FILE: /run/secrets/cf_dns_api_token
-      CF_ZONE_API_TOKEN_FILE: /run/secrets/cf_zone_api_token
+      CF_DNS_API_TOKEN_FILE: /run/secrets/traefik-cf_dns_api_token
+      CF_ZONE_API_TOKEN_FILE: /run/secrets/traefik-cf_zone_api_token
     deploy:
       resources:
         reservations:
