@@ -51,6 +51,7 @@ services:
     # port: 8080
     labels:
       - traefik.enable=true
+      - traefik.http.services.zigbee2mqtt.loadbalancer.server.port=8080
     deploy:
       resources:
         reservations:
