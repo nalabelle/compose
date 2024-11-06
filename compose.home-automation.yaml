@@ -31,15 +31,15 @@ services:
           memory: 256M
         limits:
           memory: 1G
-    healthcheck:
-      test:
-        - CMD
-        - curl
-        - --fail
-        - -s
-        - http://localhost:8123/manifest.json
-      interval: 30s
-      timeout: 5s
+    #healthcheck:
+    #  test:
+    #    - CMD
+    #    - curl
+    #    - --fail
+    #    - -s
+    #    - http://localhost:8123/manifest.json
+    #  interval: 30s
+    #  timeout: 5s
     volumes:
       - "${VOLUMES?}/home-assistant:/config"
 
