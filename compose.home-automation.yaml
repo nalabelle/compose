@@ -101,3 +101,26 @@ services:
           memory: 64M
     volumes:
       - "${VOLUMES?}/tasmoadmin:/data"
+
+  go2rtc:
+    image: alexxit/go2rtc
+    container_name: go2rtc
+    init: false
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.go2rtc.loadbalancer.server.port=1984
+    ports:
+      # rtsp
+      - "8554:8554"
+      # webrtc
+      - "8555:8555"
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 32M
+        limits:
+          memory: 64M
+    volumes:
+      - "${VOLUMES?}/go2rtc:/config"
