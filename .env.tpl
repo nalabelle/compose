@@ -6,6 +6,7 @@ CACHE=${PWD}/.cache
 SECRETS=${PWD}/_secrets
 
 # General
+HOSTNAME=
 DOMAIN={{ op://Applications/PROXY/DOMAIN }}
 ORG={{ op://Applications/PROXY/ORG }}
 EMAIL={{ op://Applications/PROXY/EMAIL }}

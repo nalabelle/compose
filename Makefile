@@ -75,6 +75,7 @@ _secrets/%env: env/%env.tpl
 		&& echo "# LOCAL OVERRIDES" >> $@ \
 		&& cat .env.local >> $@; } \
 		|| true
+	@echo "HOSTNAME=$$(hostname)" >> $@
 
 .PHONY: $(COMPOSE_TARGETS)
 $(COMPOSE_TARGETS): %-deploy: compose.%.yaml _secrets ## Deploy stack

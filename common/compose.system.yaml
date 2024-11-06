@@ -6,11 +6,13 @@ services:
     init: true
     labels:
       traefik.enable: "true"
+      traefik.http.routers.traefik.rule: Host(`${HOSTNAME:?}.${DOMAIN:?}`)
       traefik.http.routers.traefik.service: traefik
       traefik.http.services.traefik.loadbalancer.server.port: "8080"
       traefik.tls.stores.default.defaultgeneratedcert.resolver: "letsencrypt"
-      traefik.tls.stores.default.defaultgeneratedcert.domain.main: "${DOMAIN?}"
-      traefik.tls.stores.default.defaultgeneratedcert.domain.sans: "*.${DOMAIN?}"
+      traefik.tls.stores.default.defaultgeneratedcert.domain.main: "${DOMAIN:?}"
+      traefik.tls.stores.default.defaultgeneratedcert.domain.sans: "*.${DOMAIN:?}"
+
     command:
       - --log.level=DEBUG
       - --accesslog=true
@@ -31,11 +33,11 @@ services:
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.http.tls.certresolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN?}
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN?}
+      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN:?}
+      - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN:?}
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
-      - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName}}.${DOMAIN?}`)
+      - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName}}.${DOMAIN:?}`)
     environment:
       CF_DNS_API_TOKEN_FILE: /run/secrets/cf_dns_api_token
       CF_ZONE_API_TOKEN_FILE: /run/secrets/cf_zone_api_token
