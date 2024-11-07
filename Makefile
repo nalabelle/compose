@@ -16,6 +16,12 @@ SECRET_TARGETS := \
 	common/postgres/password \
 	common/proxy/cf_dns_api_token \
 	common/proxy/cf_zone_api_token \
+	media/exporter/bazarr-api-key \
+	media/exporter/lidarr-api-key \
+	media/exporter/prowlarr-api-key \
+	media/exporter/radarr-api-key \
+	media/exporter/sabnzbd-api-key \
+	media/exporter/sonarr-api-key \
 	services/discord-bot/discord_api_token \
 	services/discord-bot/forecast_api_key \
 	services/discord-bot/google_api_key \

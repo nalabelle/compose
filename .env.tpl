@@ -13,3 +13,6 @@ EMAIL={{ op://Applications/PROXY/EMAIL }}
 
 # home-automation
 ZIGBEE_DEVICE=/dev/serial/by-id/usb-port0
+
+# media
+FILEHOST=

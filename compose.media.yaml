@@ -1,0 +1,372 @@
+name: media
+
+include:
+  - common/compose.postgres.yaml
+  - common/compose.system.yaml
+
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:2.16.2@sha256:e0daed86091611573f5c9f6847608badb5a302659ed3f8ddf0fb0c8e9901a59c
+    container_name: audiobookshelf
+    environment:
+      - PORT=13378
+    #port: 13378
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 1.5G
+    volumes:
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/config:/config"
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/metadata:/metadata"
+      - nfs-podcasts:/podcasts
+
+  bazarr:
+    image: ghcr.io/linuxserver/bazarr:1.4.5@sha256:88684337f4e3ea6c47623e47c5c27f798ed0d24fbca3e08c8d04be7a2b8a5668
+    container_name: bazarr
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    entrypoint:
+      - "python3"
+      - "/app/bazarr/bin/bazarr.py"
+    command:
+      - "--no-update"
+      - "--config"
+      - "/config"
+    #port: 6767
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 512M
+    volumes:
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr/config:/config"
+      - nfs-downloads:/downloads
+      - nfs-movies:/media/movies
+      - nfs-television:/media/television
+  bazarr-exporter:
+    container_name: bazarr-exporter
+    image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    command:
+      - bazarr
+    # port: 9707
+    environment:
+      - PORT=9707
+      - URL=http://bazarr:6767
+      - API_KEY_FILE=/run/secrets/bazarr-api-key
+    secrets:
+      - bazarr-api-key
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 128M
+
+  lidarr:
+    image: ghcr.io/linuxserver/lidarr:2.7.1@sha256:c4d9107e03efb0d73bd4491bdb3110fa497da8b53493f60404fbd53087ff0119
+    container_name: lidarr
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    entrypoint:
+      - "/app/lidarr/bin/Lidarr"
+    command:
+      - "-nobrowser"
+      - "-data=/config"
+    # port: 8686
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: .25G
+        limits:
+          memory: 2G
+    volumes:
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/lidarr:/config"
+      - nfs-music:/media/music
+  lidarr-exporter:
+    container_name: lidarr-exporter
+    image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    command:
+      - lidarr
+    environment:
+      - PORT=9707
+      - URL=http://lidarr:8686
+      - API_KEY_FILE=/run/secrets/lidarr-api-key
+    #port: 9707
+    secrets:
+      - lidarr-api-key
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 128M
+
+  prowlarr:
+    image: ghcr.io/linuxserver/prowlarr:1.25.4@sha256:295528cb3a94c96871b1e90f690668fc267738116be6383ee14f044468f1eed3
+    container_name: prowlarr
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    #port: 9696
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 256M
+        limits:
+          memory: 512M
+    volumes:
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config"
+
+  prowlarr-exporter:
+    container_name: prowlarr-exporter
+    image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    command:
+      - prowlarr
+    #port: 9707
+    environment:
+      - PORT=9707
+      - URL=http://prowlarr:9696
+      - API_KEY_FILE=/run/secrets/prowlarr-api-key
+    secrets:
+      - prowlarr-api-key
+
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 128M
+  radarr:
+    image: ghcr.io/linuxserver/radarr:5.14.0@sha256:a5a1fdf02aa14abc33a507eafa125ff57cb83f251a519536bce331ce9e008ef7
+    container_name: radarr
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    entrypoint:
+      - "/app/radarr/bin/Radarr"
+    command:
+      - "-nobrowser"
+      - "-data=/config"
+    #port: 7878
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 256M
+        limits:
+          memory: 2G
+    volumes:
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/radarr:/config"
+      - nfs-downloads:/downloads
+      - nfs-movies:/media/movies
+  radarr-exporter:
+    container_name: radarr-exporter
+    image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    command:
+      - radarr
+    #port: 9707
+    environment:
+      - PORT=9707
+      - URL=http://radarr:7878
+      - API_KEY_FILE=/run/secrets/radarr-api-key
+    secrets:
+      - radarr-api-key
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 128M
+  sabnzbd:
+    image: ghcr.io/linuxserver/sabnzbd:4.3.3@sha256:5ae714b1a941a38471c2cc381ec407f93b3d7823c5a77a9a651502036b70ad69
+    container_name: sabnzbd
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    #port: 8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.02"
+          memory: 128M
+        limits:
+          memory: 1G
+    volumes:
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config"
+      - nfs-downloads:/downloads
+  sabnzbd-exporter:
+    container_name: sabnzbd-exporter
+    image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    command:
+      - sabnzbd
+    #port: 9707
+    environment:
+      - PORT=9707
+      - URL=http://sabnzbd:8080
+      - API_KEY_FILE=/run/secrets/sabnzbd-api-key
+    secrets:
+      - sabnzbd-api-key
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 128M
+  sonarr:
+    container_name: sonarr
+    image: ghcr.io/linuxserver/sonarr:4.0.10@sha256:c0281bd62b9a75f088fa4a09e5f8776431921883766633cb5e5fbd5a74761155
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    entrypoint:
+      - "/app/sonarr/bin/Sonarr"
+    command:
+      - "-nobrowser"
+      - "-data=/config"
+    #port: 8989
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 256Mi
+        limits:
+          memory: 2Gi
+    volumes:
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sonarr:/config"
+      - nfs-downloads:/downloads
+      - nfs-television:/television
+  sonarr-exporter:
+    container_name: exporter
+    image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
+    init: true
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+    command:
+      - sonarr
+    #port: 9707
+    environment:
+      - PORT=9707
+      - URL=http://sonarr:8989
+      - API_KEY_FILE=/run/secrets/sonarr-api-key
+    secrets:
+      - sonarr-api-key
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 128M
+  yt-dlp:
+    image: ghcr.io/jauderho/yt-dlp:latest@sha256:4501d9c94917cbfba6faa4ffb5b9ef6e96faa9d9d7d43bb975651b5bc4914543
+    container_name: yt-dlp
+    init: true
+    restart: unless-stopped
+    entrypoint:
+      - sleep
+      - infinity
+    labels:
+      - chadburn.enabled=true
+      - chadburn.job-exec.nebula-subs.schedule="@every 12h"
+      - chadburn.job-exec.nebula-subs.command="/config/scheduled-task"
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.02"
+          memory: 500M
+        limits:
+          memory: 1G
+    volumes:
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config"
+      - nfs-internet:/downloads
+
+secrets:
+  bazarr-api-key:
+    file: ${SECRETS?}/media/exporter/bazarr-api-key
+  lidarr-api-key:
+    file: ${SECRETS?}/media/exporter/lidarr-api-key
+  prowlarr-api-key:
+    file: ${SECRETS?}/media/exporter/prowlarr-api-key
+  radarr-api-key:
+    file: ${SECRETS?}/media/exporter/radarr-api-key
+  sabnzbd-api-key:
+    file: ${SECRETS?}/media/exporter/sabnzbd-api-key
+  sonarr-api-key:
+    file: ${SECRETS?}/media/exporter/sonarr-api-key
+
+volumes:
+  nfs-downloads:
+    driver_opts:
+      type: nfs
+      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
+      device: ":/downloads"
+  nfs-internet:
+    driver_opts:
+      type: nfs
+      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
+      device: ":/internet"
+  nfs-movies:
+    driver_opts:
+      type: nfs
+      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
+      device: ":/movies"
+  nfs-music:
+    driver_opts:
+      type: nfs
+      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
+      device: ":/music"
+  nfs-television:
+    driver_opts:
+      type: nfs
+      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
+      device: ":/television"
+  nfs-podcasts:
+    driver_opts:
+      type: nfs
+      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
+      device: ":/podcasts"
