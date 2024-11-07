@@ -10,10 +10,10 @@ services:
     container_name: audiobookshelf
     environment:
       - PORT=13378
-    #port: 13378
     init: true
     labels:
-      - "traefik.enable=true"
+      - traefik.enable=true
+      - traefik.http.services.audiobookshelf.loadbalancer.server.port=13378
     restart: unless-stopped
     deploy:
       resources:
@@ -38,9 +38,8 @@ services:
       - "python3"
       - "/app/bazarr/bin/bazarr.py"
     command:
-      - "--no-update"
-      - "--config"
-      - "/config"
+      - --no-update=true
+      - --config=/config
     #port: 6767
     deploy:
       resources:
@@ -50,7 +49,7 @@ services:
         limits:
           memory: 512M
     volumes:
-      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr/config:/config"
+      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr:/config"
       - nfs-downloads:/downloads
       - nfs-movies:/media/movies
       - nfs-television:/media/television
@@ -129,6 +128,11 @@ services:
     image: ghcr.io/linuxserver/prowlarr:1.25.4@sha256:295528cb3a94c96871b1e90f690668fc267738116be6383ee14f044468f1eed3
     container_name: prowlarr
     init: true
+    entrypoint:
+      - /app/prowlarr/bin/Prowlarr
+    command:
+      - -nobrowser
+      - -data=/config
     labels:
       - "traefik.enable=true"
     restart: unless-stopped
@@ -221,6 +225,13 @@ services:
     labels:
       - "traefik.enable=true"
     restart: unless-stopped
+    entrypoint:
+      - python3
+      - /app/sabnzbd/SABnzbd.py
+    command:
+      - --config-file
+      - /config/sabnzbd.ini
+      - -l1
     #port: 8080
     deploy:
       resources:
@@ -272,13 +283,13 @@ services:
       resources:
         reservations:
           cpus: "0.01"
-          memory: 256Mi
+          memory: 256M
         limits:
-          memory: 2Gi
+          memory: 2G
     volumes:
       - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sonarr:/config"
       - nfs-downloads:/downloads
-      - nfs-television:/television
+      - nfs-television:/media/television
   sonarr-exporter:
     container_name: exporter
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
@@ -312,8 +323,8 @@ services:
       - infinity
     labels:
       - chadburn.enabled=true
-      - chadburn.job-exec.nebula-subs.schedule="@every 12h"
-      - chadburn.job-exec.nebula-subs.command="/config/scheduled-task"
+      - chadburn.job-exec.yt-dlp.schedule="@every 12h"
+      - chadburn.job-exec.yt-dlp.command="/config/scheduled-task"
     deploy:
       resources:
         reservations:
