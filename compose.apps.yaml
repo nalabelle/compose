@@ -146,6 +146,35 @@ services:
           memory: 64M
         limits:
           memory: 512M
+  discord-bot:
+    image: ghcr.io/nalabelle/discord-bot:main-20220927080556@sha256:0eb8df9ef5c1d1d068338c07a6a4925e11df172a0aa27a09fa51828fc251646f
+    container_name: discord-bot
+    restart: unless-stopped
+    init: true
+    command:
+      - --config
+      - /app/config/config.yaml
+    secrets:
+      - source: discord_api_token
+        target: /secrets/discord_api_token
+      - source: forecast_api_key
+        target: /secrets/forecast_api_key
+      - source: google_api_key
+        target: /secrets/google_api_key
+      - source: google_client_id
+        target: /secrets/google_client_id
+      - source: google_client_secret
+        target: /secrets/google_client_secret
+    volumes:
+      - ${VOLUMES?}/discord-bot/config:/app/config
+      - ${VOLUMES?}/discord-bot/data:/app/data
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+        reservations:
+          cpus: "0.01"
+          memory: 24M
 
 configs:
   wallabag_99-custom:
@@ -155,3 +184,13 @@ configs:
 secrets:
   miniflux-database_url:
     file: ${SECRETS?}/apps/miniflux/database_url
+  discord_api_token:
+    file: ${SECRETS?}/services/discord-bot/discord_api_token
+  forecast_api_key:
+    file: ${SECRETS?}/services/discord-bot/forecast_api_key
+  google_api_key:
+    file: ${SECRETS?}/services/discord-bot/google_api_key
+  google_client_id:
+    file: ${SECRETS?}/services/discord-bot/google_client_id
+  google_client_secret:
+    file: ${SECRETS?}/services/discord-bot/google_client_secret
