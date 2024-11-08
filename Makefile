@@ -27,7 +27,8 @@ SECRET_TEMPLATE_TARGETS := \
 	apps/miniflux-sidekick.env \
 	apps/wallabag.env \
 	apps/alertmanager/config.yaml \
-	home-automation/alertmanager/config.yaml
+	home-automation/alertmanager/config.yaml \
+	media/alertmanager/config.yaml
 
 HOSTNAME:=$(shell hostname)
 COMPOSE_SOURCES := $(wildcard compose.*.yaml)

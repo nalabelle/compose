@@ -3,6 +3,7 @@ name: media
 include:
   - common/compose.postgres.yaml
   - common/compose.system.yaml
+  - common/compose.monitoring.yaml
 
 services:
   audiobookshelf:
