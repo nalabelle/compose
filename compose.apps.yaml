@@ -11,7 +11,9 @@ services:
     container_name: miniflux
     init: true
     labels:
-      - "traefik.enable=true"
+      - traefik.enable=true
+      - metrics-job=miniflux
+      - scrape-port=8080
     restart: always
     depends_on:
       postgres:
@@ -21,6 +23,8 @@ services:
       - "BASE_URL=https://miniflux.${DOMAIN?}"
       - POLLING_PARSING_ERROR_LIMIT=99
       - DATABASE_URL_FILE=/run/secrets/miniflux-database_url
+      - METRICS_COLLECTOR=1
+      - METRICS_ALLOWED_NETWORKS=127.0.0.1/8,172.0.0.1/8
     secrets:
       - miniflux-database_url
     healthcheck:

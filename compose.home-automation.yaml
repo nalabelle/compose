@@ -28,7 +28,6 @@ services:
       - metrics-job=home-assistant
       - scrape-port=8123
       - scrape-path=/api/prometheus
-      - scrape-authorization=${HOME_AUTOMATION__HOME_ASSISTANT__SCRAPE_CREDENTIALS:?}
     deploy:
       resources:
         reservations:
