@@ -3,6 +3,7 @@ name: apps
 include:
   - common/compose.postgres.yaml #miniflux db
   - common/compose.system.yaml
+  - common/compose.monitoring.yaml
 
 services:
   miniflux:

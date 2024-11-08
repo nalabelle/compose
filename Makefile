@@ -26,6 +26,7 @@ SECRET_TARGETS := \
 SECRET_TEMPLATE_TARGETS := \
 	apps/miniflux-sidekick.env \
 	apps/wallabag.env \
+	apps/alertmanager/config.yaml \
 	home-automation/alertmanager/config.yaml
 
 HOSTNAME:=$(shell hostname)
