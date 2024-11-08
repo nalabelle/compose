@@ -8,11 +8,11 @@ services:
       - traefik.http.services.metrics.loadbalancer.server.port=8428
     restart: unless-stopped
     command:
-      - --retentionPeriod=7d
-      - --promscrape.config=/config/prometheus.yaml
-      - --storageDataPath=/storage
-      - --vmalert.proxyURL=http://vmalert:8880
-      - --remoteWrite.url=${METRICS_LONG_TERM_STORAGE:?}
+      - -retentionPeriod=7d
+      - -promscrape.config=/config/prometheus.yaml
+      - -storageDataPath=/storage
+      - -vmalert.proxyURL=http://vmalert:8880
+      - -remoteWrite.url=${METRICS_LONG_TERM_STORAGE:?}
     # port: 8428
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/victoria-metrics:/storage
@@ -32,13 +32,13 @@ services:
     container_name: vmalert
     restart: unless-stopped
     command:
-      - --datasource.url=http://metrics:8428
-      - --remoteRead.url=http://metrics:8428
-      - --remoteWrite.url=http://metrics:8428
-      - --notifier.url=http://alertmanager:9093
-      - --external.url=https://${HOSTNAME:?}-metrics.${DOMAIN:?}
-      - --rule=/alerts/docker.yaml
-      # - --rule=/etc/alerts/*.yaml
+      - -datasource.url=http://metrics:8428
+      - -remoteRead.url=http://metrics:8428
+      - -remoteWrite.url=http://metrics:8428
+      - -notifier.url=http://alertmanager:9093
+      - -external.url=https://${HOSTNAME:?}-metrics.${DOMAIN:?}
+      - -rule=/alerts/docker.yaml
+      # - -rule=/etc/alerts/*.yaml
     #port: 8880
     configs:
       - source: alerts
