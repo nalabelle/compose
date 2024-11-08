@@ -3,6 +3,7 @@ name: home-automation
 include:
   - common/compose.postgres.yaml # home-assistant database
   - common/compose.system.yaml
+  - common/compose.monitoring.yaml
 
 services:
   home-assistant:
@@ -24,6 +25,10 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.home-assistant.loadbalancer.server.port=8123
+      - metrics-job=home-assistant
+      - scrape-port=8123
+      - scrape-path=/api/prometheus
+      - scrape-authorization=${HOME_AUTOMATION__HOME_ASSISTANT__SCRAPE_CREDENTIALS:?}
     deploy:
       resources:
         reservations:

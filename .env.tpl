@@ -13,6 +13,7 @@ EMAIL={{ op://Applications/PROXY/EMAIL }}
 
 # home-automation
 ZIGBEE_DEVICE=/dev/serial/by-id/usb-port0
+HOME_AUTOMATION__HOME_ASSISTANT__SCRAPE_CREDENTIALS={{ op://Applications/HOME_ASSISTANT/scrape-credentials }}
 
 # media
 FILEHOST=

@@ -1,0 +1,120 @@
+services:
+  metrics:
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.106.0
+    container_name: metrics
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.metrics.rule=Host(`${HOSTNAME:?}-metrics.${DOMAIN:?}`)
+      - traefik.http.services.metrics.loadbalancer.server.port=8428
+    restart: unless-stopped
+    command:
+      - --retentionPeriod=7d
+      - --promscrape.config=/config/prometheus.yaml
+      - --storageDataPath=/storage
+      - --vmalert.proxyURL=http://vmalert:8880
+    # port: 8428
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/victoria-metrics:/storage
+      - ${DOCKER_SOCKET?}:/var/run/docker.sock
+    configs:
+      - source: scrape-configs
+        target: /config/prometheus.yaml
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 32M
+        limits:
+          memory: 64M
+  vmalert:
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.106.0@sha256:0d5ceaf80533457d51d15ed56d13e43e3cc188d0207fd67c921eaf44c5d72781
+    container_name: vmalert
+    restart: unless-stopped
+    command:
+      - --datasource.url=http://metrics:8428
+      - --remoteRead.url=http://metrics:8428
+      - --remoteWrite.url=http://metrics:8428
+      - --notifier.url=http://alertmanager:9093
+      - --external.url=https://${HOSTNAME:?}-metrics.${DOMAIN:?}
+      - --rule=/alerts/docker.yaml
+      # - --rule=/etc/alerts/*.yaml
+    #port: 8880
+    configs:
+      - source: alerts
+        target: /alerts/docker.yaml
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 32M
+        limits:
+          memory: 64M
+  alertmanager:
+    image: registry-1.docker.io/prom/alertmanager:v0.27.0@sha256:e13b6ed5cb929eeaee733479dce55e10eb3bc2e9c4586c705a4e8da41e5eacf5
+    container_name: alertmanager
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.alertmanager.rule=Host(`${HOSTNAME:?}-alertmanager.${DOMAIN:?}`)
+      - traefik.http.services.alertmanager.loadbalancer.server.port=9093
+    restart: unless-stopped
+    command:
+      - --config.file=/config/alertmanager.yaml
+    # port: 9093
+    secrets:
+      - source: alertmanager
+        target: /config/alertmanager.yaml
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 32M
+        limits:
+          memory: 64M
+
+secrets:
+  alertmanager:
+    file: ${SECRETS?}/${COMPOSE_PROJECT_NAME:?}/alertmanager/config.yaml
+
+configs:
+  scrape-configs:
+    content: |
+      scrape_configs:
+        - job_name: docker
+          docker_sd_configs:
+            -  host: unix:///var/run/docker.sock
+          relabel_configs:
+            # Change metrics_path to labeled value
+            - source_labels: [__meta_docker_container_label_scrape_path]
+              regex: (.+)
+              target_label: __metrics_path__
+            # Change port
+            - source_labels: [__address__, __meta_docker_container_label_scrape_port]
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              target_label: __address__
+            # Only keep containers that have a `metrics-job` label.
+            - source_labels: [__meta_docker_container_label_metrics_job]
+              regex: .+
+              action: keep
+            # Use the task labels that are prefixed by `metrics-`.
+            - regex: __meta_docker_container_label_metrics_(.+)
+              action: labelmap
+              replacement: $1
+  alerts:
+    content: |
+      groups:
+        - name: Dead Ringer
+          rules:
+            - alert: PushMonitor
+              expr: 1
+              annotations:
+                summary: "PushMonitor: testing for missing pushes"
+                description: "Always firing"
+        - name: Hosts
+          rules:
+            - alert: InstanceDown
+              expr: up == 0
+              for: 5m
+              annotations:
+                summary: "Instance {{ $$labels.instance }} down"
+                description: "{{ $$labels.instance }} of job {{ $$labels.job }} has been down for more than 5 minutes."

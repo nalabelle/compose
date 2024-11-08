@@ -4,11 +4,6 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 print-%: ; @echo $*=$($*)
 
-COMPOSE_SOURCES := $(wildcard compose.*.yaml)
-COMPOSE_STACKS := $(patsubst compose.%.yaml,%, $(COMPOSE_SOURCES))
-COMPOSE_TARGETS := $(patsubst %,%-deploy, $(COMPOSE_STACKS))
-COMPOSE_TARGETS_DOWN := $(patsubst %,%-down, $(COMPOSE_STACKS))
-
 SECRET_TARGETS := \
 	apps/miniflux/database_url \
 	common/kopia/password \
@@ -28,11 +23,18 @@ SECRET_TARGETS := \
 	services/discord-bot/google_client_id \
 	services/discord-bot/google_client_secret
 
-ENV_TARGETS := \
+SECRET_TEMPLATE_TARGETS := \
 	apps/miniflux-sidekick.env \
-	apps/wallabag.env
+	apps/wallabag.env \
+	home-automation/alertmanager/config.yaml
 
 HOSTNAME:=$(shell hostname)
+COMPOSE_SOURCES := $(wildcard compose.*.yaml)
+COMPOSE_STACKS := $(patsubst compose.%.yaml,%, $(COMPOSE_SOURCES))
+COMPOSE_TARGETS := $(patsubst %,%-deploy, $(COMPOSE_STACKS))
+COMPOSE_TARGETS_DOWN := $(patsubst %,%-down, $(COMPOSE_STACKS))
+OUTPUT_SECRET_TARGETS := $(addprefix _secrets/, $(SECRET_TARGETS))
+OUTPUT_SECRET_TEMPLATE_TARGETS := $(addprefix _secrets/, $(SECRET_TEMPLATE_TARGETS))
 
 
 .DEFAULT_GOAL:=help
@@ -55,8 +57,8 @@ clean-secrets:
 	@rm .env
 	@rm -rf _secrets
 
-_secrets: $(addprefix _secrets/, $(SECRET_TARGETS)) $(addprefix _secrets/, $(ENV_TARGETS)) .env
-_secrets/%:
+_secrets: $(OUTPUT_SECRET_TARGETS) $(OUTPUT_SECRET_TEMPLATE_TARGETS) .env
+$(OUTPUT_SECRET_TARGETS):
 	@$(eval $@_PATH = op://Applications/$(notdir $(patsubst %/,%,$(basename $(dir $(dir $@)))))/$(notdir $@))
 	@$(eval $@_PATH_SUFFIXED = op://Applications/$(notdir $(patsubst %/,%,$(basename $(dir $(dir $@)))))_$(HOSTNAME)/$(notdir $@))
 	@mkdir -p $(dir $@)
@@ -69,10 +71,12 @@ _secrets/%:
 # If these are overly strict, they can't be read by the apps
 	@chmod 644 $@
 
-_secrets/%env: env/%env.tpl
+$(OUTPUT_SECRET_TEMPLATE_TARGETS): _secrets/%: env/%.tpl
 	@mkdir -p $(dir $@)
 	@op inject -f -i $< -o $@ > /dev/null
 	@printf '%s < %s\n' $@ $<
+# If these are overly strict, they can't be read by the apps
+	@chmod 644 $@
 
 .env: .env.tpl $(wildcard .env.local) ## Create .env file with secrets from .env.tpl
 	@envsubst < <(op inject -i .env.tpl) > $@
