@@ -12,6 +12,7 @@ services:
       - --promscrape.config=/config/prometheus.yaml
       - --storageDataPath=/storage
       - --vmalert.proxyURL=http://vmalert:8880
+      - --remoteWrite.url=${METRICS_LONG_TERM_STORAGE:?}
     # port: 8428
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/victoria-metrics:/storage
