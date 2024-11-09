@@ -1,4 +1,30 @@
 services:
+  agent:
+    image: victoriametrics/vmagent:v1.106.0
+    container_name: metrics-agent
+    # port: 8429
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.metrics.rule=Host(`${COMPOSE_PROJECT_NAME:?}-metrics-agent.${DOMAIN:?}`)
+      - traefik.http.services.metrics.loadbalancer.server.port=8429
+    restart: unless-stopped
+    command:
+      - -promscrape.config=/config/prometheus.yaml
+      - -remoteWrite.url=${METRICS_LONG_TERM_STORAGE:?}
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/monitoring/vmagent:/vmagentdata
+      - ${DOCKER_SOCKET?}:/var/run/docker.sock:ro
+    configs:
+      - source: scrape-configs
+        target: /config/prometheus.yaml
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 32M
+        limits:
+          memory: 64M
+
   metrics:
     image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.106.0
     container_name: metrics
