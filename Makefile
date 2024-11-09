@@ -16,12 +16,7 @@ SECRET_TARGETS := \
 	media/exporter/prowlarr-api-key \
 	media/exporter/radarr-api-key \
 	media/exporter/sabnzbd-api-key \
-	media/exporter/sonarr-api-key \
-	services/discord-bot/discord_api_token \
-	services/discord-bot/forecast_api_key \
-	services/discord-bot/google_api_key \
-	services/discord-bot/google_client_id \
-	services/discord-bot/google_client_secret
+	media/exporter/sonarr-api-key
 
 SECRET_TEMPLATE_TARGETS := \
 	apps/miniflux-sidekick.env \
