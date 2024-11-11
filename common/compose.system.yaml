@@ -77,8 +77,8 @@ services:
     init: true
     labels:
       - chadburn.enabled=true
-      - chadburn.job-exec.kopia-backup.schedule="@every 6h"
-      - chadburn.job-exec.kopia-backup.command="/usr/local/bin/kopia-backup"
+      - chadburn.job-exec.kopia-backup.schedule=@every 6h
+      - chadburn.job-exec.kopia-backup.command=/usr/local/bin/kopia-backup
     entrypoint: sleep
     command:
       - infinity

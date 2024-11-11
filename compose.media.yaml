@@ -324,8 +324,8 @@ services:
       - infinity
     labels:
       - chadburn.enabled=true
-      - chadburn.job-exec.yt-dlp.schedule="@every 12h"
-      - chadburn.job-exec.yt-dlp.command="/config/scheduled-task"
+      - chadburn.job-exec.yt-dlp.schedule=@every 12h
+      - chadburn.job-exec.yt-dlp.command=/config/scheduled-task
     deploy:
       resources:
         reservations:

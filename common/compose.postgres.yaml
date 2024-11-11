@@ -9,9 +9,9 @@ services:
     init: true
     labels:
       - chadburn.enabled=true
-      - chadburn.job-exec.db-backup.schedule="@every 12h"
-      - chadburn.job-exec.db-backup.command="/usr/local/bin/db-backup"
-      - chadburn.job-exec.db-backup.user="postgres"
+      - chadburn.job-exec.db-backup.schedule=@every 12h
+      - chadburn.job-exec.db-backup.command=/usr/local/bin/db-backup
+      - chadburn.job-exec.db-backup.user=postgres
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     # port: 5432
