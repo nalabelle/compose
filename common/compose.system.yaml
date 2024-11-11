@@ -67,11 +67,6 @@ services:
     init: true
     command:
       - daemon
-      - --config=/etc/scheduler/config.ini
-    configs:
-      - source: scheduler
-        target: /etc/scheduler/config.ini
-        mode: 0444
     volumes:
       - ${DOCKER_SOCKET?}:/var/run/docker.sock
 
@@ -106,8 +101,6 @@ services:
       - kopia-server-url
 
 configs:
-  scheduler:
-    content: ""
   kopia-backup:
     file: ${CONFIGS?}/kopia/backup
 
