@@ -6,7 +6,7 @@ MAKEFLAGS += --no-builtin-rules
 
 HOSTNAME:=$(shell hostname)
 COMPOSE_STACKS := $(patsubst compose.%.yaml,%, $(wildcard compose.*.yaml))
-SECRET_SOURCES := $(shell find secrets -name '*.tpl' -print)
+SECRET_SOURCES := $(shell find secrets -type f -print)
 
 
 .DEFAULT_GOAL:=help
@@ -46,7 +46,7 @@ clean-secrets:
 	@rm .env
 	@rm -rf _secrets
 
-_secrets/%: secrets/%.tpl
+_secrets/%: secrets/%
 	@mkdir -p $(dir $@)
 	@printf '%s < %s\n' $@ $<
 	@op inject -f -i $< -o $@ > /dev/null && chmod 644 $@
@@ -62,13 +62,13 @@ _secrets/%: secrets/%.tpl
 	@echo "HOSTNAME=$$(hostname)" >> $@
 
 define genComposeTargets
-_secrets/$(1)/common/%: secrets/common/%.tpl
+_secrets/$(1)/common/%: secrets/common/%
 	@mkdir -p $$(dir $$@)
 	@printf '%s < %s\n' $$@ $$<
 	@COMPOSE_PROJECT_NAME=$(1) op inject -f -i $$< -o $$@ > /dev/null && chmod 644 $$@
 
-_secrets/$(1): $$(patsubst secrets/%.tpl, _secrets/%, $$(filter secrets/$(1)/%,$$(SECRET_SOURCES))) \
-		$$(patsubst secrets/%.tpl, _secrets/$(1)/%, $$(filter secrets/common/%,$$(SECRET_SOURCES)))
+_secrets/$(1): $$(patsubst secrets/%, _secrets/%, $$(filter secrets/$(1)/%,$$(SECRET_SOURCES))) \
+		$$(patsubst secrets/%, _secrets/$(1)/%, $$(filter secrets/common/%,$$(SECRET_SOURCES)))
 	@# Help: Create secrets for $(1)
 	@true
 
