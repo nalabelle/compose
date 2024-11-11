@@ -106,10 +106,10 @@ configs:
 
 secrets:
   kopia-server-url:
-    file: ${SECRETS?}/common/kopia/server-url
+    file: ${SECRETS?}/${COMPOSE_PROJECT_NAME:?}/common/system/kopia-server-url
   kopia-password:
-    file: ${SECRETS?}/common/kopia/password
+    file: ${SECRETS?}/${COMPOSE_PROJECT_NAME:?}/common/system/kopia-password
   traefik-cf_dns_api_token:
-    file: ${SECRETS?}/common/proxy/cf_dns_api_token
+    file: ${SECRETS?}/${COMPOSE_PROJECT_NAME:?}/common/system/cf_dns_api_token
   traefik-cf_zone_api_token:
-    file: ${SECRETS?}/common/proxy/cf_zone_api_token
+    file: ${SECRETS?}/${COMPOSE_PROJECT_NAME:?}/common/system/cf_zone_api_token

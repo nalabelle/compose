@@ -42,4 +42,4 @@ configs:
 
 secrets:
   postgres_password:
-    file: ${SECRETS?}/common/postgres/password
+    file: ${SECRETS?}/${COMPOSE_PROJECT_NAME:?}/common/postgres/password

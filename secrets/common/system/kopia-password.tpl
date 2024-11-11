@@ -1,0 +1,1 @@
+{{ op://Applications/KOPIA/password }}
