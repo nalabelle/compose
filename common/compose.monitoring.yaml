@@ -1,4 +1,16 @@
 services:
+  push_monitor:
+    image: alpine/curl
+    container_name: ${COMPOSE_PROJECT_NAME:?}-push-monitor
+    entrypoint:
+      - push-scheduler
+    secrets:
+      - push-url
+    environment:
+      - PUSH_URL_FILE=/run/secrets/push-url
+    configs:
+      - source: push-scheduler
+        target: /usr/local/bin/push-scheduler
   agent:
     image: victoriametrics/vmagent:v1.106.0
     container_name: ${COMPOSE_PROJECT_NAME:?}-metrics
@@ -24,5 +36,11 @@ services:
         limits:
           memory: 64M
 configs:
+  push-scheduler:
+    file: ${CONFIGS:?}/common/monitoring/push-scheduler
   scrape-configs:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/common/monitoring/scrape-configs.yaml
+    file: ${CONFIGS:?}/common/monitoring/scrape-configs.yaml
+
+secrets:
+  push-url:
+    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/common/monitoring/push-url

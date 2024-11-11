@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+PUSH_URL="$(cat "$PUSH_URL_FILE")"
+while true; do
+  curl -fsSL -o/dev/null -w "%{url} %{http_code} %{time_total}s\n" "$PUSH_URL"
+  sleep 60
+done
