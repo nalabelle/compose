@@ -107,7 +107,7 @@ services:
       - "${VOLUMES?}/tasmoadmin:/data"
 
   go2rtc:
-    image: alexxit/go2rtc
+    image: alexxit/go2rtc@sha256:41fc2431fc3c867364ab7c8d935d2bddd9736597694afd3a983fe14c175347e8
     container_name: go2rtc
     init: false
     restart: unless-stopped
