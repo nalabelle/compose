@@ -7,7 +7,7 @@ include:
 
 services:
   miniflux:
-    image: miniflux/miniflux:latest@sha256:7d3e21d8c81b6ee3b1a177bba0099821c4eaa0ab38e7a7c0be461ed271e6c33f
+    image: miniflux/miniflux:latest@sha256:e21953092096579daaad39ba69729f01b08380b03bae4544a943f549c8e11a67
     container_name: miniflux
     init: true
     labels:
@@ -47,14 +47,14 @@ services:
           memory: 20M
         limits:
           memory: 128M
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1729902975@sha256:2d05281f2bd0eb59c8261252ccc9f9115872c8ee25b3c34211d46e8ff766a86b
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1730935128@sha256:81aacb6510227f01268276bac251f1c4744fa5f1c5dabce5c0729fef8385c7e7
     env_file: _secrets/apps/miniflux-sidekick.env
     volumes:
       - "${VOLUMES?}/miniflux-sidekick-config:/config"
 
   libreddit:
     # used to be libreddit, swapped to redlib
-    image: quay.io/redlib/redlib:latest@sha256:42db7afd24d3e55ceccb38f6e91ecfd44d78f381a04848bb4de67dae1836a3e4
+    image: quay.io/redlib/redlib:latest@sha256:acbd898fcf61396e3fc6e7108816b501cf8a2400f57722c5326a3a17d8e237c1
     restart: unless-stopped
     init: true
     container_name: libreddit
@@ -113,7 +113,7 @@ services:
         condition: service_healthy
 
   redis:
-    image: redis:alpine@sha256:de13e74e14b98eb96bdf886791ae47686c3c5d29f9d5f85ea55206843e3fce26
+    image: redis:alpine@sha256:ea9fcb1c25a20121af8a57d42cd5fea83d3b2cbb497a993f2a15265e0d59043e
     container_name: redis
     init: true
     restart: unless-stopped

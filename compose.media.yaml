@@ -173,7 +173,7 @@ services:
         limits:
           memory: 128M
   radarr:
-    image: ghcr.io/linuxserver/radarr:5.14.0@sha256:a5a1fdf02aa14abc33a507eafa125ff57cb83f251a519536bce331ce9e008ef7
+    image: ghcr.io/linuxserver/radarr:5.14.0@sha256:3329fbf778701cf53703b342b3a84da31caafec970ef9310be5723dd057666dc
     container_name: radarr
     init: true
     labels:
@@ -315,7 +315,7 @@ services:
         limits:
           memory: 128M
   yt-dlp:
-    image: ghcr.io/jauderho/yt-dlp:latest@sha256:4501d9c94917cbfba6faa4ffb5b9ef6e96faa9d9d7d43bb975651b5bc4914543
+    image: ghcr.io/jauderho/yt-dlp:latest@sha256:3cd6e19c5f03515a2f1e19501eda4cf89474e1ba4c98860ad382acb33e44d377
     container_name: yt-dlp
     init: true
     restart: unless-stopped
