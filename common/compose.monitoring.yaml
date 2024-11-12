@@ -1,6 +1,6 @@
 services:
   push_monitor:
-    image: alpine/curl
+    image: alpine/curl@sha256:5adbdde67c2fee2863259fe3eafd44f7a501cbf70ac603936a6241784c9c6188
     container_name: ${COMPOSE_PROJECT_NAME:?}-push-monitor
     entrypoint:
       - push-scheduler
@@ -12,7 +12,7 @@ services:
       - source: push-scheduler
         target: /usr/local/bin/push-scheduler
   agent:
-    image: victoriametrics/vmagent:v1.106.0
+    image: victoriametrics/vmagent:v1.106.0@sha256:16aa9c28956e56d2d7b735407289fb5ac648432c1406838ab1aa6578be3cef16
     container_name: ${COMPOSE_PROJECT_NAME:?}-metrics
     # port: 8429
     labels:
