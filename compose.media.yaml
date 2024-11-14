@@ -60,7 +60,7 @@ services:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: bazarr-exporter
     restart: unless-stopped
-    init: true
+    init: false
     labels:
       - metrics-job=bazarr
       - scrape-port=9707
@@ -114,7 +114,7 @@ services:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: lidarr-exporter
     restart: unless-stopped
-    init: true
+    init: false
     labels:
       - metrics-job=lidarr
       - scrape-port=9707
@@ -166,7 +166,7 @@ services:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: prowlarr-exporter
     restart: unless-stopped
-    init: true
+    init: false
     labels:
       - metrics-job=prowlarr
       - scrape-port=9707
@@ -223,7 +223,7 @@ services:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: radarr-exporter
     restart: unless-stopped
-    init: true
+    init: false
     labels:
       - metrics-job=radarr
       - scrape-port=9707
@@ -278,7 +278,7 @@ services:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: sabnzbd-exporter
     restart: unless-stopped
-    init: true
+    init: false
     labels:
       - metrics-job=sabnzbd
       - scrape-port=9707
@@ -335,7 +335,7 @@ services:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: sonarr-exporter
     restart: unless-stopped
-    init: true
+    init: false
     labels:
       - metrics-job=sabnzbd
       - scrape-port=9707
