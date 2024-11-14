@@ -28,6 +28,11 @@ help:
 			}' \
 		| sort
 
+.PHONY: clean-docker
+clean-docker:
+	@# Help: Not included in normal clean, removes all docker containers
+	@docker ps -aq | xargs docker stop | xargs docker rm
+
 .PHONY: clean
 clean: clean-secrets
 	@# Help: Remove all generated files
