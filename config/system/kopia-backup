@@ -15,6 +15,6 @@ for dir in /volumes/*/; do
 
   kopia snapshot create \
     --password="$(cat /run/secrets/kopia-password)" \
-    --override-source="$source" \
+    --override-source="/$source" \
     "$dir"
 done
