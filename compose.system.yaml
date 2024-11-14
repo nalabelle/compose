@@ -246,3 +246,7 @@ secrets:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/kopia-server-url
   push-monitor-url:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/push-monitor-url
+
+networks:
+  default:
+    name: global
