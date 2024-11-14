@@ -168,3 +168,7 @@ configs:
 secrets:
   miniflux-database_url:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/miniflux/database_url
+
+networks:
+  default:
+    name: global
