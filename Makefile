@@ -49,7 +49,8 @@ clean-secrets:
 _secrets/%: secrets/%
 	@mkdir -p $(dir $@)
 	@printf '%s < %s\n' $@ $<
-	@op inject -f -i $< -o $@ > /dev/null && chmod 644 $@
+	@HOSTNAME=$(HOSTNAME) \
+		op inject -f -i $< -o $@ > /dev/null && chmod 644 $@
 
 .env: .env.tpl $(wildcard .env.local)
 	@# Help: Create .env file with secrets from .env.tpl
@@ -59,13 +60,13 @@ _secrets/%: secrets/%
 		&& echo "# LOCAL OVERRIDES" >> $@ \
 		&& cat .env.local >> $@; } \
 		|| true
-	@echo "HOSTNAME=$$(hostname)" >> $@
+	@echo "HOSTNAME=$(HOSTNAME)" >> $@
 
 define genComposeTargets
 _secrets/$(1)/common/%: secrets/common/%
 	@mkdir -p $$(dir $$@)
 	@printf '%s < %s\n' $$@ $$<
-	@COMPOSE_PROJECT_NAME=$(1) op inject -f -i $$< -o $$@ > /dev/null && chmod 644 $$@
+	@COMPOSE_PROJECT_NAME=$(1) HOSTNAME=$$(HOSTNAME) op inject -f -i $$< -o $$@ > /dev/null && chmod 644 $$@
 
 _secrets/$(1): $$(patsubst secrets/%, _secrets/%, $$(filter secrets/$(1)/%,$$(SECRET_SOURCES))) \
 		$$(patsubst secrets/%, _secrets/$(1)/%, $$(filter secrets/common/%,$$(SECRET_SOURCES)))

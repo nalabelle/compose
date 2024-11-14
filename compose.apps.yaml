@@ -1,26 +1,23 @@
 name: apps
 
 include:
-  - common/compose.postgres.yaml #miniflux db
-  - common/compose.system.yaml
-  - common/compose.monitoring.yaml
+  - common/compose.postgres.yaml
 
 services:
   miniflux:
     image: miniflux/miniflux:latest@sha256:e21953092096579daaad39ba69729f01b08380b03bae4544a943f549c8e11a67
     container_name: miniflux
+    restart: unless-stopped
     init: true
     labels:
       - traefik.enable=true
       - metrics-job=miniflux
       - scrape-port=8080
-    restart: always
-    depends_on:
-      postgres:
-        condition: service_healthy
+    external_links:
+      - postgres
     environment:
       - RUN_MIGRATIONS=1
-      - "BASE_URL=https://miniflux.${DOMAIN?}"
+      - BASE_URL=https://miniflux.${DOMAIN:?}
       - POLLING_PARSING_ERROR_LIMIT=99
       - DATABASE_URL_FILE=/run/secrets/miniflux-database_url
       - METRICS_COLLECTOR=1
@@ -29,7 +26,8 @@ services:
       - miniflux-database_url
     healthcheck:
       test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
-    # port: 8080
+    expose:
+      - 8080
     deploy:
       resources:
         reservations:
@@ -37,9 +35,18 @@ services:
           memory: 24M
         limits:
           memory: 128M
+
   miniflux-sidekick:
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1730935128@sha256:81aacb6510227f01268276bac251f1c4744fa5f1c5dabce5c0729fef8385c7e7
     container_name: miniflux-sidekick
+    restart: unless-stopped
     init: true
+    env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick/env
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick:/config
+    depends_on:
+      miniflux:
+        condition: service_healthy
     deploy:
       resources:
         reservations:
@@ -47,22 +54,19 @@ services:
           memory: 20M
         limits:
           memory: 128M
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1730935128@sha256:81aacb6510227f01268276bac251f1c4744fa5f1c5dabce5c0729fef8385c7e7
-    env_file: _secrets/apps/miniflux-sidekick.env
-    volumes:
-      - "${VOLUMES?}/miniflux-sidekick-config:/config"
 
+  # used to be libreddit, swapped to redlib
   libreddit:
-    # used to be libreddit, swapped to redlib
     image: quay.io/redlib/redlib:latest@sha256:acbd898fcf61396e3fc6e7108816b501cf8a2400f57722c5326a3a17d8e237c1
+    container_name: libreddit
     restart: unless-stopped
     init: true
-    container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
     labels:
-      - "traefik.enable=true"
-    # ports: 8080
+      - traefik.enable=true
+    expose:
+      - 8080
     deploy:
       resources:
         reservations:
@@ -77,16 +81,17 @@ services:
     init: true
     container_name: wallabag
     labels:
-      - "traefik.enable=true"
-    env_file: _secrets/apps/wallabag.env
-    # ports: 80
+      - traefik.enable=true
+    env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/wallabag/env
+    expose:
+      - 80
     configs:
       - source: wallabag_99-custom
         target: /etc/php81/conf.d/99-custom.ini
         mode: 0444
     volumes:
-      - ${VOLUMES?}/wallabag/data:/var/www/wallabag/data
-      - ${VOLUMES?}/wallabag/images:/var/www/wallabag/web/assets/images
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/wallabag/data:/var/www/wallabag/data
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/wallabag/images:/var/www/wallabag/web/assets/images
     healthcheck:
       test:
         [
@@ -99,6 +104,11 @@ services:
         ]
       interval: 1m
       timeout: 3s
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     deploy:
       resources:
         reservations:
@@ -106,17 +116,14 @@ services:
           memory: 20M
         limits:
           memory: 256M
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
 
   redis:
     image: redis:alpine@sha256:ea9fcb1c25a20121af8a57d42cd5fea83d3b2cbb497a993f2a15265e0d59043e
     container_name: redis
-    init: true
     restart: unless-stopped
+    init: true
+    expose:
+      - 6379
     deploy:
       resources:
         reservations:
@@ -134,16 +141,17 @@ services:
     container_name: grist
     init: true
     environment:
-      - APP_HOME_URL=https://grist.${DOMAIN?}
-      - GRIST_SINGLE_ORG=${ORG?}
+      - APP_HOME_URL=https://grist.${DOMAIN:?}
+      - GRIST_SINGLE_ORG=${ORG:?}
     labels:
-      - "traefik.enable=true"
+      - traefik.enable=true
     entrypoint:
       - node
       - ./sandbox/supervisor.mjs
-    #ports: 8484
+    expose:
+      - 8484
     volumes:
-      - ${VOLUMES?}/grist:/persist
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grist:/persist
     deploy:
       resources:
         reservations:

@@ -1,0 +1,20 @@
+#!/bin/env bash
+set -eu
+set -o pipefail
+
+kopia repository connect server \
+  --url="$(cat /run/secrets/kopia-server-url)" \
+  --password="$(cat /run/secrets/kopia-password)" \
+  --override-hostname="compose"
+
+for dir in /volumes/*/; do
+  # Remove trailing /
+  dir=${dir%*/}
+  # Remove everything before and including the last /
+  source=${dir##*/}
+
+  kopia snapshot create \
+    --password="$(cat /run/secrets/kopia-password)" \
+    --override-source="$source" \
+    "$dir"
+done
