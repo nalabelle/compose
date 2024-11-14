@@ -62,7 +62,8 @@ services:
     restart: unless-stopped
     init: true
     labels:
-      - traefik.enable=true
+      - metrics-job=bazarr
+      - scrape-port=9707
     command:
       - bazarr
     expose:
@@ -115,7 +116,8 @@ services:
     restart: unless-stopped
     init: true
     labels:
-      - traefik.enable=true
+      - metrics-job=lidarr
+      - scrape-port=9707
     command:
       - lidarr
     environment:
@@ -166,7 +168,8 @@ services:
     restart: unless-stopped
     init: true
     labels:
-      - traefik.enable=true
+      - metrics-job=prowlarr
+      - scrape-port=9707
     command:
       - prowlarr
     expose:
@@ -222,7 +225,8 @@ services:
     restart: unless-stopped
     init: true
     labels:
-      - traefik.enable=true
+      - metrics-job=radarr
+      - scrape-port=9707
     command:
       - radarr
     expose:
@@ -276,7 +280,8 @@ services:
     restart: unless-stopped
     init: true
     labels:
-      - traefik.enable=true
+      - metrics-job=sabnzbd
+      - scrape-port=9707
     command:
       - sabnzbd
     expose:
@@ -332,7 +337,8 @@ services:
     restart: unless-stopped
     init: true
     labels:
-      - traefik.enable=true
+      - metrics-job=sabnzbd
+      - scrape-port=9707
     command:
       - sonarr
     expose:
