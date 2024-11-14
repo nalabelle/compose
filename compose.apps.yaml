@@ -57,7 +57,7 @@ services:
 
   # used to be libreddit, swapped to redlib
   libreddit:
-    image: quay.io/redlib/redlib:latest@sha256:acbd898fcf61396e3fc6e7108816b501cf8a2400f57722c5326a3a17d8e237c1
+    image: quay.io/redlib/redlib:latest@sha256:70e133dd1b127b64737d08440c8bcc13b45ac14dde5cd5084290110cfbefe308
     container_name: libreddit
     restart: unless-stopped
     init: true
@@ -118,7 +118,7 @@ services:
           memory: 256M
 
   redis:
-    image: redis:alpine@sha256:ea9fcb1c25a20121af8a57d42cd5fea83d3b2cbb497a993f2a15265e0d59043e
+    image: redis:alpine@sha256:c1e88455c85225310bbea54816e9c3f4b5295815e6dbf80c34d40afc6df28275
     container_name: redis
     restart: unless-stopped
     init: true
