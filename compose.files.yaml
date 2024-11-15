@@ -106,7 +106,7 @@ services:
     init: false
 
   redis:
-    image: redis:alpine@sha256:ea9fcb1c25a20121af8a57d42cd5fea83d3b2cbb497a993f2a15265e0d59043e
+    image: redis:alpine@sha256:c1e88455c85225310bbea54816e9c3f4b5295815e6dbf80c34d40afc6df28275
     container_name: redis
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/redis:/data
