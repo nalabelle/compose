@@ -28,6 +28,17 @@ help:
 			}' \
 		| sort
 
+.PHONY: lint lintfix
+lint:
+	@docker run -t --rm -v ${PWD}/common:/${PWD}/common --workdir ${PWD}/common zavoloklom/dclint .
+#	@docker run -t --rm -v ${PWD}:/${PWD} --workdir ${PWD} zavoloklom/dclint --config=common/.dclintrc common/
+
+lint-fix:
+	@docker run -t --rm -v ${PWD}/common:/${PWD}/common --workdir ${PWD}/common zavoloklom/dclint --fix .
+#	@docker run -t --rm -v ${PWD}:/${PWD} --workdir ${PWD} zavoloklom/dclint --config=common/.dclintrc common/
+
+
+
 .PHONY: clean-docker
 clean-docker:
 	@# Help: Not included in normal clean, removes all docker containers

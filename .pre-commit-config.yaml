@@ -11,3 +11,20 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: check-symlinks
       - id: check-toml
+      - id: no-commit-to-branch
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+  - repo: local
+    hooks:
+      - id: dclint-common
+        name: dclint (common)
+        language: docker_image
+        entry: zavoloklom/dclint --config=common/.dclintrc.yaml
+        files: ^common/compose\..*yaml$
+      - id: dclint-root
+        name: dclint (root)
+        language: docker_image
+        entry: zavoloklom/dclint
+        files: ^compose\..*yaml$
