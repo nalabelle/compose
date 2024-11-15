@@ -1,72 +1,43 @@
 name: apps
 
 include:
-  - common/compose.postgres.yaml
+  - path: ./common/compose.postgres.yaml
 
 services:
-  miniflux:
-    image: miniflux/miniflux:latest@sha256:e21953092096579daaad39ba69729f01b08380b03bae4544a943f549c8e11a67
-    container_name: miniflux
+  grist:
+    image: registry-1.docker.io/gristlabs/grist:1.2.1@sha256:a96916d6a70601ab86fba6eb1fef7023b206001f023622c4f22616ecfd01588c
+    container_name: grist
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grist:/persist
+    environment:
+      - APP_HOME_URL=https://grist.${DOMAIN:?}
+      - GRIST_SINGLE_ORG=${ORG:?}
+    entrypoint:
+      - node
+      - ./sandbox/supervisor.mjs
     restart: unless-stopped
-    init: true
     labels:
       - traefik.enable=true
-      - metrics-job=miniflux
-      - scrape-port=8080
-    external_links:
-      - postgres
-    environment:
-      - RUN_MIGRATIONS=1
-      - BASE_URL=https://miniflux.${DOMAIN:?}
-      - POLLING_PARSING_ERROR_LIMIT=99
-      - DATABASE_URL_FILE=/run/secrets/miniflux-database_url
-      - METRICS_COLLECTOR=1
-      - METRICS_ALLOWED_NETWORKS=127.0.0.1/8,172.0.0.1/8
-    secrets:
-      - miniflux-database_url
-    healthcheck:
-      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
-    expose:
-      - 8080
     deploy:
       resources:
         reservations:
           cpus: "0.05"
-          memory: 24M
+          memory: 64M
         limits:
-          memory: 128M
-
-  miniflux-sidekick:
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1730935128@sha256:81aacb6510227f01268276bac251f1c4744fa5f1c5dabce5c0729fef8385c7e7
-    container_name: miniflux-sidekick
-    restart: unless-stopped
+          memory: 512M
+    expose:
+      - 8484
     init: true
-    env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick/env
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick:/config
-    depends_on:
-      miniflux:
-        condition: service_healthy
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.02"
-          memory: 20M
-        limits:
-          memory: 128M
 
   # used to be libreddit, swapped to redlib
   libreddit:
     image: quay.io/redlib/redlib:latest@sha256:78a369b750eef1c58d5be3085372d179ded9210cd09fd4f69b31ff24d383995b
     container_name: libreddit
-    restart: unless-stopped
-    init: true
     environment:
       - REDLIB_DEFAULT_THEME=black
+    restart: unless-stopped
     labels:
       - traefik.enable=true
-    expose:
-      - 8080
     deploy:
       resources:
         reservations:
@@ -74,24 +45,98 @@ services:
           memory: 20M
         limits:
           memory: 256M
+    expose:
+      - 8080
+    init: true
+  miniflux:
+    image: miniflux/miniflux:latest@sha256:e21953092096579daaad39ba69729f01b08380b03bae4544a943f549c8e11a67
+    container_name: miniflux
+    depends_on:
+      postgres:
+        condition: service_healthy
+    secrets:
+      - miniflux-database_url
+    environment:
+      - BASE_URL=https://miniflux.${DOMAIN:?}
+      - DATABASE_URL_FILE=/run/secrets/miniflux-database_url
+      - METRICS_ALLOWED_NETWORKS=127.0.0.1/8,172.0.0.1/8
+      - METRICS_COLLECTOR=1
+      - POLLING_FREQUENCY=180 #Minutes
+      - POLLING_PARSING_ERROR_LIMIT=99
+      - RUN_MIGRATIONS=1
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "/usr/bin/miniflux", "-healthcheck", "auto" ]
+    labels:
+      - traefik.enable=true
+      - metrics-job=miniflux
+      - scrape-port=8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.03"
+          memory: 24M
+        limits:
+          memory: 128M
+    expose:
+      - 8080
+    init: true
+
+  miniflux-sidekick:
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1730935128@sha256:81aacb6510227f01268276bac251f1c4744fa5f1c5dabce5c0729fef8385c7e7
+    container_name: miniflux-sidekick
+    depends_on:
+      miniflux:
+        condition: service_healthy
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick:/config
+    env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick/env
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.02"
+          memory: 20M
+        limits:
+          memory: 128M
+    init: true
+
+  redis:
+    image: redis:alpine@sha256:c1e88455c85225310bbea54816e9c3f4b5295815e6dbf80c34d40afc6df28275
+    container_name: redis
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 20s
+      timeout: 3s
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.02"
+          memory: 20M
+        limits:
+          memory: 256M
+    expose:
+      - 6379
+    init: true
 
   wallabag:
     image: wallabag/wallabag@sha256:8854765d299d8e93f962d4be02ceb5703ed2ee24ec6c884f870bb7a18de41378
-    restart: unless-stopped
-    init: true
     container_name: wallabag
-    labels:
-      - traefik.enable=true
-    env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/wallabag/env
-    expose:
-      - 80
-    configs:
-      - source: wallabag_99-custom
-        target: /etc/php81/conf.d/99-custom.ini
-        mode: 0444
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/wallabag/data:/var/www/wallabag/data
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/wallabag/images:/var/www/wallabag/web/assets/images
+    configs:
+      - source: wallabag_99-custom
+        target: /etc/php81/conf.d/99-custom.ini
+        mode: 444
+    env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/wallabag/env
+    restart: unless-stopped
     healthcheck:
       test:
         [
@@ -100,75 +145,32 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://localhost/api/info",
+          "http://localhost/api/info"
         ]
       interval: 1m
       timeout: 3s
-    depends_on:
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.02"
-          memory: 20M
-        limits:
-          memory: 256M
-
-  redis:
-    image: redis:alpine@sha256:c1e88455c85225310bbea54816e9c3f4b5295815e6dbf80c34d40afc6df28275
-    container_name: redis
-    restart: unless-stopped
-    init: true
-    expose:
-      - 6379
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.02"
-          memory: 20M
-        limits:
-          memory: 256M
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 20s
-      timeout: 3s
-
-  grist:
-    image: registry-1.docker.io/gristlabs/grist:1.2.1@sha256:a96916d6a70601ab86fba6eb1fef7023b206001f023622c4f22616ecfd01588c
-    container_name: grist
-    init: true
-    environment:
-      - APP_HOME_URL=https://grist.${DOMAIN:?}
-      - GRIST_SINGLE_ORG=${ORG:?}
     labels:
       - traefik.enable=true
-    entrypoint:
-      - node
-      - ./sandbox/supervisor.mjs
-    expose:
-      - 8484
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grist:/persist
     deploy:
       resources:
         reservations:
-          cpus: "0.05"
-          memory: 64M
+          cpus: "0.02"
+          memory: 20M
         limits:
-          memory: 512M
+          memory: 256M
+    expose:
+      - 80
+    init: true
 
-configs:
-  wallabag_99-custom:
-    content: |
-      memory_limit=200M
+networks:
+  default:
+    name: global
 
 secrets:
   miniflux-database_url:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/miniflux/database_url
 
-networks:
-  default:
-    name: global
+configs:
+  wallabag_99-custom:
+    content: |
+      memory_limit=200M
