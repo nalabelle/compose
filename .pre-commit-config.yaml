@@ -21,10 +21,10 @@ repos:
       - id: dclint-common
         name: dclint (common)
         language: docker_image
-        entry: zavoloklom/dclint --config=common/.dclintrc.yaml
+        entry: zavoloklom/dclint --config=common/.dclintrc.yaml --fix
         files: ^common/compose\..*yaml$
       - id: dclint-root
         name: dclint (root)
         language: docker_image
-        entry: zavoloklom/dclint
+        entry: zavoloklom/dclint --fix
         files: ^compose\..*yaml$

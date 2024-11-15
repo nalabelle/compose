@@ -1,0 +1,45 @@
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: ${COMPOSE_PROJECT_NAME:?}-mariadb
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/mariadb:/var/lib/mysql
+    secrets:
+      - mariadb-password
+    environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mariadb-password
+    command:
+      - --innodb-buffer-pool-size=512M
+      - --transaction-isolation=READ-COMMITTED
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      #- --max-connections=512
+      - --innodb-rollback-on-timeout=OFF
+      - --innodb-lock-wait-timeout=120
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.05"
+          memory: 64M
+        limits:
+          memory: 512M
+    expose:
+      - 3306
+    init: true
+    security_opt:
+      # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
+      - seccomp:unconfined
+      - apparmor:unconfined
+    stop_grace_period: 5s
+
+secrets:
+  mariadb-password:
+    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/common/mariadb/password
