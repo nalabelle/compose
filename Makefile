@@ -28,6 +28,11 @@ help:
 			}' \
 		| sort
 
+.PHONY: lint lintfix
+lint:
+	@docker run -t --rm -v ${PWD}/common:/${PWD}/common --workdir ${PWD}/common zavoloklom/dclint .
+	@docker run -t --rm -v ${PWD}:/${PWD} --workdir ${PWD} zavoloklom/dclint .
+
 .PHONY: clean-docker
 clean-docker:
 	@# Help: Not included in normal clean, removes all docker containers

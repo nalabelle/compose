@@ -1,37 +1,58 @@
 name: home-automation
 
 include:
-  - common/compose.postgres.yaml # home-assistant database
+  - path: common/compose.postgres.yaml # home-assistant database
 
 services:
+  go2rtc:
+    image: alexxit/go2rtc@sha256:41fc2431fc3c867364ab7c8d935d2bddd9736597694afd3a983fe14c175347e8
+    container_name: go2rtc
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/go2rtc:/config
+    ports:
+      # rtsp
+      - '8554:8554'
+      # webrtc
+      - '8555:8555'
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.go2rtc.loadbalancer.server.port=1984
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 32M
+        limits:
+          memory: 64M
+    expose:
+      - 1984
+    init: false
   home-assistant:
     image: ghcr.io/home-assistant/home-assistant:2024.11@sha256:c7f8797b241c097df89145f9d8beca21c2ddc3bb3945dfb426bff654b11f4bfc
     container_name: home-assistant
-    restart: unless-stopped
-    init: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/home-assistant:/config
+    environment:
+      - MPLCONFIGDIR=/tmp/matplotlib
+    command:
+      - --config
+      - /config
     entrypoint:
       - exec
       - python3
       - -m
       - homeassistant
-    command:
-      - --config
-      - /config
-    environment:
-      - MPLCONFIGDIR=/tmp/matplotlib
-    expose:
-      - 8123
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.services.home-assistant.loadbalancer.server.port=8123
       - metrics-job=home-assistant
       - scrape-port=8123
       - scrape-path=/api/prometheus
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/home-assistant:/config
-    depends_on:
-      postgres:
-        condition: service_healthy
     deploy:
       resources:
         reservations:
@@ -39,52 +60,21 @@ services:
           memory: 256M
         limits:
           memory: 1G
-    #healthcheck:
-    #  test:
-    #    - CMD
-    #    - curl
-    #    - --fail
-    #    - -s
-    #    - http://localhost:8123/manifest.json
-    #  interval: 30s
-    #  timeout: 5s
-
-  zigbee2mqtt:
-    image: ghcr.io/koenkk/zigbee2mqtt:1.41.0@sha256:8643f5d454fb2209a1ce765cb0726b57b92e38ac293af95f068760473af4cf5d
-    container_name: zigbee2mqtt
-    restart: unless-stopped
-    init: true
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.zigbee2mqtt.loadbalancer.server.port=8080
     expose:
-      - 8080
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/zigbee2mqtt:/app/data
-    devices:
-      - ${ZIGBEE_DEVICE:?}:/dev/zigbee
-    depends_on:
-      - mosquitto
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 64M
-        limits:
-          memory: 128M
+      - 8123
+    init: true
 
   mosquitto:
     image: registry-1.docker.io/library/eclipse-mosquitto:2.0.20@sha256:8b396cec28cd5e8e1a3aba1d9abdbddd42c454c80f703e77c1bec56e152fa54e
     container_name: mosquitto
-    restart: unless-stopped
-    init: true
-    entrypoint:
-      - mosquitto
+    ports:
+      - '1883:1883'
     command:
       - -c
       - /mosquitto-no-auth.conf
-    ports:
-      - "1883:1883"
+    entrypoint:
+      - mosquitto
+    restart: unless-stopped
     deploy:
       resources:
         reservations:
@@ -92,43 +82,16 @@ services:
           memory: 16M
         limits:
           memory: 64M
+    init: true
 
   tasmoadmin:
     image: ghcr.io/tasmoadmin/tasmoadmin:v4.2.0@sha256:e2dd8d0b403cc3e4e64aefee2ad81ac3e586cde3b9aeba5918d05f6cc97c02e9
     container_name: tasmoadmin
-    restart: unless-stopped
-    init: false
-    labels:
-      - traefik.enable=true
-    expose:
-      - 80
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/tasmoadmin:/data
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 32M
-        limits:
-          memory: 64M
-
-  go2rtc:
-    image: alexxit/go2rtc@sha256:41fc2431fc3c867364ab7c8d935d2bddd9736597694afd3a983fe14c175347e8
-    container_name: go2rtc
     restart: unless-stopped
-    init: false
     labels:
       - traefik.enable=true
-      - traefik.http.services.go2rtc.loadbalancer.server.port=1984
-    expose:
-      - 1984
-    ports:
-      # rtsp
-      - "8554:8554"
-      # webrtc
-      - "8555:8555"
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/go2rtc:/config
     deploy:
       resources:
         reservations:
@@ -136,6 +99,32 @@ services:
           memory: 32M
         limits:
           memory: 64M
+    expose:
+      - 80
+    init: false
+  zigbee2mqtt:
+    image: ghcr.io/koenkk/zigbee2mqtt:1.41.0@sha256:8643f5d454fb2209a1ce765cb0726b57b92e38ac293af95f068760473af4cf5d
+    container_name: zigbee2mqtt
+    depends_on:
+      - mosquitto
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/zigbee2mqtt:/app/data
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.zigbee2mqtt.loadbalancer.server.port=8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 128M
+    devices:
+      - ${ZIGBEE_DEVICE:?}:/dev/zigbee
+    expose:
+      - 8080
+    init: true
 
 networks:
   default:

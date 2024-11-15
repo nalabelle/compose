@@ -1,25 +1,22 @@
 name: media
 
 include:
-  - common/compose.postgres.yaml
+  - path: common/compose.postgres.yaml
 
 services:
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:2.16.2@sha256:e0daed86091611573f5c9f6847608badb5a302659ed3f8ddf0fb0c8e9901a59c
     container_name: audiobookshelf
-    restart: unless-stopped
-    init: true
-    expose:
-      - 13378
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/config:/config
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/metadata:/metadata
+      - nfs-podcasts:/podcasts
     environment:
       - PORT=13378
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.services.audiobookshelf.loadbalancer.server.port=13378
-    volumes:
-      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/config:/config"
-      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/metadata:/metadata"
-      - nfs-podcasts:/podcasts
     deploy:
       resources:
         reservations:
@@ -27,27 +24,27 @@ services:
           memory: 64M
         limits:
           memory: 1.5G
+    expose:
+      - 13378
+    init: true
 
   bazarr:
     image: ghcr.io/linuxserver/bazarr:1.4.5@sha256:7391c8c31a190aa676ca3596b54c243e731411cb8bdfef50f94f3e5c559520b8
     container_name: bazarr
-    restart: unless-stopped
-    init: true
-    expose:
-      - 6767
-    labels:
-      - traefik.enable=true
-    entrypoint:
-      - python3
-      - /app/bazarr/bin/bazarr.py
-    command:
-      - --no-update=true
-      - --config=/config
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr:/config
       - nfs-downloads:/downloads
       - nfs-movies:/media/movies
       - nfs-television:/media/television
+    command:
+      - --no-update=true
+      - --config=/config
+    entrypoint:
+      - python3
+      - /app/bazarr/bin/bazarr.py
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
     deploy:
       resources:
         reservations:
@@ -55,25 +52,25 @@ services:
           memory: 64M
         limits:
           memory: 512M
+    expose:
+      - 6767
+    init: true
 
   bazarr-exporter:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: bazarr-exporter
-    restart: unless-stopped
-    init: false
-    labels:
-      - metrics-job=bazarr
-      - scrape-port=9707
-    command:
-      - bazarr
-    expose:
-      - 9707
+    secrets:
+      - bazarr-api-key
     environment:
       - PORT=9707
       - URL=http://bazarr:6767
       - API_KEY_FILE=/run/secrets/bazarr-api-key
-    secrets:
-      - bazarr-api-key
+    command:
+      - bazarr
+    restart: unless-stopped
+    labels:
+      - metrics-job=bazarr
+      - scrape-port=9707
     deploy:
       resources:
         reservations:
@@ -81,27 +78,27 @@ services:
           memory: 64M
         limits:
           memory: 128M
+    expose:
+      - 9707
+    init: false
 
   lidarr:
     image: ghcr.io/linuxserver/lidarr:2.7.1@sha256:5c1f7a05944a1ceea242481801bbc5f908a4cc66e95ae0153b5a59f2d6224b17
     container_name: lidarr
-    restart: unless-stopped
-    init: true
-    labels:
-      - traefik.enable=true
-    entrypoint:
-      - /app/lidarr/bin/Lidarr
-    command:
-      - -nobrowser
-      - -data=/config
-    expose:
-      - 8686
-    volumes:
-      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/lidarr:/config"
-      - nfs-music:/media/music
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/lidarr:/config
+      - nfs-music:/media/music
+    command:
+      - -nobrowser
+      - -data=/config
+    entrypoint:
+      - /app/lidarr/bin/Lidarr
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
     deploy:
       resources:
         reservations:
@@ -109,27 +106,27 @@ services:
           memory: .25G
         limits:
           memory: 2G
+    expose:
+      - 8686
+    init: true
 
   lidarr-exporter:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: lidarr-exporter
-    restart: unless-stopped
-    init: false
-    labels:
-      - metrics-job=lidarr
-      - scrape-port=9707
-    command:
+    depends_on:
       - lidarr
+    secrets:
+      - lidarr-api-key
     environment:
       - PORT=9707
       - URL=http://lidarr:8686
       - API_KEY_FILE=/run/secrets/lidarr-api-key
-    expose:
-      - 9707
-    secrets:
-      - lidarr-api-key
-    depends_on:
+    command:
       - lidarr
+    restart: unless-stopped
+    labels:
+      - metrics-job=lidarr
+      - scrape-port=9707
     deploy:
       resources:
         reservations:
@@ -137,23 +134,23 @@ services:
           memory: 64M
         limits:
           memory: 128M
+    expose:
+      - 9707
+    init: false
 
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:1.25.4@sha256:e6d760f17399cd40093ed7e40af7160bc638e6a9690a9c8d024699b5129c1aaa
     container_name: prowlarr
-    restart: unless-stopped
-    init: true
-    labels:
-      - traefik.enable=true
-    entrypoint:
-      - /app/prowlarr/bin/Prowlarr
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
     command:
       - -nobrowser
       - -data=/config
-    expose:
-      - 9696
-    volumes:
-      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config"
+    entrypoint:
+      - /app/prowlarr/bin/Prowlarr
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
     deploy:
       resources:
         reservations:
@@ -161,27 +158,27 @@ services:
           memory: 256M
         limits:
           memory: 512M
+    expose:
+      - 9696
+    init: true
 
   prowlarr-exporter:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: prowlarr-exporter
-    restart: unless-stopped
-    init: false
-    labels:
-      - metrics-job=prowlarr
-      - scrape-port=9707
-    command:
+    depends_on:
       - prowlarr
-    expose:
-      - 9709
+    secrets:
+      - prowlarr-api-key
     environment:
       - PORT=9707
       - URL=http://prowlarr:9696
       - API_KEY_FILE=/run/secrets/prowlarr-api-key
-    secrets:
-      - prowlarr-api-key
-    depends_on:
+    command:
       - prowlarr
+    restart: unless-stopped
+    labels:
+      - metrics-job=prowlarr
+      - scrape-port=9707
     deploy:
       resources:
         reservations:
@@ -189,28 +186,28 @@ services:
           memory: 64M
         limits:
           memory: 128M
+    expose:
+      - 9709
+    init: false
 
   radarr:
     image: ghcr.io/linuxserver/radarr:5.14.0@sha256:3329fbf778701cf53703b342b3a84da31caafec970ef9310be5723dd057666dc
     container_name: radarr
-    restart: unless-stopped
-    init: true
-    labels:
-      - traefik.enable=true
-    entrypoint:
-      - /app/radarr/bin/Radarr
-    command:
-      - -nobrowser
-      - -data=/config
-    expose:
-      - 7878
+    depends_on:
+      postgres:
+        condition: service_healthy
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/radarr:/config
       - nfs-downloads:/downloads
       - nfs-movies:/media/movies
-    depends_on:
-      postgres:
-        condition: service_healthy
+    command:
+      - -nobrowser
+      - -data=/config
+    entrypoint:
+      - /app/radarr/bin/Radarr
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
     deploy:
       resources:
         reservations:
@@ -218,27 +215,27 @@ services:
           memory: 256M
         limits:
           memory: 2G
+    expose:
+      - 7878
+    init: true
 
   radarr-exporter:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: radarr-exporter
-    restart: unless-stopped
-    init: false
-    labels:
-      - metrics-job=radarr
-      - scrape-port=9707
-    command:
+    depends_on:
       - radarr
-    expose:
-      - 9707
+    secrets:
+      - radarr-api-key
     environment:
       - PORT=9707
       - URL=http://radarr:7878
       - API_KEY_FILE=/run/secrets/radarr-api-key
-    secrets:
-      - radarr-api-key
-    depends_on:
+    command:
       - radarr
+    restart: unless-stopped
+    labels:
+      - metrics-job=radarr
+      - scrape-port=9707
     deploy:
       resources:
         reservations:
@@ -246,26 +243,26 @@ services:
           memory: 64M
         limits:
           memory: 128M
+    expose:
+      - 9707
+    init: false
 
   sabnzbd:
     image: ghcr.io/linuxserver/sabnzbd:4.3.3@sha256:d9eda6d9bd651886631f01f3ebb1ff33f9f5d04f0fd95be8fb22bc1a779a3d84
     container_name: sabnzbd
-    restart: unless-stopped
-    init: true
-    labels:
-      - traefik.enable=true
-    entrypoint:
-      - python3
-      - /app/sabnzbd/SABnzbd.py
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
+      - nfs-downloads:/downloads
     command:
       - --config-file
       - /config/sabnzbd.ini
       - -l1
-    expose:
-      - 8080
-    volumes:
-      - "${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config"
-      - nfs-downloads:/downloads
+    entrypoint:
+      - python3
+      - /app/sabnzbd/SABnzbd.py
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
     deploy:
       resources:
         reservations:
@@ -273,27 +270,27 @@ services:
           memory: 128M
         limits:
           memory: 1G
+    expose:
+      - 8080
+    init: true
 
   sabnzbd-exporter:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: sabnzbd-exporter
-    restart: unless-stopped
-    init: false
-    labels:
-      - metrics-job=sabnzbd
-      - scrape-port=9707
-    command:
+    depends_on:
       - sabnzbd
-    expose:
-      - 9707
+    secrets:
+      - sabnzbd-api-key
     environment:
       - PORT=9707
       - URL=http://sabnzbd:8080
       - API_KEY_FILE=/run/secrets/sabnzbd-api-key
-    secrets:
-      - sabnzbd-api-key
-    depends_on:
+    command:
       - sabnzbd
+    restart: unless-stopped
+    labels:
+      - metrics-job=sabnzbd
+      - scrape-port=9707
     deploy:
       resources:
         reservations:
@@ -301,28 +298,28 @@ services:
           memory: 64M
         limits:
           memory: 128M
+    expose:
+      - 9707
+    init: false
 
   sonarr:
     image: ghcr.io/linuxserver/sonarr:4.0.10@sha256:c0281bd62b9a75f088fa4a09e5f8776431921883766633cb5e5fbd5a74761155
     container_name: sonarr
-    restart: unless-stopped
-    init: true
-    labels:
-      - traefik.enable=true
-    entrypoint:
-      - /app/sonarr/bin/Sonarr
-    command:
-      - -nobrowser
-      - -data=/config
-    expose:
-      - 8989
+    depends_on:
+      postgres:
+        condition: service_healthy
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sonarr:/config
       - nfs-downloads:/downloads
       - nfs-television:/media/television
-    depends_on:
-      postgres:
-        condition: service_healthy
+    command:
+      - -nobrowser
+      - -data=/config
+    entrypoint:
+      - /app/sonarr/bin/Sonarr
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
     deploy:
       resources:
         reservations:
@@ -330,27 +327,27 @@ services:
           memory: 256M
         limits:
           memory: 2G
+    expose:
+      - 8989
+    init: true
 
   sonarr-exporter:
     image: ghcr.io/onedr0p/exportarr:v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
     container_name: sonarr-exporter
-    restart: unless-stopped
-    init: false
-    labels:
-      - metrics-job=sonarr
-      - scrape-port=9707
-    command:
+    depends_on:
       - sonarr
-    expose:
-      - 9707
+    secrets:
+      - sonarr-api-key
     environment:
       - PORT=9707
       - URL=http://sonarr:8989
       - API_KEY_FILE=/run/secrets/sonarr-api-key
-    secrets:
-      - sonarr-api-key
-    depends_on:
+    command:
       - sonarr
+    restart: unless-stopped
+    labels:
+      - metrics-job=sonarr
+      - scrape-port=9707
     deploy:
       resources:
         reservations:
@@ -358,22 +355,24 @@ services:
           memory: 64M
         limits:
           memory: 128M
+    expose:
+      - 9707
+    init: false
 
   yt-dlp:
     image: ghcr.io/jauderho/yt-dlp:latest@sha256:3cd6e19c5f03515a2f1e19501eda4cf89474e1ba4c98860ad382acb33e44d377
     container_name: yt-dlp
-    restart: unless-stopped
-    init: true
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config
+      - nfs-internet:/downloads
     entrypoint:
       - sleep
       - infinity
+    restart: unless-stopped
     labels:
       - chadburn.enabled=true
       - chadburn.job-exec.yt-dlp.schedule=@every 12h
       - chadburn.job-exec.yt-dlp.command=/config/scheduled-task
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config
-      - nfs-internet:/downloads
     deploy:
       resources:
         reservations:
@@ -381,20 +380,11 @@ services:
           memory: 500M
         limits:
           memory: 1G
+    init: true
 
-secrets:
-  bazarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/bazarr-api-key
-  lidarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/lidarr-api-key
-  prowlarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr-api-key
-  radarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/radarr-api-key
-  sabnzbd-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd-api-key
-  sonarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/sonarr-api-key
+networks:
+  default:
+    name: global
 
 volumes:
   nfs-downloads:
@@ -428,6 +418,16 @@ volumes:
       o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
       device: ":/podcasts"
 
-networks:
-  default:
-    name: global
+secrets:
+  bazarr-api-key:
+    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/bazarr-api-key
+  lidarr-api-key:
+    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/lidarr-api-key
+  prowlarr-api-key:
+    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr-api-key
+  radarr-api-key:
+    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/radarr-api-key
+  sabnzbd-api-key:
+    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd-api-key
+  sonarr-api-key:
+    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/sonarr-api-key
