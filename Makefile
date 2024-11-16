@@ -44,6 +44,7 @@ clean: clean-secrets
 
 .git/hooks/post-update: .hooks/post-update
 	@# Help: Install git post-update hook to make this a push target
+	git config pull.rebase true
 	git config receive.denyCurrentBranch updateInstead
 	ln -s ../../$< $@
 
