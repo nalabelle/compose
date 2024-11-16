@@ -20,3 +20,7 @@ scrape_configs:
       - regex: __meta_docker_container_label_metrics_(.+)
         action: labelmap
         replacement: $1
+  - job_name: file
+    file_sd_configs:
+      - files:
+          - "/storage/_targets/*.yaml"
