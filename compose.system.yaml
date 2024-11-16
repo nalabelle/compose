@@ -8,6 +8,7 @@ services:
       - source: alertmanager
         target: /config/alertmanager.yaml
     command:
+      - --web.external-url=https://${HOSTNAME:?}-alertmanager.${DOMAIN:?}
       - --config.file=/config/alertmanager.yaml
     restart: unless-stopped
     labels:
@@ -211,8 +212,6 @@ secrets:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/kopia-password
   kopia-server-url:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/kopia-server-url
-  push-monitor-url:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/push-monitor-url
 
 configs:
   kopia-backup:
