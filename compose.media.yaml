@@ -364,7 +364,8 @@ services:
     container_name: yt-dlp
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config
-      - nfs-internet:/downloads
+      - nfs-downloads:/downloads
+      - nfs-internet:/internet
     entrypoint:
       - sleep
       - infinity
