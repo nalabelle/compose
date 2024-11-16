@@ -92,7 +92,7 @@ _secrets/$(1): $$(patsubst secrets/%, _secrets/%, $$(filter secrets/$(1)/%,$$(SE
 	@true
 
 .PHONY: $(1)-deploy $(1)-down
-$(1)-deploy: compose.$(1).yaml _secrets/$(1)
+$(1)-deploy: compose.$(1).yaml _secrets/$(1) .env
 	@# Help: docker compose deploy $(1)
 	docker compose -f $$< up -d --remove-orphans
 
