@@ -38,6 +38,13 @@ clean-docker:
 	@# Help: Not included in normal clean, removes all docker containers
 	@docker ps -aq | xargs docker stop | xargs docker rm
 
+.PHONY: docker-prune
+docker-prune:
+	@# Help: Clean unused resources from docker
+# I'm not sure if -af --volumes does the same thing as running each of these?
+	@docker system prune -af
+	@docker volume prune -f
+
 .PHONY: clean
 clean: clean-secrets
 	@# Help: Remove all generated files
