@@ -90,7 +90,7 @@ services:
       - 8428
 
   push-monitor:
-    image: alpine/curl@sha256:d82ba6e1ac1ada16a0211ff03fa58a3125599c8ff8b8635bd655487065990a16
+    image: alpine/curl@sha256:5fd79d2c7f5238d658cffd00359d424f712eea3cd4712adeb8b05c824f4aa333
     container_name: push-monitor
     configs:
       - source: push-monitor
