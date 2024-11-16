@@ -193,6 +193,8 @@ services:
   vmalert:
     image: registry-1.docker.io/victoriametrics/vmalert:v1.107.0@sha256:38c8f6e30593f3372eb6ec110732c892f71f90f36ead57854b060f7bd58fda30
     container_name: vmalert
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics/_alerts:/etc/alerts
     configs:
       - source: alerts
         target: /alerts/docker.yaml
@@ -203,7 +205,7 @@ services:
       - -notifier.url=http://alertmanager:9093
       - -external.url=https://${HOSTNAME:?}-metrics.${DOMAIN:?}
       - -rule=/alerts/docker.yaml
-      # - -rule=/etc/alerts/*.yaml
+      - -rule=/etc/alerts/*.yaml
     restart: unless-stopped
     deploy:
       resources:
