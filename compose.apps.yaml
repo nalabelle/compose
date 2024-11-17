@@ -161,10 +161,9 @@ services:
     expose:
       - 80
     init: true
-
 networks:
   default:
-    name: global
+    name: ${COMPOSE_PROJECT_NAME:?}
 
 secrets:
   miniflux-database_url:

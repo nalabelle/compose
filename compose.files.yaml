@@ -1,4 +1,4 @@
-name: apps
+name: files
 
 include:
   - path: common/compose.postgres.yaml
@@ -47,7 +47,7 @@ services:
           cpus: "0.01"
           memory: 24M
         limits:
-          memory: 1Gi
+          memory: 1G
     expose:
       - 8000
     init: true
@@ -94,6 +94,8 @@ services:
         condition: service_healthy
     env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/photoprism/env
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
     deploy:
       resources:
         reservations:
@@ -128,7 +130,7 @@ services:
 
 networks:
   default:
-    name: global
+    name: ${COMPOSE_PROJECT_NAME:?}
 
 volumes:
   nfs-documents:

@@ -70,6 +70,11 @@ services:
     configs:
       - source: scrape-configs
         target: /config/prometheus.yaml
+    networks:
+      - apps
+      - files
+      - home-automation
+      - media
     command:
       - -retentionPeriod=${METRICS_RETENTION:-30d}
       - -promscrape.config=/config/prometheus.yaml
@@ -126,6 +131,11 @@ services:
       - '8000:80'
       # Uncomment this to access traefik dashboard directly
       # - "8080:8080"
+    networks:
+      - apps
+      - files
+      - home-automation
+      - media
     command:
       - --log.level=DEBUG
       - --accesslog=true
@@ -199,7 +209,16 @@ services:
 
 networks:
   default:
-    name: global
+    name: ${COMPOSE_PROJECT_NAME:?}
+  # Add all networks here so we can reach out to them
+  apps:
+    name: apps
+  files:
+    name: files
+  media:
+    name: media
+  home-automation:
+    name: home-automation
 
 secrets:
   alertmanager:

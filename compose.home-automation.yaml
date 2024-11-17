@@ -128,4 +128,4 @@ services:
 
 networks:
   default:
-    name: global
+    name: ${COMPOSE_PROJECT_NAME:?}
