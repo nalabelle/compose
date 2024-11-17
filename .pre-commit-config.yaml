@@ -5,6 +5,7 @@ repos:
       - id: check-yaml
         args: [--allow-multiple-documents]
       - id: end-of-file-fixer
+        exclude: ^secrets/media/.+-api-key$
       - id: trailing-whitespace
       - id: check-merge-conflict
       - id: check-executables-have-shebangs
@@ -17,12 +18,12 @@ repos:
       - id: shellcheck
   - repo: local
     hooks:
-      - id: dclint-common
+      - id: dclint-common-fix
         name: dclint (common)
         language: docker_image
         entry: zavoloklom/dclint --config=common/.dclintrc.yaml --fix
         files: ^common/compose\..*yaml$
-      - id: dclint-root
+      - id: dclint-root-fix
         name: dclint (root)
         language: docker_image
         entry: zavoloklom/dclint --fix
