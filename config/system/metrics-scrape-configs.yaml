@@ -3,6 +3,14 @@ scrape_configs:
     docker_sd_configs:
       - host: unix:///var/run/docker.sock
     relabel_configs:
+      # Only keep networks exposed via proxy net.
+      - source_labels: [__meta_docker_network_name]
+        regex: proxy-.+
+        action: keep
+      # Only keep containers that have a `metrics-job` label.
+      - source_labels: [__meta_docker_container_label_metrics_job]
+        regex: .+
+        action: keep
       # Change metrics_path to labeled value
       - source_labels: [__meta_docker_container_label_scrape_path]
         regex: (.+)
@@ -12,10 +20,6 @@ scrape_configs:
         regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
         target_label: __address__
-      # Only keep containers that have a `metrics-job` label.
-      - source_labels: [__meta_docker_container_label_metrics_job]
-        regex: .+
-        action: keep
       # Use the task labels that are prefixed by `metrics-`.
       - regex: __meta_docker_container_label_metrics_(.+)
         action: labelmap
