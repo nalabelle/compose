@@ -7,6 +7,8 @@ services:
     secrets:
       - source: alertmanager
         target: /config/alertmanager.yaml
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --web.external-url=https://${HOSTNAME:?}-alertmanager.${DOMAIN:?}
       - --config.file=/config/alertmanager.yaml
@@ -15,6 +17,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.alertmanager.rule=Host(`${HOSTNAME:?}-alertmanager.${DOMAIN:?}`)
       - traefik.http.services.alertmanager.loadbalancer.server.port=9093
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -71,10 +74,12 @@ services:
       - source: scrape-configs
         target: /config/prometheus.yaml
     networks:
-      - apps
-      - files
-      - home-automation
-      - media
+      - proxy-${COMPOSE_PROJECT_NAME:?}
+      # For reaching scrape targets
+      - proxy-apps
+      - proxy-files
+      - proxy-home-automation
+      - proxy-media
     command:
       - -retentionPeriod=${METRICS_RETENTION:-30d}
       - -promscrape.config=/config/prometheus.yaml
@@ -85,6 +90,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.metrics.rule=Host(`${HOSTNAME:?}-metrics.${DOMAIN:?}`)
       - traefik.http.services.metrics.loadbalancer.server.port=8428
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -132,10 +138,11 @@ services:
       # Uncomment this to access traefik dashboard directly
       # - "8080:8080"
     networks:
-      - apps
-      - files
-      - home-automation
-      - media
+      - proxy-${COMPOSE_PROJECT_NAME:?}
+      - proxy-apps
+      - proxy-files
+      - proxy-home-automation
+      - proxy-media
     command:
       - --log.level=DEBUG
       - --accesslog=true
@@ -208,17 +215,18 @@ services:
       - 8880
 
 networks:
-  default:
-    name: ${COMPOSE_PROJECT_NAME:?}
   # Add all networks here so we can reach out to them
-  apps:
-    name: apps
-  files:
-    name: files
-  media:
-    name: media
-  home-automation:
-    name: home-automation
+  proxy-apps:
+    name: proxy-apps
+  proxy-files:
+    name: proxy-files
+  proxy-media:
+    name: proxy-media
+  proxy-home-automation:
+    name: proxy-home-automation
+  # Let's be consistent
+  proxy-system:
+    name: proxy-system
 
 secrets:
   alertmanager:

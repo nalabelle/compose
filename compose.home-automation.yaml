@@ -14,10 +14,13 @@ services:
       - '8554:8554'
       # webrtc
       - '8555:8555'
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.services.go2rtc.loadbalancer.server.port=1984
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -38,6 +41,8 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/home-assistant:/config
     environment:
       - MPLCONFIGDIR=/tmp/matplotlib
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --config
       - /config
@@ -50,6 +55,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.home-assistant.loadbalancer.server.port=8123
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
       - metrics-job=home-assistant
       - scrape-port=8123
       - scrape-path=/api/prometheus
@@ -89,9 +95,12 @@ services:
     container_name: tasmoadmin
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/tasmoadmin:/data
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -102,6 +111,7 @@ services:
     expose:
       - 80
     init: false
+
   zigbee2mqtt:
     image: ghcr.io/koenkk/zigbee2mqtt:1.41.0@sha256:8643f5d454fb2209a1ce765cb0726b57b92e38ac293af95f068760473af4cf5d
     container_name: zigbee2mqtt
@@ -109,10 +119,13 @@ services:
       - mosquitto
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/zigbee2mqtt:/app/data
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.services.zigbee2mqtt.loadbalancer.server.port=8080
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -127,5 +140,5 @@ services:
     init: true
 
 networks:
-  default:
-    name: ${COMPOSE_PROJECT_NAME:?}
+  proxy-home-automation:
+    name: proxy-home-automation

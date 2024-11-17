@@ -13,10 +13,13 @@ services:
       - nfs-podcasts:/podcasts
     environment:
       - PORT=13378
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.services.audiobookshelf.loadbalancer.server.port=13378
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -36,6 +39,8 @@ services:
       - nfs-downloads:/downloads
       - nfs-movies:/media/movies
       - nfs-television:/media/television
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --no-update=true
       - --config=/config
@@ -45,6 +50,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -65,6 +71,8 @@ services:
       - PORT=9707
       - URL=http://bazarr:6767
       - API_KEY_FILE=/run/secrets/bazarr-api-key
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - bazarr
     restart: unless-stopped
@@ -91,6 +99,8 @@ services:
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/lidarr:/config
       - nfs-music:/media/music
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
       - -data=/config
@@ -99,6 +109,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -121,6 +132,8 @@ services:
       - PORT=9707
       - URL=http://lidarr:8686
       - API_KEY_FILE=/run/secrets/lidarr-api-key
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - lidarr
     restart: unless-stopped
@@ -143,6 +156,8 @@ services:
     container_name: prowlarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
       - -data=/config
@@ -151,6 +166,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -173,6 +189,8 @@ services:
       - PORT=9707
       - URL=http://prowlarr:9696
       - API_KEY_FILE=/run/secrets/prowlarr-api-key
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - prowlarr
     restart: unless-stopped
@@ -200,6 +218,8 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/radarr:/config
       - nfs-downloads:/downloads
       - nfs-movies:/media/movies
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
       - -data=/config
@@ -208,6 +228,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -230,6 +251,8 @@ services:
       - PORT=9707
       - URL=http://radarr:7878
       - API_KEY_FILE=/run/secrets/radarr-api-key
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - radarr
     restart: unless-stopped
@@ -253,6 +276,8 @@ services:
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
       - nfs-downloads:/downloads
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --config-file
       - /config/sabnzbd.ini
@@ -263,6 +288,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -285,6 +311,8 @@ services:
       - PORT=9707
       - URL=http://sabnzbd:8080
       - API_KEY_FILE=/run/secrets/sabnzbd-api-key
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - sabnzbd
     restart: unless-stopped
@@ -312,6 +340,8 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sonarr:/config
       - nfs-downloads:/downloads
       - nfs-television:/media/television
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
       - -data=/config
@@ -320,6 +350,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -342,6 +373,8 @@ services:
       - PORT=9707
       - URL=http://sonarr:8989
       - API_KEY_FILE=/run/secrets/sonarr-api-key
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - sonarr
     restart: unless-stopped
@@ -384,8 +417,8 @@ services:
     init: true
 
 networks:
-  default:
-    name: ${COMPOSE_PROJECT_NAME:?}
+  proxy-media:
+    name: proxy-media
 
 volumes:
   nfs-downloads:

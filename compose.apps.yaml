@@ -12,12 +12,15 @@ services:
     environment:
       - APP_HOME_URL=https://grist.${DOMAIN:?}
       - GRIST_SINGLE_ORG=${ORG:?}
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     entrypoint:
       - node
       - ./sandbox/supervisor.mjs
     restart: unless-stopped
     labels:
-      - traefik.enable=true
+      - traefik.enabled=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -35,9 +38,24 @@ services:
     container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--spider",
+          "-q",
+          "--tries=1",
+          "http://localhost:8080/settings"
+        ]
+      interval: 1m
+      timeout: 3s
     labels:
-      - traefik.enable=true
+      - traefik.enabled=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -48,6 +66,7 @@ services:
     expose:
       - 8080
     init: true
+
   miniflux:
     image: miniflux/miniflux:latest@sha256:e21953092096579daaad39ba69729f01b08380b03bae4544a943f549c8e11a67
     container_name: miniflux
@@ -64,13 +83,16 @@ services:
       - POLLING_FREQUENCY=180 #Minutes
       - POLLING_PARSING_ERROR_LIMIT=99
       - RUN_MIGRATIONS=1
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "/usr/bin/miniflux", "-healthcheck", "auto" ]
     labels:
-      - traefik.enable=true
       - metrics-job=miniflux
       - scrape-port=8080
+      - traefik.enabled=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -136,6 +158,8 @@ services:
         target: /etc/php81/conf.d/99-custom.ini
         mode: 444
     env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/wallabag/env
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     healthcheck:
       test:
@@ -150,7 +174,8 @@ services:
       interval: 1m
       timeout: 3s
     labels:
-      - traefik.enable=true
+      - traefik.enabled=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -161,9 +186,10 @@ services:
     expose:
       - 80
     init: true
+
 networks:
-  default:
-    name: ${COMPOSE_PROJECT_NAME:?}
+  proxy-apps:
+    name: proxy-apps
 
 secrets:
   miniflux-database_url:

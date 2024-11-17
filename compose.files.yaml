@@ -38,9 +38,12 @@ services:
       PAPERLESS_WEBSERVER_WORKERS: "2"
       USERMAP_UID: "3005"
       USERMAP_GID: "100"
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -72,9 +75,12 @@ services:
         type: volume
         volume:
           subpath: _rejected
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -93,9 +99,12 @@ services:
       mariadb:
         condition: service_healthy
     env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/photoprism/env
+    networks:
+      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -129,8 +138,8 @@ services:
     init: true
 
 networks:
-  default:
-    name: ${COMPOSE_PROJECT_NAME:?}
+  proxy-files:
+    name: proxy-files
 
 volumes:
   nfs-documents:
