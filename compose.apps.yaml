@@ -20,7 +20,7 @@ services:
       - ./sandbox/supervisor.mjs
     restart: unless-stopped
     labels:
-      - traefik.enabled=true
+      - traefik.enable=true
       - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
@@ -56,7 +56,7 @@ services:
       interval: 1m
       timeout: 3s
     labels:
-      - traefik.enabled=true
+      - traefik.enable=true
       - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
@@ -94,7 +94,7 @@ services:
     labels:
       - metrics-job=miniflux
       - scrape-port=8080
-      - traefik.enabled=true
+      - traefik.enable=true
       - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
@@ -182,7 +182,7 @@ services:
       interval: 1m
       timeout: 3s
     labels:
-      - traefik.enabled=true
+      - traefik.enable=true
       - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
