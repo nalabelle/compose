@@ -15,6 +15,7 @@ services:
       # webrtc
       - '8555:8555'
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
@@ -31,6 +32,7 @@ services:
     expose:
       - 1984
     init: false
+
   home-assistant:
     image: ghcr.io/home-assistant/home-assistant:2024.11@sha256:b447bbb6e77ee969d1aa2de1c29e11921180b4588361d5059b9ede77f55a8d7c
     container_name: home-assistant
@@ -42,6 +44,7 @@ services:
     environment:
       - MPLCONFIGDIR=/tmp/matplotlib
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --config
@@ -75,6 +78,8 @@ services:
     container_name: mosquitto
     ports:
       - '1883:1883'
+    networks:
+      - default
     command:
       - -c
       - /mosquitto-no-auth.conf
@@ -96,6 +101,7 @@ services:
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/tasmoadmin:/data
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
@@ -120,6 +126,7 @@ services:
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/zigbee2mqtt:/app/data
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
@@ -140,5 +147,7 @@ services:
     init: true
 
 networks:
+  default:
+    name: ${COMPOSE_PROJECT_NAME:?}
   proxy-home-automation:
     name: proxy-home-automation

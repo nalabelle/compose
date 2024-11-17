@@ -39,6 +39,7 @@ services:
       USERMAP_UID: "3005"
       USERMAP_GID: "100"
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
@@ -76,6 +77,7 @@ services:
         volume:
           subpath: _rejected
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
@@ -100,6 +102,7 @@ services:
         condition: service_healthy
     env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/photoprism/env
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
@@ -121,6 +124,8 @@ services:
     container_name: redis
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/redis:/data
+    networks:
+      - default
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
@@ -138,6 +143,8 @@ services:
     init: true
 
 networks:
+  default:
+    name: ${COMPOSE_PROJECT_NAME:?}
   proxy-files:
     name: proxy-files
 

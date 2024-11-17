@@ -14,6 +14,7 @@ services:
     environment:
       - PORT=13378
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
@@ -40,6 +41,7 @@ services:
       - nfs-movies:/media/movies
       - nfs-television:/media/television
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --no-update=true
@@ -72,6 +74,7 @@ services:
       - URL=http://bazarr:6767
       - API_KEY_FILE=/run/secrets/bazarr-api-key
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - bazarr
@@ -100,6 +103,7 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/lidarr:/config
       - nfs-music:/media/music
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
@@ -133,6 +137,7 @@ services:
       - URL=http://lidarr:8686
       - API_KEY_FILE=/run/secrets/lidarr-api-key
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - lidarr
@@ -157,6 +162,7 @@ services:
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
@@ -190,6 +196,7 @@ services:
       - URL=http://prowlarr:9696
       - API_KEY_FILE=/run/secrets/prowlarr-api-key
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - prowlarr
@@ -219,6 +226,7 @@ services:
       - nfs-downloads:/downloads
       - nfs-movies:/media/movies
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
@@ -252,6 +260,7 @@ services:
       - URL=http://radarr:7878
       - API_KEY_FILE=/run/secrets/radarr-api-key
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - radarr
@@ -277,6 +286,7 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
       - nfs-downloads:/downloads
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --config-file
@@ -312,6 +322,7 @@ services:
       - URL=http://sabnzbd:8080
       - API_KEY_FILE=/run/secrets/sabnzbd-api-key
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - sabnzbd
@@ -341,6 +352,7 @@ services:
       - nfs-downloads:/downloads
       - nfs-television:/media/television
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
@@ -374,6 +386,7 @@ services:
       - URL=http://sonarr:8989
       - API_KEY_FILE=/run/secrets/sonarr-api-key
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - sonarr
@@ -399,6 +412,8 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config
       - nfs-downloads:/downloads
       - nfs-internet:/internet
+    networks:
+      - default
     entrypoint:
       - sleep
       - infinity
@@ -417,6 +432,8 @@ services:
     init: true
 
 networks:
+  default:
+    name: ${COMPOSE_PROJECT_NAME:?}
   proxy-media:
     name: proxy-media
 

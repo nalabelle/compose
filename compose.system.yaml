@@ -8,6 +8,7 @@ services:
       - source: alertmanager
         target: /config/alertmanager.yaml
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --web.external-url=https://${HOSTNAME:?}-alertmanager.${DOMAIN:?}
@@ -46,6 +47,8 @@ services:
       KOPIA_LOG_DIR: /app/logs
       KOPIA_CACHE_DIRECTORY: /app/cache
       KOPIA_HOSTNAME: ${HOSTNAME:?}
+    networks:
+      - default
     command:
       - infinity
     entrypoint: sleep
@@ -74,6 +77,7 @@ services:
       - source: scrape-configs
         target: /config/prometheus.yaml
     networks:
+      - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
       # For reaching scrape targets
       - proxy-apps
@@ -106,6 +110,8 @@ services:
     container_name: scheduler
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock
+    networks:
+      - default
     command:
       - daemon
     restart: unless-stopped
@@ -195,6 +201,8 @@ services:
     configs:
       - source: alerts
         target: /alerts/docker.yaml
+    networks:
+      - default
     command:
       - -datasource.url=http://metrics:8428
       - -remoteRead.url=http://metrics:8428
@@ -215,6 +223,8 @@ services:
       - 8880
 
 networks:
+  default:
+    name: ${COMPOSE_PROJECT_NAME:?}
   # Add all networks here so we can reach out to them
   proxy-apps:
     name: proxy-apps
