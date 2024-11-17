@@ -100,6 +100,9 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/photoprism:/assets
+      - nfs-photos:/photos
     env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/photoprism/env
     networks:
       - default
@@ -149,6 +152,11 @@ networks:
     name: proxy-files
 
 volumes:
+  nfs-photos:
+    driver_opts:
+      type: nfs
+      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
+      device: ":/photos"
   nfs-documents:
     driver_opts:
       type: nfs
