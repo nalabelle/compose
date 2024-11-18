@@ -5,7 +5,7 @@ include:
 
 services:
   audiobookshelf:
-    image: ghcr.io/advplyr/audiobookshelf:2.17.0@sha256:ba37c80ae183b15a6e72c3ed693616f06e95b23aae2d4551c287343f5c7f5083
+    image: ghcr.io/advplyr/audiobookshelf:2.17.1@sha256:4640df7f926e8bc7b07b6090908fb99b323e6b7316764c94cbcd9ca955e9ff8e
     container_name: audiobookshelf
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/config:/config
