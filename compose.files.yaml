@@ -95,7 +95,7 @@ services:
     init: false
 
   photoprism:
-    image: registry-1.docker.io/photoprism/photoprism:latest
+    image: registry-1.docker.io/photoprism/photoprism:latest@sha256:1f14335e2cd9dfaadc555ac8d40aa8a3966a5b5e5ef88fa78973ef7e8673fa2b
     container_name: photoprism
     depends_on:
       mariadb:
