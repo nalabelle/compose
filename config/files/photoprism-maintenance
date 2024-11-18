@@ -1,0 +1,15 @@
+#!/bin/bash
+set -x
+
+photoprism index --cleanup
+photoprism faces index
+photoprism faces update
+photoprism faces optimize
+photoprism faces audit
+#photoprism places update
+photoprism moments
+photoprism convert
+photoprism thumbs
+photoprism optimize
+photoprism cleanup --dry
+photoprism purge --dry

@@ -103,6 +103,9 @@ services:
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/photoprism:/assets
       - nfs-photos:/photos
+    configs:
+      - source: photoprism-maintenance
+        target: /app/scripts/maintain
     env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/photoprism/env
     networks:
       - default
@@ -111,6 +114,13 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
+      - chadburn.enabled=true
+      - chadburn.job-exec.photoprism-backup.schedule=@every 12h
+      - chadburn.job-exec.photoprism-backup.command=photoprism backup -a -i -f
+      - chadburn.job-exec.photoprism-import.schedule=@every 1h
+      - chadburn.job-exec.photoprism-import.command=photoprism import
+      - chadburn.job-exec.photoprism-maintain.schedule=@every 24h
+      - chadburn.job-exec.photoprism-maintain.command=/app/scripts/maintain
     deploy:
       resources:
         reservations:
@@ -166,3 +176,7 @@ volumes:
 secrets:
   paperless-dbpass:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/paperless/dbpass
+
+configs:
+  photoprism-maintenance:
+    file: ${CONFIGS:?}/${COMPOSE_PROJECT_NAME:?}/photoprism-maintenance
