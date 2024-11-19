@@ -35,7 +35,7 @@ services:
 
   # used to be libreddit, swapped to redlib
   libreddit:
-    image: quay.io/redlib/redlib:latest@sha256:710c0b7cd1da9067bc88e786d0516abc2eed8a03d0f288faedbc92fe21e0f7f8
+    image: quay.io/redlib/redlib:latest@sha256:ab7cebc9cda01908c7813f4c0e7926d72f14dc96e54aeba2b18a6665d5c1bc83
     container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
