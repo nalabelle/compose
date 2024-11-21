@@ -30,7 +30,7 @@ services:
       - 9093
 
   kopia:
-    image: kopia/kopia:latest@sha256:8f9cd30c19f4683397262ff89d62ee0446fe67c952c8e106388717fdd0e922b0
+    image: kopia/kopia:latest@sha256:b6cb1f09a5fa832a320ee06d7803e82cdd7f69ac6f61d76a0d55fbbf1495c043
     container_name: kopia
     volumes:
       - ${VOLUMES:?}:/volumes:ro
