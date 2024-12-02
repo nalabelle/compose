@@ -29,6 +29,36 @@ services:
     expose:
       - 9093
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.51.0
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - default
+      - proxy-${COMPOSE_PROJECT_NAME:?}
+    restart: unless-stopped
+    labels:
+      - caddy={{index .Names 0}}.${DOMAIN:?}
+      - caddy.reverse_proxy={{ upstreams 8080 }}
+      - traefik.enable=true
+      - traefik.http.routers.cadvisor.rule=Host(`${HOSTNAME:?}-cadvisor.${DOMAIN:?}`)
+      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
+      - metrics-job=cadvisor
+      - scrape-port=8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 32M
+        limits:
+          memory: 64M
+    expose:
+      - 8080
+
   kopia:
     image: kopia/kopia:latest@sha256:b6cb1f09a5fa832a320ee06d7803e82cdd7f69ac6f61d76a0d55fbbf1495c043
     container_name: kopia
@@ -104,6 +134,32 @@ services:
           memory: 64M
     expose:
       - 8428
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:v1.8.2
+    container_name: node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    networks:
+      - default
+      - proxy-${COMPOSE_PROJECT_NAME:?}
+    command:
+      - "--path.rootfs=/host"
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/l\
+        ib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)(\
+        $$|/)"
+    restart: unless-stopped
+    labels:
+      - metrics-job=node
+      - scrape-port=9100
+    expose:
+      - 9100
 
   scheduler:
     image: premoweb/chadburn:1.0.7@sha256:096be3c00f39db7d7d33763432456ab8bdc79f0f5da7ec20fec5ff071f3e841f
@@ -241,6 +297,8 @@ networks:
 secrets:
   alertmanager:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/alertmanager-config.yaml
+  caddyfile:
+    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/caddyfile
   traefik-cf_dns_api_token:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/cf_dns_api_token
   traefik-cf_zone_api_token:
@@ -251,6 +309,8 @@ secrets:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/kopia-server-url
 
 configs:
+  get-host-ip:
+    file: ${CONFIGS:?}/${COMPOSE_PROJECT_NAME:?}/get-host-ip
   kopia-backup:
     file: ${CONFIGS:?}/${COMPOSE_PROJECT_NAME:?}/kopia-backup
   scrape-configs:
