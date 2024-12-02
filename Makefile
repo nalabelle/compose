@@ -37,8 +37,7 @@ node_modules: package.json
 .PHONY: lintfix
 lintfix: node_modules lint-ci
 	@# Help: Run all linters
-	@npx dclint --fix .
-	@pushd common >/dev/null; npx dclint --fix .; popd >/dev/null
+	@npx dclint . --recursive --fix --exclude .devbox volumes .cache _secrets
 
 .PHONY: lint-ci
 lint-ci:
