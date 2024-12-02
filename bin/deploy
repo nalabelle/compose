@@ -28,6 +28,9 @@ read -r -a project_list <<<"$PROJECTS"
 
 for project in "${project_list[@]}"; do
   echo "Deploying ${project}"
+  # You'd think remove orphans and force recreate would work to bring things up in a great state,
+  # but it seems to have problems with the files stack. Not sure why yet.
+  make --no-print-directory "${project}-down"
   make --no-print-directory "${project}-deploy"
 done
 
