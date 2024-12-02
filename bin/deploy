@@ -20,25 +20,10 @@ fi
 read -r -a project_list <<<"$PROJECTS"
 
 for project in "${project_list[@]}"; do
-  if [[ ! -f "compose.${project}.yaml" ]]; then
-    echo "compose.${project}.yaml not found"
-    exit 1
-  fi
   echo "Deploying ${project}"
-  make "${project}-down"
+  make --no-print-directory "${project}-deploy"
 done
 
-git pull
-
-for project in "${project_list[@]}"; do
-  if [[ ! -f "compose.${project}.yaml" ]]; then
-    echo "compose.${project}.yaml not found"
-    exit 1
-  fi
-  echo "Deploying ${project}"
-  make "${project}-deploy"
-done
-
-make docker-prune
+make --no-print-directory docker-prune
 
 popd >/dev/null

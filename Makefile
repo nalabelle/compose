@@ -48,12 +48,15 @@ lint-ci:
 .PHONY: deploy
 deploy:
 	@# Help: Deploy all compose projects
-	@[ -n "${PROJECTS}" ] || (echo "No compose projects found"; exit 1)
+	@bin/deploy
 
 .PHONY: docker-clean
+.ONESHELL: docker-clean
 docker-clean:
 	@# Help: Not included in normal clean, removes all docker containers
+	@[ -n "$$(docker ps -aq)" ] || { echo "No containers to remove" && exit 0; }
 	@docker ps -aq | xargs docker stop | xargs docker rm
+
 
 .PHONY: docker-prune
 docker-prune:
@@ -112,7 +115,7 @@ _secrets/$(1): $$(patsubst secrets/%, _secrets/%, $$(filter secrets/$(1)/%,$$(SE
 .PHONY: $(1)-deploy $(1)-down
 $(1)-deploy: compose.$(1).yaml _secrets/$(1) .env
 	@# Help: docker compose deploy $(1)
-	docker compose -f $$< up -d --remove-orphans
+	docker compose -f $$< up -d --remove-orphans --force-recreate
 
 $(1)-down: compose.$(1).yaml .env
 	@# Help: docker compose remove $(1)
