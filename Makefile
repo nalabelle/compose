@@ -28,6 +28,21 @@ help:
 			}' \
 		| sort
 
+node_modules: package.json
+	npm ci
+	touch $@
+
+.PHONY: lintfix
+lintfix: node_modules lint-ci
+	@# Help: Run all linters
+	@npx dclint --fix .
+	@pushd common >/dev/null; npx dclint --fix .; popd >/dev/null
+
+.PHONY: lint-ci
+lint-ci:
+	@# Help: Run all linters in CI mode
+	SKIP=lintfix pre-commit run --all-files
+
 .PHONY: docker-clean
 docker-clean:
 	@# Help: Not included in normal clean, removes all docker containers

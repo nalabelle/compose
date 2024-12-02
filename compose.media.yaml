@@ -29,7 +29,7 @@ services:
         limits:
           memory: 1.5G
     expose:
-      - 13378
+      - '13378'
     init: true
 
   bazarr:
@@ -61,7 +61,7 @@ services:
         limits:
           memory: 512M
     expose:
-      - 6767
+      - '6767'
     init: true
 
   bazarr-exporter:
@@ -90,7 +90,7 @@ services:
         limits:
           memory: 128M
     expose:
-      - 9707
+      - '9707'
     init: false
 
   lidarr:
@@ -122,7 +122,7 @@ services:
         limits:
           memory: 2G
     expose:
-      - 8686
+      - '8686'
     init: true
 
   lidarr-exporter:
@@ -153,7 +153,7 @@ services:
         limits:
           memory: 128M
     expose:
-      - 9707
+      - '9707'
     init: false
 
   prowlarr:
@@ -181,7 +181,7 @@ services:
         limits:
           memory: 512M
     expose:
-      - 9696
+      - '9696'
     init: true
 
   prowlarr-exporter:
@@ -212,7 +212,7 @@ services:
         limits:
           memory: 128M
     expose:
-      - 9709
+      - '9709'
     init: false
 
   radarr:
@@ -245,7 +245,7 @@ services:
         limits:
           memory: 2G
     expose:
-      - 7878
+      - '7878'
     init: true
 
   radarr-exporter:
@@ -276,7 +276,7 @@ services:
         limits:
           memory: 128M
     expose:
-      - 9707
+      - '9707'
     init: false
 
   sabnzbd:
@@ -307,7 +307,7 @@ services:
         limits:
           memory: 1G
     expose:
-      - 8080
+      - '8080'
     init: true
 
   sabnzbd-exporter:
@@ -338,7 +338,7 @@ services:
         limits:
           memory: 128M
     expose:
-      - 9707
+      - '9707'
     init: false
 
   sonarr:
@@ -371,7 +371,7 @@ services:
         limits:
           memory: 2G
     expose:
-      - 8989
+      - '8989'
     init: true
 
   sonarr-exporter:
@@ -402,7 +402,7 @@ services:
         limits:
           memory: 128M
     expose:
-      - 9707
+      - '9707'
     init: false
 
   yt-dlp:

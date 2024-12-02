@@ -17,7 +17,7 @@ dump_db() {
 
   echo "${db_name}: Starting"
   pg_dump -Fd -f "${WORK_DIR}/${db_name}" "${db_name}" || completed="false"
-  if [[ "$completed" == "true" ]]; then
+  if [[ $completed == "true" ]]; then
     echo "${db_name}: Completed"
     if [ -d "$BACKUP/$db_name" ]; then
       rm "$BACKUP/$db_name/"*

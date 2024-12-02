@@ -23,13 +23,8 @@ repos:
       - id: shellcheck
   - repo: local
     hooks:
-      - id: dclint-common-fix
-        name: dclint (common)
-        language: docker_image
-        entry: zavoloklom/dclint --config=common/.dclintrc.yaml --fix
-        files: ^common/compose\..*yaml$
-      - id: dclint-root-fix
-        name: dclint (root)
-        language: docker_image
-        entry: zavoloklom/dclint --fix
-        files: ^compose\..*yaml$
+      - id: lintfix
+        name: make lintfix
+        language: system
+        entry: make lintfix
+        files: compose\..*yaml$
