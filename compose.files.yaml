@@ -57,29 +57,25 @@ services:
     init: true
 
   pdf-web-edit:
-    image: registry-1.docker.io/lbrowning/pdf-web-edit:v0.9.0@sha256:a385abf0528fd28a0a1c855548a2f9cf1372d3498d03af1ab70a89e06b49ab70
+    image: ghcr.io/danielhabenicht/danielhabenicht/fork.pdf-web-edit:v0.9.6
     container_name: pdf-web-edit
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/pdf-web-edit:/config
-      - nfs-documents-inbox:/inbox
-      - nfs-documents-processed:/outbox
-      - nfs-documents-rejected:/archive
-    # There seems to be a bug where docker doesn't think the volumes are absolute paths?
-    #  - source: nfs-documents
-    #    target: /inbox
-    #    type: volume
-    #    volume:
-    #      subpath: _inbox
-    #  - source: nfs-documents
-    #    target: /outbox
-    #    type: volume
-    #    volume:
-    #      subpath: _processed
-    #  - source: nfs-documents
-    #    target: /archive
-    #    type: volume
-    #    volume:
-    #      subpath: _rejected
+      - source: nfs-documents
+        target: /inbox
+        type: volume
+        volume:
+          subpath: _inbox
+      - source: nfs-documents
+        target: /outbox
+        type: volume
+        volume:
+          subpath: _processed
+      - source: nfs-documents
+        target: /archive
+        type: volume
+        volume:
+          subpath: _rejected
     networks:
       - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
@@ -176,21 +172,6 @@ volumes:
       type: nfs
       o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
       device: ":/documents"
-  nfs-documents-inbox:
-    driver_opts:
-      type: nfs
-      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
-      device: ":/documents/_inbox"
-  nfs-documents-processed:
-    driver_opts:
-      type: nfs
-      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
-      device: ":/documents/_processed"
-  nfs-documents-rejected:
-    driver_opts:
-      type: nfs
-      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
-      device: ":/documents/_rejected"
 
 secrets:
   paperless-dbpass:
