@@ -2,7 +2,7 @@ name: jump
 
 services:
   dns:
-    image: technitium/dns-server:13.2.1
+    image: technitium/dns-server:13.2.2@sha256:5cc486df196350ee0700bbc407d959c6cbf9d3eace175720747655f5170a452f
     container_name: dns
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/dns:/etc/dns
