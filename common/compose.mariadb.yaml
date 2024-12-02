@@ -3,7 +3,12 @@ services:
     image: mariadb:11@sha256:2d50fe0f77dac919396091e527e5e148a9de690e58f32875f113bef6506a17f5
     container_name: ${COMPOSE_PROJECT_NAME:?}-mariadb
     volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/mariadb:/var/lib/mysql
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/mariadb/data:/var/lib/mysql
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/mariadb/backup:/var/backup/mariadb
+    configs:
+      - source: mariadb-backup
+        target: /usr/local/bin/db-backup
+        mode: 555
     secrets:
       - mariadb-password
     environment:
@@ -26,6 +31,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    labels:
+      - chadburn.enabled=true
+      - chadburn.job-exec.mariadb-backup.schedule=@every 12h
+      - chadburn.job-exec.mariadb-backup.command=/usr/local/bin/db-backup
     deploy:
       resources:
         reservations:
@@ -45,3 +54,7 @@ services:
 secrets:
   mariadb-password:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/common/mariadb/password
+
+configs:
+  mariadb-backup:
+    file: ${CONFIGS:?}/common/mariadb/db-backup
