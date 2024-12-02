@@ -1,0 +1,23 @@
+#!/bin/bash
+set -o pipefail
+set -eu
+
+echo ""
+
+BACKUP=/var/backup/mariadb
+
+cleanup() {
+  rm -r "$WORK_DIR"
+}
+
+WORK_DIR=$(mktemp -d)
+trap cleanup EXIT
+
+mkdir -p "${WORK_DIR}"
+
+mariadb-backup --backup --target-dir="$WORK_DIR"
+mariadb-backup --prepare --target-dir="$WORK_DIR"
+
+rm -r "$BACKUP"
+mkdir -p "$BACKUP"
+mv -t "$BACKUP/" "${WORK_DIR}/"
