@@ -27,7 +27,7 @@ services:
         limits:
           memory: 64M
     expose:
-      - 9093
+      - '9093'
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.51.0
@@ -57,7 +57,7 @@ services:
         limits:
           memory: 64M
     expose:
-      - 8080
+      - '8080'
 
   kopia:
     image: kopia/kopia:latest@sha256:b6cb1f09a5fa832a320ee06d7803e82cdd7f69ac6f61d76a0d55fbbf1495c043
@@ -133,7 +133,7 @@ services:
         limits:
           memory: 64M
     expose:
-      - 8428
+      - '8428'
 
   node-exporter:
     image: quay.io/prometheus/node-exporter:v1.8.2
@@ -159,7 +159,7 @@ services:
       - metrics-job=node
       - scrape-port=9100
     expose:
-      - 9100
+      - '9100'
 
   scheduler:
     image: premoweb/chadburn:1.0.7@sha256:096be3c00f39db7d7d33763432456ab8bdc79f0f5da7ec20fec5ff071f3e841f
@@ -276,7 +276,7 @@ services:
         limits:
           memory: 64M
     expose:
-      - 8880
+      - '8880'
 
 networks:
   default:

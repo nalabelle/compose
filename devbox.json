@@ -5,13 +5,10 @@
     "shellcheck@latest",
     "shfmt@latest",
     "gnumake@latest",
-    "_1password@latest"
+    "_1password@latest",
+    "nodejs@22"
   ],
-  "shell": {
-    "scripts": {
-      "dclint": [
-        "docker run -t --rm -v ${PWD}:/${PWD} --workdir ${PWD} zavoloklom/dclint $@"
-      ]
-    }
+  "env": {
+    "DEVBOX_COREPACK_ENABLED": "true"
   }
 }

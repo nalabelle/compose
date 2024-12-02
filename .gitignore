@@ -4,4 +4,5 @@
 /.env
 /.env.local
 /_secrets
+/node_modules
 /volumes

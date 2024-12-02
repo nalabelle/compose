@@ -53,7 +53,7 @@ services:
         limits:
           memory: 1G
     expose:
-      - 8000
+      - '8000'
     init: true
 
   pdf-web-edit:
@@ -91,7 +91,7 @@ services:
         limits:
           memory: 96M
     expose:
-      - 80
+      - '80'
     init: false
 
   photoprism:
@@ -129,7 +129,7 @@ services:
         limits:
           memory: 2G
     expose:
-      - 2342
+      - '2342'
     init: false
 
   redis:
@@ -152,7 +152,7 @@ services:
         limits:
           memory: 256M
     expose:
-      - 6379
+      - '6379'
     init: true
 
 networks:
