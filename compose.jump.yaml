@@ -1,0 +1,34 @@
+name: jump
+
+services:
+  dns:
+    image: technitium/dns-server:13.2.1
+    container_name: dns
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/dns:/etc/dns
+    environment:
+      - DNS_SERVER_DOMAIN=${HOSTNAME:?}.${DOMAIN:?}
+    # dclint disable-line no-duplicate-exported-ports
+    ports:
+      - '53:53/udp' #DNS service
+      - '53:53/tcp' #DNS service
+      - '5380:5380/tcp' #DNS web console (HTTP)
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 512M
+    hostname: dns
+    init: true
+    sysctls:
+      - net.ipv4.ip_local_port_range=1024 65000
+
+networks:
+  default:
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 2001:db8::/64
