@@ -3,11 +3,13 @@ SHELL := bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-
 HOSTNAME:=$(shell hostname)
 COMPOSE_STACKS := $(patsubst compose.%.yaml,%, $(wildcard compose.*.yaml))
 SECRET_SOURCES := $(shell find secrets -type f -print)
 
+ifneq (,$(wildcard ./.env.local))
+    include .env.local
+endif
 
 .DEFAULT_GOAL:=help
 print-%:
@@ -42,6 +44,11 @@ lintfix: node_modules lint-ci
 lint-ci:
 	@# Help: Run all linters in CI mode
 	SKIP=lintfix pre-commit run --all-files
+
+.PHONY: deploy
+deploy:
+	@# Help: Deploy all compose projects
+	@[ -n "${PROJECTS}" ] || (echo "No compose projects found"; exit 1)
 
 .PHONY: docker-clean
 docker-clean:
