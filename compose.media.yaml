@@ -406,7 +406,7 @@ services:
     init: false
 
   yt-dlp:
-    image: ghcr.io/jauderho/yt-dlp:latest@sha256:7f7cde4a4966ca87398f1033b58de266bca8bba432bdb24a9f60703fb7b1a324
+    image: ghcr.io/jauderho/yt-dlp:latest@sha256:dcd0707187fedcfedf83a9fc15dcd3cb5d634ba27350438fd5d4af9eb9f919b0
     container_name: yt-dlp
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config
