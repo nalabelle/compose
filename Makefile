@@ -28,8 +28,8 @@ help:
 			}' \
 		| sort
 
-.PHONY: clean-docker
-clean-docker:
+.PHONY: docker-clean
+docker-clean:
 	@# Help: Not included in normal clean, removes all docker containers
 	@docker ps -aq | xargs docker stop | xargs docker rm
 
@@ -62,8 +62,9 @@ clean-secrets:
 _secrets/%: secrets/%
 	@mkdir -p $(dir $@)
 	@printf '%s < %s\n' $@ $<
+	@envsubst < <(op inject -i .env.tpl) > $@
 	@HOSTNAME=$(HOSTNAME) \
-		op inject -f -i $< -o $@ > /dev/null && chmod 644 $@
+		envsubst < <(op inject -f -i $<) > $@ 2>/dev/null && chmod 644 $@
 
 .env: .env.tpl $(wildcard .env.local)
 	@# Help: Create .env file with secrets from .env.tpl
