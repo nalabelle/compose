@@ -1,7 +1,7 @@
 # dclint disable require-project-name-field service-container-name-regex
 services:
   mariadb:
-    image: mariadb:11@sha256:b70986c919e36477832d3a70f683ed7355d90f7ccd44ed8db034fede98aea033
+    image: mariadb:11@sha256:a9547599cd87d7242435aea6fda22a9d83e2c06d16c658ef70d2868b3d3f6a80
     container_name: ${COMPOSE_PROJECT_NAME:?}-mariadb
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/mariadb/data:/var/lib/mysql
