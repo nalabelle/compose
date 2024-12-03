@@ -33,7 +33,7 @@ services:
     init: true
 
   bazarr:
-    image: ghcr.io/linuxserver/bazarr:1.4.5@sha256:5805d6a44689a41cf78a8317208276a52f0647fb3cd0b2c4a3c8df6e02f93d3b
+    image: ghcr.io/linuxserver/bazarr:1.4.5@sha256:be98501c48d98eec67a3269cacf884eb122b884d0775cdb8ee9a03947ef2b493
     container_name: bazarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr:/config
@@ -406,7 +406,7 @@ services:
     init: false
 
   yt-dlp:
-    image: ghcr.io/jauderho/yt-dlp:latest@sha256:dcd0707187fedcfedf83a9fc15dcd3cb5d634ba27350438fd5d4af9eb9f919b0
+    image: ghcr.io/jauderho/yt-dlp:latest@sha256:78402d15d0b6696b8edbe1641cc05b70d259f064e31be920b487662bfcf4934a
     container_name: yt-dlp
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config
