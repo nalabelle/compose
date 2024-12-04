@@ -30,7 +30,7 @@ services:
       - '9093'
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.51.0
+    image: gcr.io/cadvisor/cadvisor:v0.51.0@sha256:771a65c7877817cd9bb4c2d9eecb9fd1ac56f370287617658c51a35061efa71a
     container_name: cadvisor
     volumes:
       - /:/rootfs:ro
@@ -136,7 +136,7 @@ services:
       - '8428'
 
   node-exporter:
-    image: quay.io/prometheus/node-exporter:v1.8.2
+    image: quay.io/prometheus/node-exporter:v1.8.2@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706
     container_name: node-exporter
     volumes:
       - /proc:/host/proc:ro
