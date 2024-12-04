@@ -42,8 +42,6 @@ services:
       - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
-      - caddy={{index .Names 0}}.${DOMAIN:?}
-      - caddy.reverse_proxy={{ upstreams 8080 }}
       - traefik.enable=true
       - traefik.http.routers.cadvisor.rule=Host(`${HOSTNAME:?}-cadvisor.${DOMAIN:?}`)
       - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
@@ -53,9 +51,9 @@ services:
       resources:
         reservations:
           cpus: "0.01"
-          memory: 32M
-        limits:
           memory: 64M
+        limits:
+          memory: 128M
     expose:
       - '8080'
 
@@ -129,9 +127,9 @@ services:
       resources:
         reservations:
           cpus: "0.01"
-          memory: 32M
-        limits:
           memory: 64M
+        limits:
+          memory: 128M
     expose:
       - '8428'
 
@@ -158,6 +156,13 @@ services:
     labels:
       - metrics-job=node
       - scrape-port=9100
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 96M
     expose:
       - '9100'
 
@@ -244,9 +249,9 @@ services:
       resources:
         reservations:
           cpus: "0.01"
-          memory: 20M
+          memory: 64M
         limits:
-          memory: 50M
+          memory: 96M
     init: true
 
   vmalert:
@@ -297,8 +302,6 @@ networks:
 secrets:
   alertmanager:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/alertmanager-config.yaml
-  caddyfile:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/caddyfile
   traefik-cf_dns_api_token:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/cf_dns_api_token
   traefik-cf_zone_api_token:
@@ -309,8 +312,6 @@ secrets:
     file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/kopia-server-url
 
 configs:
-  get-host-ip:
-    file: ${CONFIGS:?}/${COMPOSE_PROJECT_NAME:?}/get-host-ip
   kopia-backup:
     file: ${CONFIGS:?}/${COMPOSE_PROJECT_NAME:?}/kopia-backup
   scrape-configs:
