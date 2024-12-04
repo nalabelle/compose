@@ -94,7 +94,7 @@ services:
     init: false
 
   lidarr:
-    image: ghcr.io/linuxserver/lidarr:2.7.1@sha256:5c1f7a05944a1ceea242481801bbc5f908a4cc66e95ae0153b5a59f2d6224b17
+    image: ghcr.io/linuxserver/lidarr:2.7.1@sha256:7c4c1d52799932b7c2b7e5786adf31ea4edf37093645ccaf06e6d7f6fb2124e7
     container_name: lidarr
     depends_on:
       postgres:
@@ -157,7 +157,7 @@ services:
     init: false
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.27.0@sha256:90d1058f7ecac9c41a77cb82e7eaafddb084bf6a06628074ff5d00956259a863
+    image: ghcr.io/linuxserver/prowlarr:1.27.0@sha256:fce97e356e940fda1feda7d20b501426dff62a819bcd393d958319b1a87aed9b
     container_name: prowlarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
