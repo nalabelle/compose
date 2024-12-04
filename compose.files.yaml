@@ -57,7 +57,7 @@ services:
     init: true
 
   pdf-web-edit:
-    image: ghcr.io/danielhabenicht/danielhabenicht/fork.pdf-web-edit:v0.9.6
+    image: ghcr.io/danielhabenicht/danielhabenicht/fork.pdf-web-edit:v0.9.6@sha256:e851892cc1dc9d8d62c941d37a47057063d9d51d80ad9e95d07ce711259984be
     container_name: pdf-web-edit
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/pdf-web-edit:/config
