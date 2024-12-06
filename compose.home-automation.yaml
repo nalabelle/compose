@@ -34,7 +34,7 @@ services:
     init: false
 
   home-assistant:
-    image: ghcr.io/home-assistant/home-assistant:2024.12@sha256:af5543e668b5935ff613e05358e6e162ebfb3585ce5eed1af86e7344b58091f1
+    image: ghcr.io/home-assistant/home-assistant:2024.12@sha256:7f6458dadc010fb3ff16e986530e3c366df4b26d418e6f16096e1d2fdbe56ad0
     container_name: home-assistant
     depends_on:
       postgres:
