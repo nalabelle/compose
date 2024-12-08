@@ -5,7 +5,7 @@ include:
 
 services:
   audiobookshelf:
-    image: ghcr.io/advplyr/audiobookshelf:2.17.4@sha256:0f73a5e8441e6bac24f0556cb9c0156a6f71d97cb2d612ff90621212927c28b0
+    image: ghcr.io/advplyr/audiobookshelf:2.17.5@sha256:5ad77d4a1834575588debb2ac54ec34f234a4c2d4b5e226029dd5b2cf1a0d766
     container_name: audiobookshelf
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/config:/config
@@ -216,7 +216,7 @@ services:
     init: false
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:5.15.1@sha256:2e37ae0af799e01f413a97ee82c7e581a5b635816df0380889bc65d554dbeb17
+    image: ghcr.io/linuxserver/radarr:5.15.1@sha256:18d7873c8b773c10944c475fe96ca8ae79186512d3c6f403bcbd4409c9c4acfc
     container_name: radarr
     depends_on:
       postgres:
