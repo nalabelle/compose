@@ -60,6 +60,7 @@ services:
           memory: 64M
     expose:
       - '12345'
+    hostname: ${HOSTNAME:?}-alloy
 
   kopia:
     image: kopia/kopia:latest@sha256:b6cb1f09a5fa832a320ee06d7803e82cdd7f69ac6f61d76a0d55fbbf1495c043
