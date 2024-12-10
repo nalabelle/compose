@@ -138,6 +138,27 @@ services:
     expose:
       - '9100'
 
+  oom:
+    image: registry-1.docker.io/library/docker:cli
+    container_name: oom
+    volumes:
+      - ${DOCKER_SOCKET:?}:/var/run/docker.sock
+    networks:
+      - default
+    command:
+      - events
+      - --filter type=container
+      - --filter event=oom
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 5M
+        limits:
+          memory: 30M
+    init: true
+
   scheduler:
     image: premoweb/chadburn:1.0.7@sha256:096be3c00f39db7d7d33763432456ab8bdc79f0f5da7ec20fec5ff071f3e841f
     container_name: scheduler
