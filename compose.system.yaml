@@ -154,7 +154,7 @@ services:
       resources:
         reservations:
           cpus: "0.01"
-          memory: 5M
+          memory: 7M
         limits:
           memory: 30M
     init: true
