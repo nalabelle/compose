@@ -11,9 +11,9 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/go2rtc:/config
     ports:
       # rtsp
-      - '8554:8554'
+      - "8554:8554"
       # webrtc
-      - '8555:8555'
+      - "8555:8555"
     networks:
       - default
       - proxy-${COMPOSE_PROJECT_NAME:?}
@@ -30,7 +30,7 @@ services:
         limits:
           memory: 64M
     expose:
-      - '1984'
+      - "1984"
     init: false
 
   home-assistant:
@@ -70,14 +70,14 @@ services:
         limits:
           memory: 1G
     expose:
-      - '8123'
+      - "8123"
     init: true
 
   mosquitto:
     image: registry-1.docker.io/library/eclipse-mosquitto:2.0.20@sha256:8b396cec28cd5e8e1a3aba1d9abdbddd42c454c80f703e77c1bec56e152fa54e
     container_name: mosquitto
     ports:
-      - '1883:1883'
+      - "1883:1883"
     networks:
       - default
     command:
@@ -115,7 +115,7 @@ services:
         limits:
           memory: 64M
     expose:
-      - '80'
+      - "80"
     init: false
 
   zigbee2mqtt:
@@ -143,7 +143,7 @@ services:
     devices:
       - ${ZIGBEE_DEVICE:?}:/dev/zigbee
     expose:
-      - '8080'
+      - "8080"
     init: true
 
 networks:

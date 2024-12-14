@@ -27,7 +27,7 @@ services:
         limits:
           memory: 64M
     expose:
-      - '9093'
+      - "9093"
   alloy:
     image: registry-1.docker.io/grafana/alloy:v1.5.1
     container_name: alloy
@@ -59,7 +59,7 @@ services:
         limits:
           memory: 64M
     expose:
-      - '12345'
+      - "12345"
     hostname: ${HOSTNAME:?}-alloy
 
   kopia:
@@ -136,7 +136,7 @@ services:
         limits:
           memory: 128M
     expose:
-      - '8428'
+      - "8428"
 
   node-exporter:
     image: quay.io/prometheus/node-exporter:v1.8.2@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706
@@ -169,7 +169,7 @@ services:
         limits:
           memory: 96M
     expose:
-      - '9100'
+      - "9100"
 
   oom:
     image: registry-1.docker.io/library/docker:cli
@@ -228,8 +228,8 @@ services:
       CF_DNS_API_TOKEN_FILE: /run/secrets/traefik-cf_dns_api_token
       CF_ZONE_API_TOKEN_FILE: /run/secrets/traefik-cf_zone_api_token
     ports:
-      - '4430:443'
-      - '8000:80'
+      - "4430:443"
+      - "8000:80"
       # Uncomment this to access traefik dashboard directly
       # - "8080:8080"
     networks:
@@ -309,7 +309,7 @@ services:
         limits:
           memory: 64M
     expose:
-      - '8880'
+      - "8880"
 
 networks:
   default:
