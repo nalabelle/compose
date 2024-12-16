@@ -94,7 +94,7 @@ services:
     init: false
 
   lidarr:
-    image: ghcr.io/linuxserver/lidarr:2.7.1@sha256:4a581cedce8a0367672943f14be2d8b1d4edcadfd98640e12c9ff29ab5093f76
+    image: ghcr.io/linuxserver/lidarr:2.8.2@sha256:ea89a7344ac9d205812f07b4c240234c66f0d5f146eb0c3bbe3c1966c98054ef
     container_name: lidarr
     depends_on:
       postgres:
@@ -157,7 +157,7 @@ services:
     init: false
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.27.0@sha256:3e88e94ce35d7c5f621018d4bbb2c082b486261cb5a7930210cd705f0d22b980
+    image: ghcr.io/linuxserver/prowlarr:1.28.2@sha256:37d58da230af6a0210d583adb49d32f1257762f8b615fddcbbde8ae3e21135ce
     container_name: prowlarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
@@ -406,7 +406,7 @@ services:
     init: false
 
   yt-dlp:
-    image: ghcr.io/jauderho/yt-dlp:latest@sha256:58d7c6c6aae1c1da94956c5a25d93b9e2bd639c1e96d4656c0fbdbb96c4348b9
+    image: ghcr.io/jauderho/yt-dlp:latest@sha256:654b84ed62493c8db39d49a552c310f0f8811c25a6a62a476d92d8af341ee93d
     container_name: yt-dlp
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config
