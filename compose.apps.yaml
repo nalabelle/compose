@@ -5,7 +5,7 @@ include:
 
 services:
   grist:
-    image: registry-1.docker.io/gristlabs/grist:1.3.2@sha256:aada28865ef0a79f79fa7d32864e25c5df85aebfec847a281a9c40c3f37c9838
+    image: registry-1.docker.io/gristlabs/grist:1.3.2@sha256:52c46e068ee9022cdfcb6b2df3c66fdf384d0b2a3220c4181650624eb8ce4db1
     container_name: grist
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grist:/persist
