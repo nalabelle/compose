@@ -33,7 +33,7 @@ services:
     init: true
 
   bazarr:
-    image: ghcr.io/linuxserver/bazarr:1.5.0@sha256:4e6e74dd25e0b7a0dd20190b1a9e0ec1adb74b56d7b87ce5c9d073f44b2cf2b1
+    image: ghcr.io/linuxserver/bazarr:1.5.0@sha256:c99ddc0c3a6c23edec34faf81a21fd9bdb60a02b3b5d916590b7a7e48254c87f
     container_name: bazarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr:/config
@@ -94,7 +94,7 @@ services:
     init: false
 
   lidarr:
-    image: ghcr.io/linuxserver/lidarr:2.8.2@sha256:ea89a7344ac9d205812f07b4c240234c66f0d5f146eb0c3bbe3c1966c98054ef
+    image: ghcr.io/linuxserver/lidarr:2.8.2@sha256:f502893fc25fffd9012d85e7bf0670a948783975b9c8d91372869f072389342b
     container_name: lidarr
     depends_on:
       postgres:
@@ -157,7 +157,7 @@ services:
     init: false
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.28.2@sha256:37d58da230af6a0210d583adb49d32f1257762f8b615fddcbbde8ae3e21135ce
+    image: ghcr.io/linuxserver/prowlarr:1.28.2@sha256:88d2f10981b438f40edd6ae905555932696a99e58d43834c180764604dbf75eb
     container_name: prowlarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
@@ -216,7 +216,7 @@ services:
     init: false
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:5.16.3@sha256:ee4c2213b769bc9a891b5dd5aa1786804634fb681dd261b3bed6b65d98592c55
+    image: ghcr.io/linuxserver/radarr:5.16.3@sha256:0068f9fa55cdf8b72b831b8fd56e9e94cf1de969cfa1f58f7ba11ee3619eaf65
     container_name: radarr
     depends_on:
       postgres:
@@ -280,7 +280,7 @@ services:
     init: false
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:4.4.1@sha256:37cfb25fdeaca82e1ad89a1bf664efe41ad481ed56aa069f710ac975cc5c6ecf
+    image: ghcr.io/linuxserver/sabnzbd:4.4.1@sha256:76a15e85e391eb2702ac1c6ccd90fc7b7546913065c1504f708ce9bf863aedbf
     container_name: sabnzbd
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
@@ -342,7 +342,7 @@ services:
     init: false
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:4.0.11@sha256:b466acde22d18859336e790af23c0b56d9dbb7199935b226b3139bf416fe7e1c
+    image: ghcr.io/linuxserver/sonarr:4.0.11@sha256:ca4ad72f07e532d1d414435eb43193d1dc407255e46c21c2694653ca8af4fd81
     container_name: sonarr
     depends_on:
       postgres:
