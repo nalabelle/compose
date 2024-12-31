@@ -91,7 +91,7 @@ services:
         limits:
           memory: 96M
     expose:
-      - "80"
+      - "8080"
     init: false
 
   photoprism:
