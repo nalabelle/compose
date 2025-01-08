@@ -113,11 +113,14 @@ _secrets/$(1): $$(patsubst secrets/%, _secrets/%, $$(filter secrets/$(1)/%,$$(SE
 	@# Help: Create secrets for $(1)
 	@true
 
-.PHONY: $(1)-deploy $(1)-down
+.PHONY: $(1)-deploy $(1)-down $(1)-pull
 $(1)-deploy: compose.$(1).yaml _secrets/$(1) .env
 	@# Help: docker compose deploy $(1)
-	docker compose -f $$< pull
 	docker compose -f $$< up -d --remove-orphans --force-recreate
+
+$(1)-pull: compose.$(1).yaml _secrets/$(1) .env
+	@# Help: docker compose pull $(1)
+	docker compose -f $$< pull
 
 $(1)-down: compose.$(1).yaml .env
 	@# Help: docker compose remove $(1)
