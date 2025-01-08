@@ -112,7 +112,7 @@ services:
     init: true
 
   miniflux-sidekick:
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1733262084@sha256:0fba6235b0fb4af58b1ea0b04a7be301421287a3f82c600e25769e29081b6fb7
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1736359889@sha256:0f4190dc5fcc1b3496826b706e628adfab003d4c942362a48dd8aeab1c15470c
     container_name: miniflux-sidekick
     depends_on:
       miniflux:
