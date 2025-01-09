@@ -29,7 +29,7 @@ services:
     expose:
       - "9093"
   alloy:
-    image: registry-1.docker.io/grafana/alloy:v1.5.1
+    image: registry-1.docker.io/grafana/alloy:v1.5.1@sha256:01a63f4e032ce54ee94b22049bc27f597e74f85566478c377f4b5c7f020c1eb3
     container_name: alloy
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock:ro
@@ -172,7 +172,7 @@ services:
       - "9100"
 
   oom:
-    image: registry-1.docker.io/library/docker:cli
+    image: registry-1.docker.io/library/docker:cli@sha256:48fb8184d093547916178a48ed6b558968aaa6686e3ab8a289aeff122f0dbb16
     container_name: oom
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock
