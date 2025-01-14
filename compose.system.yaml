@@ -101,7 +101,7 @@ services:
     init: true
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.109.0@sha256:dc4cfcf76a0bf444bf330f21615edf530a846dcfb1a18f733756f8c86b08ccdb
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.109.0@sha256:c784a60aadc3069fe240404a9a12b31e383a01e19e7e95841895a57a307f4c8d
     container_name: metrics
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics:/storage
@@ -283,7 +283,7 @@ services:
     init: true
 
   vmalert:
-    image: registry-1.docker.io/victoriametrics/vmalert:v1.109.0@sha256:14026d4dbd842d79b0b8867d48ef476a295548aaa58c0cdbf249056e87bbd94f
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.109.0@sha256:4c600a430c8c05d34b455c168e95445f08fde76487da4e794e81e2b1b3f9d09a
     container_name: vmalert
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics/_alerts:/etc/alerts
