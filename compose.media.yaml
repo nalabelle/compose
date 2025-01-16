@@ -280,7 +280,7 @@ services:
     init: false
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:4.4.1@sha256:a7fb5bd7208bfd5915c2527cef57dd8b00bdf684b68e5c9ec4326f10b6cf94b3
+    image: ghcr.io/linuxserver/sabnzbd:4.4.1@sha256:5f323d7c2c67f700f8c0e40f25bf3d67c03c35b65c82a1c1680fcb0d055f6528
     container_name: sabnzbd
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
@@ -406,7 +406,7 @@ services:
     init: false
 
   yt-dlp:
-    image: ghcr.io/jauderho/yt-dlp:latest@sha256:434a6ed63c3673b83ed26a3db3a8347162163f98a74cff649f169c750fff601a
+    image: ghcr.io/jauderho/yt-dlp:latest@sha256:28cdb10528e16c7df4a30d34796d7e3a09dbd122da95954a2bf69f5a287c327d
     container_name: yt-dlp
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config
