@@ -172,7 +172,7 @@ services:
       - "9100"
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:7c10b867b5da6f0ecbac463defeaa490c1d2816cb02fe4e14d2994ad9c3812cd
+    image: registry-1.docker.io/library/docker:cli@sha256:13ef8c39b49e8669461bfd6c71d6eca53f85b6dd16a13acbdeb0d706ceb4ebaf
     container_name: oom
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock
