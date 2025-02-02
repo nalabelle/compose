@@ -430,6 +430,35 @@ services:
         limits:
           memory: 1G
     init: true
+  ytdl-sub:
+    image: ghcr.io/jmbannon/ytdl-sub:2025.01.28
+    container_name: ytdl-sub
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdl-sub:/config
+      - nfs-downloads:/downloads
+      - nfs-internet:/internet
+    environment:
+      - PUID=3005
+      - PGID=100
+      - TZ=America/Los_Angeles
+    networks:
+      - default
+    entrypoint:
+      - sleep
+      - infinity
+    restart: unless-stopped
+    labels:
+      - chadburn.enabled=true
+      - chadburn.job-exec.yt-dlp.schedule=@every 12h
+      - chadburn.job-exec.yt-dlp.command=/config/scheduled-task
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.02"
+          memory: 500M
+        limits:
+          memory: 1G
+    init: false
 
 networks:
   default:
