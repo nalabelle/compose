@@ -404,32 +404,6 @@ services:
     expose:
       - "9707"
     init: false
-
-  yt-dlp:
-    image: ghcr.io/jauderho/yt-dlp:latest@sha256:99b084ac45a9302a731407552b8f2d627295c5ecbab05ad86097392e883ced1a
-    container_name: yt-dlp
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdlp:/config
-      - nfs-downloads:/downloads
-      - nfs-internet:/internet
-    networks:
-      - default
-    entrypoint:
-      - sleep
-      - infinity
-    restart: unless-stopped
-    labels:
-      - chadburn.enabled=true
-      - chadburn.job-exec.yt-dlp.schedule=@every 12h
-      - chadburn.job-exec.yt-dlp.command=/config/scheduled-task
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.02"
-          memory: 500M
-        limits:
-          memory: 1G
-    init: true
   ytdl-sub:
     image: ghcr.io/jmbannon/ytdl-sub:2025.01.28
     container_name: ytdl-sub
