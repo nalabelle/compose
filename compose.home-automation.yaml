@@ -40,7 +40,9 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/home-assistant:/config
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/home-assistant/config:/config
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/home-assistant/backups:/backups
+      - nfs-security:/mnt/security
     environment:
       - MPLCONFIGDIR=/tmp/matplotlib
     networks:
@@ -151,3 +153,10 @@ networks:
     name: ${COMPOSE_PROJECT_NAME:?}
   proxy-home-automation:
     name: proxy-home-automation
+
+volumes:
+  nfs-security:
+    driver_opts:
+      type: nfs
+      o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
+      device: ":/security"
