@@ -405,7 +405,7 @@ services:
       - "9707"
     init: false
   ytdl-sub:
-    image: ghcr.io/jmbannon/ytdl-sub:2025.01.28
+    image: ghcr.io/jmbannon/ytdl-sub:2025.01.28@sha256:803a15d77d040fa306faa713782bd8672815280036a0d8baeaca2deec51ea131
     container_name: ytdl-sub
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdl-sub:/config
