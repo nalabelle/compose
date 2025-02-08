@@ -34,7 +34,7 @@ services:
     init: false
 
   home-assistant:
-    image: ghcr.io/home-assistant/home-assistant:2025.1@sha256:96c525c68f77bdbc93cda8fffed47e460c45035d88869816b4482369cdaede46
+    image: ghcr.io/home-assistant/home-assistant:2025.2@sha256:9bde98a5c314a1d0bef07d6ab7bc36c2abf98df6337ca36db4e57adeeda1dc79
     container_name: home-assistant
     depends_on:
       postgres:
@@ -96,7 +96,7 @@ services:
     init: true
 
   tasmoadmin:
-    image: ghcr.io/tasmoadmin/tasmoadmin:v4.2.1@sha256:f3e64d6e180ff39a2e1c6ca4e16976fd71d0558c972e8e549d01245ce6e2aa66
+    image: ghcr.io/tasmoadmin/tasmoadmin:v4.2.2@sha256:1cebfcd97836b197085df8923eb8730a119b3f59793248f4914e2a3919e84476
     container_name: tasmoadmin
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/tasmoadmin:/data
@@ -119,7 +119,7 @@ services:
     init: false
 
   zigbee2mqtt:
-    image: ghcr.io/koenkk/zigbee2mqtt:2.0.0@sha256:6105a3a01a66bbfb98909a7c309d0707ec7b41728ac15d399747077225231545
+    image: ghcr.io/koenkk/zigbee2mqtt:2.1.1@sha256:c7b111384716247f057b449ebb242bf05f3fafb98dd6d5688c1ac1fc730d5e95
     container_name: zigbee2mqtt
     depends_on:
       - mosquitto

@@ -29,7 +29,7 @@ services:
     expose:
       - "9093"
   alloy:
-    image: registry-1.docker.io/grafana/alloy:v1.5.1@sha256:01a63f4e032ce54ee94b22049bc27f597e74f85566478c377f4b5c7f020c1eb3
+    image: registry-1.docker.io/grafana/alloy:v1.6.1@sha256:25db7cff68ec18a4991bed5205589229f3a5b60168ce4db7313ad8e4a997adec
     container_name: alloy
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock:ro
@@ -63,7 +63,7 @@ services:
     hostname: ${HOSTNAME:?}-alloy
 
   kopia:
-    image: kopia/kopia:latest@sha256:b6cb1f09a5fa832a320ee06d7803e82cdd7f69ac6f61d76a0d55fbbf1495c043
+    image: kopia/kopia:latest@sha256:615b786bdb46d5a9301338983e8077e5be0f1c643b7a3188c8732989104accf4
     container_name: kopia
     volumes:
       - ${VOLUMES:?}:/volumes:ro
@@ -101,7 +101,7 @@ services:
     init: true
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.109.1@sha256:db5b973e9604f118953beb4dc4aceadec4adcf05f5deade0466e517ff1300df8
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.111.0@sha256:c385832d3d8e092ff8c5ca4cf7546fbefb03f2afb09626168abd3fe42b4bfe5f
     container_name: metrics
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics:/storage
@@ -172,7 +172,7 @@ services:
       - "9100"
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:13ef8c39b49e8669461bfd6c71d6eca53f85b6dd16a13acbdeb0d706ceb4ebaf
+    image: registry-1.docker.io/library/docker:cli@sha256:1624879c3635f0677fa129aecece0e0a6cdd30c77759542fa07d4ed567f7d86e
     container_name: oom
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock
@@ -283,7 +283,7 @@ services:
     init: true
 
   vmalert:
-    image: registry-1.docker.io/victoriametrics/vmalert:v1.109.1@sha256:989e14537aa8a52b06cf6d286ce73d843c36993d62e5660311cfcf5853a48945
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.111.0@sha256:cd94af2c0d00c7893f556be9ec77d7ba0bdf4b6186a4803217f9b35378b7ecb3
     container_name: vmalert
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics/_alerts:/etc/alerts
