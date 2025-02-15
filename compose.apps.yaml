@@ -5,7 +5,7 @@ include:
 
 services:
   grist:
-    image: registry-1.docker.io/gristlabs/grist:1.3.3@sha256:e20b3652aab89545809a90a7c260f5d8ecc0a44083f7724bce907d4b963bb1f9
+    image: registry-1.docker.io/gristlabs/grist:1.4.0@sha256:e02a40dd18a45b0272105083d779700c7f0901e9e5300fd6474afa078ea5a516
     container_name: grist
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grist:/persist
@@ -35,7 +35,7 @@ services:
 
   # used to be libreddit, swapped to redlib
   libreddit:
-    image: quay.io/redlib/redlib:latest@sha256:f3784a08c7917686eb331f06b68ba7adb803260a4431e1957c0c96435dd102f0
+    image: quay.io/redlib/redlib:latest@sha256:201a735c17ab0306adf260d0aa98e7a3c2b3af44caa8e8715ca0b95a811e3271
     container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
@@ -112,7 +112,7 @@ services:
     init: true
 
   miniflux-sidekick:
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1738692756@sha256:6c81ed35071641dac2450925ee07416d6432f67eceb843fbf2c56166f5aa0c28
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1739299922@sha256:076f0927c893e4e24eb724bd27d2aca38674d6ab3896c55f7e51d8554f33713d
     container_name: miniflux-sidekick
     depends_on:
       miniflux:
@@ -133,7 +133,7 @@ services:
     init: true
 
   redis:
-    image: redis:alpine@sha256:1bf97f21f01b0e7bd4b7b34a26d3b9d8086e41e70c10f262e8a9e0b49b5116a0
+    image: redis:alpine@sha256:070d47a7fc389d7cf74257f76bfb57591f470f685eb4637c85f0a587534a4f26
     container_name: redis
     networks:
       - default

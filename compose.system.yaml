@@ -101,7 +101,7 @@ services:
     init: true
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.111.0@sha256:c385832d3d8e092ff8c5ca4cf7546fbefb03f2afb09626168abd3fe42b4bfe5f
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.111.0@sha256:1676d73b39297a938eb60f0894b44b264152a6a38074fa5de99d9bdc425deb65
     container_name: metrics
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics:/storage
@@ -172,7 +172,7 @@ services:
       - "9100"
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:1624879c3635f0677fa129aecece0e0a6cdd30c77759542fa07d4ed567f7d86e
+    image: registry-1.docker.io/library/docker:cli@sha256:851f91d241214e7c6db86513b270d58776379aacc5eb9c4a87e5b47115e3065c
     container_name: oom
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock
@@ -283,7 +283,7 @@ services:
     init: true
 
   vmalert:
-    image: registry-1.docker.io/victoriametrics/vmalert:v1.111.0@sha256:cd94af2c0d00c7893f556be9ec77d7ba0bdf4b6186a4803217f9b35378b7ecb3
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.111.0@sha256:ca7453c7b8aea69b806b4e2ee41592531d9bb5b5a68248d35419ca8f00866763
     container_name: vmalert
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics/_alerts:/etc/alerts
