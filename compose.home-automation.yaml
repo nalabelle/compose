@@ -34,7 +34,7 @@ services:
     init: false
 
   home-assistant:
-    image: ghcr.io/home-assistant/home-assistant:2025.2@sha256:9bde98a5c314a1d0bef07d6ab7bc36c2abf98df6337ca36db4e57adeeda1dc79
+    image: ghcr.io/home-assistant/home-assistant:2025.2@sha256:f4b0f05fe64e10b9795d5c70058cd23a92067cf75146dd46dd016232560633e3
     container_name: home-assistant
     depends_on:
       postgres:
@@ -76,7 +76,7 @@ services:
     init: true
 
   mosquitto:
-    image: registry-1.docker.io/library/eclipse-mosquitto:2.0.20@sha256:deae95623b9d5c6ca5e264380629db53b992106d436b56d42f7c8df46b41b96f
+    image: registry-1.docker.io/library/eclipse-mosquitto:2.0.20@sha256:21421af7b32bf9ce508e9090c8eb13bb81f410ca778dc205506180a6f862d0eb
     container_name: mosquitto
     ports:
       - "1883:1883"
@@ -98,7 +98,7 @@ services:
     init: true
 
   tasmoadmin:
-    image: ghcr.io/tasmoadmin/tasmoadmin:v4.2.2@sha256:1cebfcd97836b197085df8923eb8730a119b3f59793248f4914e2a3919e84476
+    image: ghcr.io/tasmoadmin/tasmoadmin:v4.2.3@sha256:a2221d7c322073f9785e57d1e153419fe8702550fa7de92f47da7e3d85b92119
     container_name: tasmoadmin
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/tasmoadmin:/data
