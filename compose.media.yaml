@@ -5,7 +5,7 @@ include:
 
 services:
   audiobookshelf:
-    image: ghcr.io/advplyr/audiobookshelf:2.19.4@sha256:c35341d6e1065d6f39916dcafa42ea6b3be38f7cf1411dd215f9322f59925ec3
+    image: ghcr.io/advplyr/audiobookshelf:2.19.5@sha256:85fcbbde3911ede0ac4f573be632d0ea66c79ed29c3cc0957dbc48a3fbd670ff
     container_name: audiobookshelf
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/config:/config
@@ -33,7 +33,7 @@ services:
     init: true
 
   bazarr:
-    image: ghcr.io/linuxserver/bazarr:1.5.1@sha256:f25f8d61c5d3d5b963e92cfb6d53930648e995fbd22ff62d3cd8b061282f59c7
+    image: ghcr.io/linuxserver/bazarr:1.5.1@sha256:6e901cc2a12f9ec96fab0162a7d8a4dcbf9353f2357470ef59ebb48bc005ce82
     container_name: bazarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr:/config
@@ -157,7 +157,7 @@ services:
     init: false
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.30.2@sha256:3b57d7060f6edcc796d8eb57247823b1a16b8ba5688618bcca335152489333b4
+    image: ghcr.io/linuxserver/prowlarr:1.31.2@sha256:bd12830fa7d9077687b360b2834fbdd7ab6c2166ca3a2e7ca90e9dfe9a1be7b2
     container_name: prowlarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
@@ -216,7 +216,7 @@ services:
     init: false
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:5.18.4@sha256:1184ee84bc5329c4f62c070a04d73eaf7918878410ca48a1f3dbf82b684eee27
+    image: ghcr.io/linuxserver/radarr:5.19.3@sha256:0a8020afc5e3dcad1413ba125a980729a2b16ff0d88d108b3e1779111ef1c896
     container_name: radarr
     depends_on:
       postgres:
@@ -280,7 +280,7 @@ services:
     init: false
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:4.4.1@sha256:854dcbcc7802e863092b25e9caf155015d01b6afe2b4cee070a5127bd623c638
+    image: ghcr.io/linuxserver/sabnzbd:4.4.1@sha256:d5f659a45ba38b109b92bec00c080c192813b74a3bf66ed55dec51d8d95997cc
     container_name: sabnzbd
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
