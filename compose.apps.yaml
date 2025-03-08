@@ -35,7 +35,7 @@ services:
 
   # used to be libreddit, swapped to redlib
   libreddit:
-    image: quay.io/redlib/redlib:latest@sha256:fdfa1a6d4e14756c88085957ca0f89ce9bef6991cf3f6a4050f515ef1935e0ff
+    image: quay.io/redlib/redlib:latest@sha256:bd1b79a73fbfd66da155f0579bb16bedb35e05bed057210336fea301f987da80
     container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
@@ -112,7 +112,7 @@ services:
     init: true
 
   miniflux-sidekick:
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1739299922@sha256:076f0927c893e4e24eb724bd27d2aca38674d6ab3896c55f7e51d8554f33713d
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1741124810@sha256:8a1fbbde09156591d611071aaabae5ce37d7e7f694fd32923898bd47fef93a31
     container_name: miniflux-sidekick
     depends_on:
       miniflux:
