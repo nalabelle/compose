@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.4/.schema/devbox.schema.json",
   "packages": [
-    "pre-commit@2.20.0",
+    "pre-commit@4.0.1",
     "shellcheck@0.10.0",
     "shfmt@3.10.0",
     "gnumake@4.4.1",
-    "_1password@1.12.2",
+    "_1password-cli@2.30.3",
     "nodejs@22.14.0"
   ],
   "env": {
