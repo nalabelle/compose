@@ -5,7 +5,7 @@
     "shellcheck@0.10.0",
     "shfmt@3.10.0",
     "gnumake@4.4.1",
-    "_1password@1.12.2",
+    "_1password@2.30.0",
     "nodejs@22.14.0"
   ],
   "env": {
