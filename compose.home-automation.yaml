@@ -5,7 +5,7 @@ include:
 
 services:
   go2rtc:
-    image: alexxit/go2rtc@sha256:eafcc3bad6c24ebc6d349c8c98a72b5cd5145d8f580452aed9fec20da9e6c6dd
+    image: alexxit/go2rtc@sha256:7d31dcb73633310e80497c431f4534c81ed55ec0708db3262bc56918e654bba5
     container_name: go2rtc
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/go2rtc:/config
@@ -34,7 +34,7 @@ services:
     init: false
 
   home-assistant:
-    image: ghcr.io/home-assistant/home-assistant:2025.3@sha256:9a85fd0a6b9af0bcdc0d7b3a4d65be3baada22d2b1e3298f30e9e971cfe29ff3
+    image: ghcr.io/home-assistant/home-assistant:2025.3@sha256:f34de69aff7b21c7d7d474b86bef4dbce9613668b8d4a936e6c93b3844611505
     container_name: home-assistant
     depends_on:
       postgres:
