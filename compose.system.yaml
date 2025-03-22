@@ -29,7 +29,7 @@ services:
     expose:
       - "9093"
   alloy:
-    image: registry-1.docker.io/grafana/alloy:v1.7.4@sha256:fd2d274beeed926ffe62cf353df12a69d37af61e9a27eb4dc897a127755e4d95
+    image: registry-1.docker.io/grafana/alloy:v1.7.5@sha256:b92703c13c32c20d629ffd89f40287ed385c12a335a7c9f31c720a5f912f9d6f
     container_name: alloy
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock:ro
@@ -101,7 +101,7 @@ services:
     init: true
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.113.0@sha256:464b8e161605071a4161432487d6f12586c37a4c00180c818009b41d18057321
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.114.0@sha256:227ad53fd57a4b4430624898a1be0cac39431e1235fa0dc92f567cce38969344
     container_name: metrics
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics:/storage
@@ -172,7 +172,7 @@ services:
       - "9100"
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:18018c4b6e75bab6b93e04159c83778c98b60b0f95c762967bb501d684553daf
+    image: registry-1.docker.io/library/docker:cli@sha256:72fe6b42ba4c5ef5ad1a9ce3c54a2e0822010501fca79c4e66664bc69586ec32
     container_name: oom
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock
@@ -195,7 +195,7 @@ services:
     init: true
 
   scheduler:
-    image: premoweb/chadburn:1.0.7@sha256:096be3c00f39db7d7d33763432456ab8bdc79f0f5da7ec20fec5ff071f3e841f
+    image: premoweb/chadburn:1.9.5@sha256:c1766c5ed884e7f4d518561584ffa6e03d836573c4e01ab180dbd2fd10c11d0b
     container_name: scheduler
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock
@@ -283,7 +283,7 @@ services:
     init: true
 
   vmalert:
-    image: registry-1.docker.io/victoriametrics/vmalert:v1.113.0@sha256:07d988c4617fa43fbe7184455e1fdafd4cad89cdf2c1177302659c19b22770a5
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.114.0@sha256:9db45f097d3c9b18abe3e9488d35693fc9a879daf00b9d330ced946329cfffad
     container_name: vmalert
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics/_alerts:/etc/alerts

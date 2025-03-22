@@ -5,7 +5,7 @@ include:
 
 services:
   audiobookshelf:
-    image: ghcr.io/advplyr/audiobookshelf:2.19.5@sha256:85fcbbde3911ede0ac4f573be632d0ea66c79ed29c3cc0957dbc48a3fbd670ff
+    image: ghcr.io/advplyr/audiobookshelf:2.20.0@sha256:8901592931b7b2c95fa336664ddf4b9df6260bfce8aacca23c4fc6c2b2f08109
     container_name: audiobookshelf
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/config:/config
@@ -33,7 +33,7 @@ services:
     init: true
 
   bazarr:
-    image: ghcr.io/linuxserver/bazarr:1.5.1@sha256:0b3e1b888615cbd32cf879963d041abcf863d15160a9ace2928039a7b00590ef
+    image: ghcr.io/linuxserver/bazarr:1.5.1@sha256:fffd75389760b731f11468a1ddabcb35b042ef4b51994c9587337825cdef5470
     container_name: bazarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr:/config
@@ -94,7 +94,7 @@ services:
     init: false
 
   lidarr:
-    image: ghcr.io/linuxserver/lidarr:2.9.6@sha256:f3faffdc7143153f46c37388767975a131f0c57d4c73bdffa7338a1e9c5e7524
+    image: ghcr.io/linuxserver/lidarr:2.9.6@sha256:fe7a71b2f58dd3585eda02d5cc3eb79b20304c58a676a2bd57e7713be19a3627
     container_name: lidarr
     depends_on:
       postgres:
@@ -157,7 +157,7 @@ services:
     init: false
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.31.2@sha256:30186e7d5841c4c4909d2362bda40b29db7d2a06125e5927cc957e05d5b037a1
+    image: ghcr.io/linuxserver/prowlarr:1.32.2@sha256:0116e2c4b53b03bd34edafee6acbe64edeb08be7858e65acd81cc72ef6c98f3a
     container_name: prowlarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
@@ -216,7 +216,7 @@ services:
     init: false
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:5.19.3@sha256:620189d67078ddcfeb7a4efa424eb62f827ef734ef1e56980768bf8efd73782a
+    image: ghcr.io/linuxserver/radarr:5.20.2@sha256:23677e1cb09bd957796f4521748f0eff9eb65d883949c10442635eabe64b750a
     container_name: radarr
     depends_on:
       postgres:
@@ -280,7 +280,7 @@ services:
     init: false
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:4.4.1@sha256:c59623123310dd1086669f7d223c3de7bf6d3015624aba9fab8c77e4d198dc68
+    image: ghcr.io/linuxserver/sabnzbd:4.4.1@sha256:71cd422e30b7ae5060e997042be7cec6bb9f474f054197ac5f63edcde11dba32
     container_name: sabnzbd
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
@@ -342,7 +342,7 @@ services:
     init: false
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:4.0.13@sha256:b666479159c0ffc17d5c2281737c9a88d78afcaa0aa52cb441b46336f6feba31
+    image: ghcr.io/linuxserver/sonarr:4.0.14@sha256:7fe49f99201de94a277c577dcce5ef8f1789ead1056c8cf758fac7bf4e601d16
     container_name: sonarr
     depends_on:
       postgres:
@@ -405,7 +405,7 @@ services:
       - "9707"
     init: false
   ytdl-sub:
-    image: ghcr.io/jmbannon/ytdl-sub:2025.02.21@sha256:23485a9d0f91c0965e7cddd8c03cb83a4083d24db3feb68b5d128ed91ffd7054
+    image: ghcr.io/jmbannon/ytdl-sub:2025.03.21@sha256:a5465c7d4d77a658a3dba96fcf5c3324daed861b0113c120dbcd23ece40eb045
     container_name: ytdl-sub
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdl-sub:/config
