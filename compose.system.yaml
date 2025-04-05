@@ -101,7 +101,7 @@ services:
     init: true
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.114.0@sha256:227ad53fd57a4b4430624898a1be0cac39431e1235fa0dc92f567cce38969344
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.115.0@sha256:d8ac3a1776c8a9beead8bbd42a489c82249b1bfe9071dfd4813f34ebe36354bb
     container_name: metrics
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics:/storage
@@ -139,7 +139,7 @@ services:
       - "8428"
 
   node-exporter:
-    image: quay.io/prometheus/node-exporter:v1.9.0@sha256:c99d7ee4d12a38661788f60d9eca493f08584e2e544bbd3b3fca64749f86b848
+    image: quay.io/prometheus/node-exporter:v1.9.1@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a
     container_name: node-exporter
     volumes:
       - /proc:/host/proc:ro
@@ -283,7 +283,7 @@ services:
     init: true
 
   vmalert:
-    image: registry-1.docker.io/victoriametrics/vmalert:v1.114.0@sha256:9db45f097d3c9b18abe3e9488d35693fc9a879daf00b9d330ced946329cfffad
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.115.0@sha256:ff4dc4a3176bfd5c470a9844cfa5f7357f81b41513e82f62a4073e9dc7409a3d
     container_name: vmalert
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics/_alerts:/etc/alerts
