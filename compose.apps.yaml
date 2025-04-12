@@ -5,7 +5,7 @@ include:
 
 services:
   grist:
-    image: registry-1.docker.io/gristlabs/grist:1.5.0@sha256:15e7abbcfbaf916b590c158225d07aba55f632f5351dd621d6c6fff14aa2c6f5
+    image: registry-1.docker.io/gristlabs/grist:1.5.1@sha256:15033bb08459c85bdd1889fd25f217e1bf77745ad430dfded540cd535e97c06f
     container_name: grist
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grist:/persist
@@ -35,7 +35,7 @@ services:
 
   # used to be libreddit, swapped to redlib
   libreddit:
-    image: quay.io/redlib/redlib:latest@sha256:9e69039ca432ce500688f031957ab37acea0a55127a7d7aff16193b18e7944a7
+    image: quay.io/redlib/redlib:latest@sha256:8c6c56472380188edc8dcd15b1a8e6741281635446b95c6ef1222f9940a96d93
     container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
@@ -157,7 +157,7 @@ services:
     init: true
 
   wallabag:
-    image: wallabag/wallabag@sha256:8854765d299d8e93f962d4be02ceb5703ed2ee24ec6c884f870bb7a18de41378
+    image: wallabag/wallabag@sha256:9989e05769885aef0b316508b728580460c7713e435cc0b02c16e7b06e17bb6a
     container_name: wallabag
     depends_on:
       postgres:
