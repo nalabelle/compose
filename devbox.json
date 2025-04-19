@@ -6,7 +6,7 @@
     "shfmt@3.11.0",
     "gnumake@4.4.1",
     "_1password-cli@2.30.3",
-    "nodejs@22.14.0"
+    "nodejs@23.11.0"
   ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true"
