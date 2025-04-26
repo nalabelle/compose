@@ -6,7 +6,7 @@ include:
 
 services:
   paperless:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.15@sha256:80d1a7fe4f638cb00c1dcf5ff4ce2c15d92f13a6287db1e1b94f58c35a689e47
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.15@sha256:39b337e73c978238f0b529baf42f1b59b65d17eed35cd61bc1ccbbf779b5d58b
     container_name: paperless
     depends_on:
       postgres:
@@ -95,7 +95,7 @@ services:
     init: false
 
   photoprism:
-    image: registry-1.docker.io/photoprism/photoprism:latest@sha256:b0d73530fd95c6e1f88b5b077a8690070a1eab7d33b8b8ea6b8410831dbc2f55
+    image: registry-1.docker.io/photoprism/photoprism:latest@sha256:6a871b8bf14a26429074e5a19a49d44be65d399b164364c8a4bfb4aad4f110d1
     container_name: photoprism
     depends_on:
       mariadb:
@@ -133,7 +133,7 @@ services:
     init: false
 
   redis:
-    image: redis:alpine@sha256:02419de7eddf55aa5bcf49efb74e88fa8d931b4d77c07eff8a6b2144472b6952
+    image: redis:alpine@sha256:f773b35a95e170d92dd4214a3ec4859b1b7960bf56896ae687646d695f311187
     container_name: redis
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/redis:/data

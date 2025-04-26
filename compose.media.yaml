@@ -33,7 +33,7 @@ services:
     init: true
 
   bazarr:
-    image: ghcr.io/linuxserver/bazarr:1.5.1@sha256:b98bdcac54db7ed05524fb63447b855d7fc419428222b3827b1cc9655f95bf51
+    image: ghcr.io/linuxserver/bazarr:1.5.1@sha256:2219fa5f4db9b33fa187553177daae80e7baa6b0350a3132395c7bf6b4ded771
     container_name: bazarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr:/config
@@ -65,7 +65,7 @@ services:
     init: true
 
   bazarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.1.0@sha256:ffe2065573db0f9717443143316eac6b335c37e6f6fea2f6a238ef3f134ee50a
+    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
     container_name: bazarr-exporter
     secrets:
       - bazarr-api-key
@@ -126,7 +126,7 @@ services:
     init: true
 
   lidarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.1.0@sha256:ffe2065573db0f9717443143316eac6b335c37e6f6fea2f6a238ef3f134ee50a
+    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
     container_name: lidarr-exporter
     depends_on:
       - lidarr
@@ -157,7 +157,7 @@ services:
     init: false
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.33.3@sha256:e6afa0c106a24fc3cb90df825956908bb5070cdae9d8b9595fb998b9e0e08d2c
+    image: ghcr.io/linuxserver/prowlarr:1.34.1@sha256:c35700d4f3219477fbe169840ef149b7bcdf614b5689ff82c091c8a64326e8b0
     container_name: prowlarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
@@ -185,7 +185,7 @@ services:
     init: true
 
   prowlarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.1.0@sha256:ffe2065573db0f9717443143316eac6b335c37e6f6fea2f6a238ef3f134ee50a
+    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
     container_name: prowlarr-exporter
     depends_on:
       - prowlarr
@@ -216,7 +216,7 @@ services:
     init: false
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:5.21.1@sha256:5ad8df1b0dc0bb0c2232a9278b85c3c230d82184415f83238b5969da8dc6a942
+    image: ghcr.io/linuxserver/radarr:5.22.4@sha256:7e9dbd55e29496f66fd8f3e210e5c202c1437ba8f4a748013c6da8ac268a0de1
     container_name: radarr
     depends_on:
       postgres:
@@ -249,7 +249,7 @@ services:
     init: true
 
   radarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.1.0@sha256:ffe2065573db0f9717443143316eac6b335c37e6f6fea2f6a238ef3f134ee50a
+    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
     container_name: radarr-exporter
     depends_on:
       - radarr
@@ -280,7 +280,7 @@ services:
     init: false
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:4.5.1@sha256:4087a051fa3aec7c320db624f572eba71513bcb34b146fbd036b8c7c92b78bfa
+    image: ghcr.io/linuxserver/sabnzbd:4.5.1@sha256:219f9d2508849a916614840e48bc0d09769724a0bd2cb031d42572cdefc23c04
     container_name: sabnzbd
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
@@ -311,7 +311,7 @@ services:
     init: true
 
   sabnzbd-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.1.0@sha256:ffe2065573db0f9717443143316eac6b335c37e6f6fea2f6a238ef3f134ee50a
+    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
     container_name: sabnzbd-exporter
     depends_on:
       - sabnzbd
@@ -342,7 +342,7 @@ services:
     init: false
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:4.0.14@sha256:cefa1c97ba8f5db60c1c89d04015ead764d3b850b4fbdc5784bdde2a02d72350
+    image: ghcr.io/linuxserver/sonarr:4.0.14@sha256:a347f6c83d9d47af53819287410ac4d7f203987038bf7579d819020ef84116d3
     container_name: sonarr
     depends_on:
       postgres:
@@ -375,7 +375,7 @@ services:
     init: true
 
   sonarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.1.0@sha256:ffe2065573db0f9717443143316eac6b335c37e6f6fea2f6a238ef3f134ee50a
+    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
     container_name: sonarr-exporter
     depends_on:
       - sonarr
