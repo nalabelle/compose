@@ -70,7 +70,7 @@ services:
     init: true
 
   miniflux:
-    image: miniflux/miniflux:latest@sha256:be23e6d4757b76aceffc05e4a3b0d029bea885da3bc5fa319ab9be3531dbf695
+    image: miniflux/miniflux:latest@sha256:3a11ac10969ec406d90eb9f2cec04e7d3b89bd9bc728bab6f036f604c4396f1c
     container_name: miniflux
     depends_on:
       postgres:
@@ -112,7 +112,7 @@ services:
     init: true
 
   miniflux-sidekick:
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1743533757@sha256:2772914e1a870e53b679aefee35bbc1a81f06072532f993c31ce6bc676592b6c
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1745437612@sha256:a45bfb48a0ff6f09b702419196223ba716e6c8ff85f74004b9dbae48a9a51327
     container_name: miniflux-sidekick
     depends_on:
       miniflux:
@@ -133,7 +133,7 @@ services:
     init: true
 
   redis:
-    image: redis:alpine@sha256:02419de7eddf55aa5bcf49efb74e88fa8d931b4d77c07eff8a6b2144472b6952
+    image: redis:alpine@sha256:f773b35a95e170d92dd4214a3ec4859b1b7960bf56896ae687646d695f311187
     container_name: redis
     networks:
       - default
