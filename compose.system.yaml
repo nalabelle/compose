@@ -91,7 +91,6 @@ services:
       - chadburn.enabled=true
       - chadburn.job-exec.kopia-backup.schedule=@every 6h
       - chadburn.job-exec.kopia-backup.command=/usr/local/bin/kopia-backup
-    user: "0:0"
     deploy:
       resources:
         reservations:
