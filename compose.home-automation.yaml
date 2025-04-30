@@ -146,7 +146,7 @@ services:
       - ${ZIGBEE_DEVICE:?}:/dev/zigbee
     expose:
       - "8080"
-    init: true
+    init: false
 
 networks:
   default:
