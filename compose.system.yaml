@@ -65,7 +65,6 @@ services:
   kopia:
     image: kopia/kopia:latest@sha256:615b786bdb46d5a9301338983e8077e5be0f1c643b7a3188c8732989104accf4
     container_name: kopia
-    user: "${UID:-1000}:${DOCKER_GID:-104}"
     volumes:
       - ${VOLUMES:?}:/volumes:ro
       # Don't put kopia in with the volumes or it'll loop itself
@@ -91,6 +90,7 @@ services:
       - chadburn.enabled=true
       - chadburn.job-exec.kopia-backup.schedule=@every 6h
       - chadburn.job-exec.kopia-backup.command=/usr/local/bin/kopia-backup
+    user: "0:0"
     deploy:
       resources:
         reservations:
@@ -196,6 +196,7 @@ services:
 
   scheduler:
     image: premoweb/chadburn:1.9.5@sha256:c1766c5ed884e7f4d518561584ffa6e03d836573c4e01ab180dbd2fd10c11d0b
+    user: "${UID:-1000}:${DOCKER_GID:-104}"
     container_name: scheduler
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock
