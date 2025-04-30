@@ -65,6 +65,7 @@ services:
   kopia:
     image: kopia/kopia:latest@sha256:615b786bdb46d5a9301338983e8077e5be0f1c643b7a3188c8732989104accf4
     container_name: kopia
+    user: "${UID:-1000}:${DOCKER_GID:-104}"
     volumes:
       - ${VOLUMES:?}:/volumes:ro
       # Don't put kopia in with the volumes or it'll loop itself
