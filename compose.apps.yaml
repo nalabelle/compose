@@ -205,6 +205,7 @@ services:
 networks:
   default:
     name: ${COMPOSE_PROJECT_NAME:?}
+    enable_ipv6: true
   proxy-apps:
     name: proxy-apps
 
@@ -215,4 +216,4 @@ secrets:
 configs:
   wallabag_99-custom:
     content: |
-      memory_limit=200M
+      memory_limit=800M
