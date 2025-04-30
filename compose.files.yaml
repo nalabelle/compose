@@ -54,7 +54,7 @@ services:
           memory: 1G
     expose:
       - "8000"
-    init: true
+    init: false
 
   pdf-web-edit:
     image: ghcr.io/danielhabenicht/danielhabenicht/fork.pdf-web-edit:v0.9.6@sha256:e851892cc1dc9d8d62c941d37a47057063d9d51d80ad9e95d07ce711259984be
