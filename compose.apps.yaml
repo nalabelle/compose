@@ -5,7 +5,7 @@ include:
 
 services:
   grist:
-    image: registry-1.docker.io/gristlabs/grist:1.5.1@sha256:15033bb08459c85bdd1889fd25f217e1bf77745ad430dfded540cd535e97c06f
+    image: registry-1.docker.io/gristlabs/grist:1.5.2@sha256:f326d59774db6caf1ad09c34c9fc8d2f67741f0dd237ff9ae3470f875ffd452e
     container_name: grist
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grist:/persist
@@ -112,7 +112,7 @@ services:
     init: true
 
   miniflux-sidekick:
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1745437612@sha256:a45bfb48a0ff6f09b702419196223ba716e6c8ff85f74004b9dbae48a9a51327
+    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1745437612@sha256:b508b34e58bd185556a2bc4398de1d9967321e9f4468a3ffd8f43e8565cfeab5
     container_name: miniflux-sidekick
     depends_on:
       miniflux:

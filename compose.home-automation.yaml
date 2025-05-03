@@ -34,7 +34,7 @@ services:
     init: false
 
   home-assistant:
-    image: ghcr.io/home-assistant/home-assistant:2025.4@sha256:ef20dcfefbadbfa2bfa1039dd82e329e67e3d26f04d9a7d795fe703974c940ca
+    image: ghcr.io/home-assistant/home-assistant:2025.4@sha256:c9a4eefee167f674db4a51b1b7466339a5637978cee4df0269e5f41ff1614aaf
     container_name: home-assistant
     depends_on:
       postgres:
@@ -121,7 +121,7 @@ services:
     init: false
 
   zigbee2mqtt:
-    image: ghcr.io/koenkk/zigbee2mqtt:2.2.1@sha256:5c1f0ca9669292b1bdabc7b6d9927642049bc2c1ee53f42b7299181e93dd7d8f
+    image: ghcr.io/koenkk/zigbee2mqtt:2.3.0@sha256:42de8c55dc578a8404a18c43aeb2b7c75be7988179abe9a8195d99a9e7ebb917
     container_name: zigbee2mqtt
     depends_on:
       - mosquitto
