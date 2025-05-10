@@ -29,7 +29,7 @@ services:
     expose:
       - "9093"
   alloy:
-    image: registry-1.docker.io/grafana/alloy:v1.8.2@sha256:8fad63014ac2d69dd5e21e51ec1639bb6f52b43402ff8ca96125ea874b7f6422
+    image: registry-1.docker.io/grafana/alloy:v1.8.3@sha256:ab04df3936e4d71d31b6f55e0c58a7e749091f59635dd8c2bc731ba1b6c93701
     container_name: alloy
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock:ro
@@ -101,7 +101,7 @@ services:
     init: true
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.116.0@sha256:b10c78f4bd9b52554b7f863ff416e480d931b1811f591049d166eea1fb247638
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.117.0@sha256:2093194e9c28343d264bf7098b72eee0351658827c5059e4ee3716f6279531be
     container_name: metrics
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics:/storage
@@ -172,7 +172,7 @@ services:
       - "9100"
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:3eb3f642d45781a5a9f62d3e426d2b68750da3140affc380ff36f563b4a5703b
+    image: registry-1.docker.io/library/docker:cli@sha256:3c69ee4af37c4efc954a29aeeb063f2194f3764851239e1fdbaa39c9dfe1157d
     container_name: oom
     volumes:
       - ${DOCKER_SOCKET:?}:/var/run/docker.sock
@@ -284,7 +284,7 @@ services:
     init: true
 
   vmalert:
-    image: registry-1.docker.io/victoriametrics/vmalert:v1.116.0@sha256:b33ab710a7c4f68928c7d832222c9892952736f72e40012449102787fdfae135
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.117.0@sha256:d0b1012ffb57f05e6c850d4bd290e88986bfbafcc1a70b41016c863eb53f32ef
     container_name: vmalert
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}-${HOSTNAME:?}/victoria-metrics/_alerts:/etc/alerts

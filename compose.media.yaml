@@ -33,7 +33,7 @@ services:
     init: true
 
   bazarr:
-    image: ghcr.io/linuxserver/bazarr:1.5.1@sha256:f17f0335c1b61aae73dd2b08477ead4ebc6df03f57badddb42a173e4637ee1ed
+    image: ghcr.io/linuxserver/bazarr:1.5.1@sha256:034e679ae691e10841a0a5a54cd349b042f49f5403cd66211c001314056f567f
     container_name: bazarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr:/config
@@ -94,7 +94,7 @@ services:
     init: false
 
   lidarr:
-    image: ghcr.io/linuxserver/lidarr:2.11.2@sha256:d44312a0849e84970a5f13db183eda993861078e5b9d1fdec31a0daa53226a24
+    image: ghcr.io/linuxserver/lidarr:2.11.2@sha256:eca135d4c2bfd0472c56002bd865d87822d9d439a2ba7e72a2615c0382db85bc
     container_name: lidarr
     depends_on:
       postgres:
@@ -157,7 +157,7 @@ services:
     init: false
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.35.1@sha256:126ead562b0fb1716e5c07db1df81f96351ae4de07b0101423cbc9317ccf012d
+    image: ghcr.io/linuxserver/prowlarr:1.35.1@sha256:dec1e580aad36bccaeb1aba283f01a5263761905c304875a603c9a952ecfda79
     container_name: prowlarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
@@ -280,7 +280,7 @@ services:
     init: false
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:4.5.1@sha256:64fef49beb0bf1df043c556c2abf1b8485031fad6409995d75ee93e201359d52
+    image: ghcr.io/linuxserver/sabnzbd:4.5.1@sha256:580cc1e4af14500d07d9a0c7abab86ef333e28a2c8124725072075116e8227d1
     container_name: sabnzbd
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
@@ -342,7 +342,7 @@ services:
     init: false
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:4.0.14@sha256:5581b2188f11ea6693e0dfe3f3c3198bb605b78088ec685ad579a5a308cc0d5d
+    image: ghcr.io/linuxserver/sonarr:4.0.14@sha256:bae1b72ad55cee030a416aaaef1f20eee076e4c1c6d490689904d4609a2cabac
     container_name: sonarr
     depends_on:
       postgres:
@@ -405,7 +405,7 @@ services:
       - "9707"
     init: false
   ytdl-sub:
-    image: ghcr.io/jmbannon/ytdl-sub:2025.05.01@sha256:e5810cb81ca7487345da4d3e1ebc718f588f0677c02563da1d5fae6126891c56
+    image: ghcr.io/jmbannon/ytdl-sub:2025.05.05@sha256:623c47a0fc8121b6bac5baea6de779aa7dfa797707a339ad9f4aab2f9b2201f2
     container_name: ytdl-sub
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdl-sub:/config
