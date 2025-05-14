@@ -1,0 +1,79 @@
+services:
+  traefik:
+    image:
+      "traefik:v3.2@sha256:d12741b971f5c833919db2b680191dc23d5d96ef17e41a914e3\
+      c593a8c663ac4"
+    container_name: traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Holds the ssl cert, which can be regenerated
+      - traefik-data:/data
+    secrets:
+      - traefik-cf_dns_api_token
+      - traefik-cf_zone_api_token
+    environment:
+      CF_DNS_API_TOKEN_FILE: /run/secrets/traefik-cf_dns_api_token
+      CF_ZONE_API_TOKEN_FILE: /run/secrets/traefik-cf_zone_api_token
+    ports:
+      - "443:443"
+      - "80:80"
+      # Uncomment this to access traefik dashboard directly
+      # - "8080:8080"
+    command:
+      - --log.level=DEBUG
+      - --accesslog=true
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --api.disabledashboardad=true
+      - --certificatesresolvers.letsencrypt=true
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesresolvers.letsencrypt.acme.email=${EMAIL?}
+      - --certificatesresolvers.letsencrypt.acme.storage=/data/letsencrypt-acme.json
+      - --entrypoints.web=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure=true
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      - --entrypoints.websecure.http.tls.certresolver=letsencrypt
+      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN:?}
+      - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN:?}
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.defaultrule=Host(`{{ normalize
+        .ContainerName}}.${DOMAIN:?}`)
+    restart: unless-stopped
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.traefik.rule: Host(`${HOSTNAME:?}.${DOMAIN:?}`)
+      traefik.http.routers.traefik.service: traefik
+      traefik.http.services.traefik.loadbalancer.server.port: "8080"
+      traefik.tls.stores.default.defaultgeneratedcert.resolver: "letsencrypt"
+      traefik.tls.stores.default.defaultgeneratedcert.domain.main: "${DOMAIN:?}"
+      traefik.tls.stores.default.defaultgeneratedcert.domain.sans: "*.${DOMAIN:?}"
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 96M
+    init: true
+
+  auto_docker_proxy:
+    image: obeoneorg/traefik_network_connector
+    volumes:
+      - /usr/src/app/config.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
+
+secrets:
+  traefik-cf_dns_api_token:
+    environment: CF_DNS_API_TOKEN
+  traefik-cf_zone_api_token:
+    environment: CF_ZONE_API_TOKEN
+
+volumes:
+  traefik-data: {}
