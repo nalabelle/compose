@@ -64,7 +64,7 @@ services:
     init: true
 
   auto_docker_proxy:
-    image: obeoneorg/traefik_network_connector
+    image: obeoneorg/traefik_network_connector@sha256:4600c0044f0712a05b8d97a1507b6b977d37e123924d1febc4d7be68e0a34120
     volumes:
       - /usr/src/app/config.yaml
       - /var/run/docker.sock:/var/run/docker.sock
