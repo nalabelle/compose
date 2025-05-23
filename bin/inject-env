@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -eu
+set -o pipefail
+
+HOSTNAME=${HOSTNAME:-$(hostname)}
+
+op inject -f -i .env.tpl -o .env
+
+{
+  echo "";
+  echo "HOSTNAME=${HOSTNAME}";
+  echo "";
+  test -f .env.local && echo "# LOCAL OVERRIDES" && cat .env.local;
+} >> .env
