@@ -1,0 +1,22 @@
+docker:
+  host: "unix:///var/run/docker.sock"
+  tls:
+    # Enable TLS
+    enabled: false
+    # Path to CA certificate for TLS verification
+    verify: ""
+    # Path to client certificate for TLS
+    cert: ""
+    # Path to client key for TLS
+    key: ""
+logLevel:
+  # Logging Configuration (Possible values : "DEBUG", "INFO", "WARN", "ERROR", "FATAL")
+  # General logging level for all libraries etc
+  general: "INFO"
+  # This application specific logging level
+  application: "DEBUG"
+traefik:
+  # Name of the Traefik container
+  containerName: "traefik"
+  # Label to monitor for Traefik management (using regex)
+  monitoredLabel: "^traefik.enable$"
