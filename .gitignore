@@ -1,8 +1,8 @@
 /.cache
 /.deploy
 /.devbox
-/.env
-/.env.local
+.env
+.env.local
 /_secrets
 /node_modules
 /volumes
