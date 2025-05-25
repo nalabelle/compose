@@ -1,6 +1,6 @@
 services:
   tailscale:
-    image: tailscale/tailscale:latest
+    image: tailscale/tailscale:latest@sha256:25cadf045d992b7c82f1a006ccda781a67c47ba5d9ee35ce1f9d25319d1bcbc4
     container_name: tailscale
     environment:
       #- TS_SERVE_CONFIG=/config/ts-serve.json
@@ -81,7 +81,7 @@ services:
 
   auto_docker_proxy:
     container_name: auto-docker-proxy
-    image: obeoneorg/traefik_network_connector
+    image: obeoneorg/traefik_network_connector@sha256:b7cf582c0ca4eaf33d95ae97d3eb07f0767a7f6cc2d3f59675997c5509ea63a3
     configs:
       - source: auto-docker-proxy-config
         target: /usr/src/app/config.yaml
