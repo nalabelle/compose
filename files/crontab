@@ -10,4 +10,4 @@ CRON_TZ=America/Los_Angeles
 # MariaDB backup job
 0 */12 * * *    docker exec -t files-mariadb /usr/local/bin/db-backup
 # Postgres backup job
-0 */12 * * *    docker exec -t files-postgres /usr/local/bin/db-backup
+30 */12 * * *    docker exec -t files-postgres /usr/local/bin/db-backup

@@ -1,0 +1,11 @@
+services:
+  stirling:
+    volumes:
+      - local-inbox:/pipeline/watchedFolders
+      - local-processed:/pipeline/finishedfolders
+
+volumes:
+  local-inbox: {}
+  local-processed: {}
+  nfs-photos: !override {}
+  nfs-documents: !override {}

@@ -8,7 +8,8 @@ services:
     configs:
       - source: postgres_db-backup
         target: /usr/local/bin/db-backup
-        mode: 555
+      - source: postgres_db-init
+        target: /usr/local/bin/db-init
     secrets:
       - postgres_password
     environment:
@@ -38,4 +39,6 @@ secrets:
 
 configs:
   postgres_db-backup:
-    file: ./postgres/db-backup
+    file: db-backup
+  postgres_db-init:
+    file: db-init

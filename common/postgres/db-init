@@ -1,0 +1,54 @@
+#!/bin/bash
+set -e
+
+# Generic PostgreSQL database user initialization script
+# Usage: db-init <db_name> <username> <password>
+
+DB_NAME=$1
+USERNAME=$2
+PASSWORD=$3
+
+if [ -z "$DB_NAME" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ]; then
+  echo "Error: Missing required parameters"
+  echo "Usage: db-init <db_name> <username> <password>"
+  exit 1
+fi
+
+# Function to check if database is already initialized
+check_db_initialized() {
+  # Try to connect to the database as the user
+  PGPASSWORD="${PASSWORD}" psql -h postgres -U "${USERNAME}" -d "${DB_NAME}" -c "SELECT 1" &>/dev/null
+  return $?
+}
+
+# Initialize PostgreSQL user and database
+init_db() {
+  echo "Initializing PostgreSQL user and database: ${DB_NAME} for user: ${USERNAME}..."
+
+  # Get the root password from the secret file
+  if [ -f "/run/secrets/postgres_password" ]; then
+    ROOT_PASSWORD=$(cat "/run/secrets/postgres_password")
+  else
+    echo "Error: PostgreSQL root password secret file not found"
+    exit 1
+  fi
+
+  # Connect as postgres user to create the user and database
+  PGPASSWORD="${ROOT_PASSWORD}" psql -h postgres -U postgres -c "CREATE USER ${USERNAME} WITH PASSWORD '${PASSWORD}';"
+  PGPASSWORD="${ROOT_PASSWORD}" psql -h postgres -U postgres -c "CREATE DATABASE ${DB_NAME} OWNER ${USERNAME};"
+
+  echo "PostgreSQL initialization completed for ${DB_NAME}."
+}
+
+# Main execution
+echo "Starting database initialization check for ${DB_NAME}..."
+
+# Initialize PostgreSQL if needed
+if ! check_db_initialized; then
+  echo "Database ${DB_NAME} not initialized. Creating user and database..."
+  init_db
+else
+  echo "Database ${DB_NAME} already initialized."
+fi
+
+echo "Database initialization completed for ${DB_NAME}."

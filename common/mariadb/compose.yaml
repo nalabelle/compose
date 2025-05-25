@@ -9,7 +9,8 @@ services:
     configs:
       - source: mariadb-backup
         target: /usr/local/bin/db-backup
-        mode: 555
+      - source: mariadb-init
+        target: /usr/local/bin/db-init
     secrets:
       - mariadb-password
     environment:
@@ -52,4 +53,6 @@ secrets:
 
 configs:
   mariadb-backup:
-    file: ./mariadb/db-backup
+    file: db-backup
+  mariadb-init:
+    file: db-init

@@ -27,6 +27,9 @@ docker-clean:
 	@# Help: Not included in normal clean, removes all docker containers
 	@[ -n "$$(docker ps -aq)" ] || { echo "No containers to remove" && exit 0; }
 	@docker ps -aq | xargs docker stop | xargs docker rm
+	@docker system prune -af
+	@docker volume prune -af
+	@docker image prune -f
 
 
 .PHONY: docker-prune

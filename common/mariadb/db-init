@@ -1,0 +1,58 @@
+#!/bin/bash
+set -e
+
+# Generic MariaDB database user initialization script
+# Usage: db-init <db_name> <username> <password>
+
+DB_NAME=$1
+USERNAME=$2
+PASSWORD=$3
+
+if [ -z "$DB_NAME" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ]; then
+  echo "Error: Missing required parameters"
+  echo "Usage: db-init <db_name> <username> <password>"
+  exit 1
+fi
+
+# Function to check if database is already initialized
+check_db_initialized() {
+  # Try to connect to the database as the user
+  mariadb -h mariadb -u "${USERNAME}" -p"${PASSWORD}" -e "SELECT 1" "${DB_NAME}" &>/dev/null
+  return $?
+}
+
+# Initialize MariaDB user and database
+init_db() {
+  echo "Initializing MariaDB user and database: ${DB_NAME} for user: ${USERNAME}..."
+
+  # Get the root password from the secret file
+  if [ -f "/run/secrets/mariadb-password" ]; then
+    ROOT_PASSWORD=$(cat "/run/secrets/mariadb-password")
+  else
+    echo "Error: MariaDB root password secret file not found"
+    exit 1
+  fi
+
+  # Connect as root user to create the user and database
+  mariadb -h mariadb -u root -p"${ROOT_PASSWORD}" <<EOF
+CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS '${USERNAME}'@'%' IDENTIFIED BY '${PASSWORD}';
+GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${USERNAME}'@'%';
+FLUSH PRIVILEGES;
+EOF
+
+  echo "MariaDB initialization completed for ${DB_NAME}."
+}
+
+# Main execution
+echo "Starting database initialization check for ${DB_NAME}..."
+
+# Initialize MariaDB if needed
+if ! check_db_initialized; then
+  echo "Database ${DB_NAME} not initialized. Creating user and database..."
+  init_db
+else
+  echo "Database ${DB_NAME} already initialized."
+fi
+
+echo "Database initialization completed for ${DB_NAME}."

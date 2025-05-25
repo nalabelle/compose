@@ -47,37 +47,53 @@ pull: compose.yaml .env
 	docker compose -f $< pull
 
 .PHONY: dev-recreate
-dev-recreate: compose.yaml .env secrets
+dev-recreate:: compose.yaml .env secrets
 	@# Help: Run docker compose in dev mode, recreating containers
 	@if [ -f compose.dev.yaml ]; then \
-		docker compose -f compose.yaml -f compose.dev.yaml up --force-recreate --remove-orphans -d; \
+		CMD="docker compose -f compose.yaml -f compose.dev.yaml up --force-recreate --remove-orphans -d"; \
+		echo "$$CMD"; \
+		eval "$$CMD"; \
 	else \
-		docker compose -f compose.yaml up --force-recreate --remove-orphans -d; \
+		CMD="docker compose -f compose.yaml up --force-recreate --remove-orphans -d"; \
+		echo "$$CMD"; \
+		eval "$$CMD"; \
 	fi
 
 .PHONY: dev
-dev: compose.yaml .env secrets
+dev:: compose.yaml .env secrets
 	@# Help: Run docker compose in dev mode
 	@if [ -f compose.dev.yaml ]; then \
-		docker compose -f compose.yaml -f compose.dev.yaml up --remove-orphans -d; \
+		CMD="docker compose -f compose.yaml -f compose.dev.yaml up --remove-orphans -d"; \
+		echo "$$CMD"; \
+		eval "$$CMD"; \
 	else \
-		docker compose -f compose.yaml up --remove-orphans -d; \
+		CMD="docker compose -f compose.yaml up --remove-orphans -d"; \
+		echo "$$CMD"; \
+		eval "$$CMD"; \
 	fi
 
 .PHONY: deploy
 deploy:: compose.yaml .env secrets
 	@# Help: docker compose up
-	docker compose -f $< up  --remove-orphans -d
+	docker compose -f $< up  --remove-orphans -d -V
 
 .PHONY: deploy-recreate
 deploy-recreate:: compose.yaml .env secrets
 	@# Help: docker compose deploy, recreating containers
-	docker compose -f $< up  --remove-orphans --force-recreate -d
+	docker compose -f $< up  --remove-orphans --force-recreate -d -V
 
 .PHONY: down
 down:: compose.yaml .env
 	@# Help: docker compose remove
-	docker compose down --remove-orphans
+	@if [ -f compose.dev.yaml ]; then \
+		CMD="docker compose -f compose.yaml -f compose.dev.yaml down --remove-orphans -v"; \
+		echo "$$CMD"; \
+		eval "$$CMD"; \
+	else \
+		CMD="docker compose -f compose.yaml down --remove-orphans -v"; \
+		echo "$$CMD"; \
+		eval "$$CMD"; \
+	fi
 
 
 # Generic rule to process any template file
