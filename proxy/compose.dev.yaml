@@ -5,6 +5,11 @@ services:
   traefik:
     secrets: !reset []
     environment: !reset {}
+    volumes:
+      - $HOME/.local/config/certs/_wildcard.compose.localhost-key.pem:/etc/traefik/certs/key.pem
+      - $HOME/.local/config/certs/_wildcard.compose.localhost.pem:/etc/traefik/certs/cert.pem
+      # Mount a dynamic configuration file for static TLS configuration
+      - ./dev/traefik-dynamic.yaml:/etc/traefik/dynamic/conf.yaml
     ports:
       - "8080:8080"
     command:
@@ -21,6 +26,9 @@ services:
       - --entrypoints.websecure=true
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
+      # Add file provider for static configuration
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName }}.${DOMAIN:?}`)
