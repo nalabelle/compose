@@ -17,15 +17,10 @@ services:
       - default
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-    labels:
-      - chadburn.enabled=true
-      - chadburn.job-exec.${COMPOSE_PROJECT_NAME:?}-db-backup.schedule=@every 12h
-      - chadburn.job-exec.${COMPOSE_PROJECT_NAME:?}-db-backup.command=/usr/local/bin/db-backup
-      - chadburn.job-exec.${COMPOSE_PROJECT_NAME:?}-db-backup.user=postgres
     deploy:
       resources:
         reservations:
@@ -39,8 +34,8 @@ services:
 
 secrets:
   postgres_password:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/common/postgres/password
+    environment: POSTGRES_ROOT_PASSWORD
 
 configs:
   postgres_db-backup:
-    file: ${CONFIGS:?}/common/postgres/db-backup
+    file: ./postgres/db-backup

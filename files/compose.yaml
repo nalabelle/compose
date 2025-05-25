@@ -1,8 +1,8 @@
 name: files
 
 include:
-  - path: common/compose.postgres.yaml
-  - path: common/compose.mariadb.yaml
+  - path: ../common/compose.postgres.yaml
+  - path: ../common/compose.mariadb.yaml
 
 services:
   paperless:
@@ -24,7 +24,8 @@ services:
       PAPERLESS_URL: https://paperless.${DOMAIN:?}
       PAPERLESS_REDIS: redis://redis:6379
       PAPERLESS_DBHOST: postgres
-      PAPERLESS_DBPASS_FILE: /run/secrets/paperless-dbpass
+      PAPERLESS_DBPASS: ${PAPERLESS_DBPASS:?}
+      # PAPERLESS_DBPASS_FILE doesn't trim whitespace so is kinda useless
       PAPERLESS_DATA_DIR: /config/data
       PAPERLESS_MEDIA_ROOT: /documents
       PAPERLESS_CONSUMPTION_DIR: /documents/_processed
@@ -38,13 +39,9 @@ services:
       PAPERLESS_WEBSERVER_WORKERS: "2"
       USERMAP_UID: "3005"
       USERMAP_GID: "100"
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -76,13 +73,9 @@ services:
         type: volume
         volume:
           subpath: _rejected
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -106,21 +99,26 @@ services:
     configs:
       - source: photoprism-maintenance
         target: /app/scripts/maintain
-    env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/photoprism/env
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
+    environment:
+      HOME: /assets/config
+      PHOTOPRISM_ADMIN_PASSWORD:
+      PHOTOPRISM_CACHE_PATH: /assets/cache
+      PHOTOPRISM_DATABASE_DRIVER: mysql
+      PHOTOPRISM_DATABASE_DSN:
+      PHOTOPRISM_DEBUG: true
+      PHOTOPRISM_EXPORT_PATH: /photos/export
+      PHOTOPRISM_HTTP_COMPRESSION: gzip
+      PHOTOPRISM_HTTP_HOST: 0.0.0.0
+      PHOTOPRISM_HTTP_PORT: 2342
+      PHOTOPRISM_IMPORT_PATH: /photos/import
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000
+      PHOTOPRISM_ORIGINALS_PATH: /photos/Catalog
+      PHOTOPRISM_SITE_URL: https://photoprism.${DOMAIN:?}
+      PHOTOPRISM_STORAGE_PATH: /photos/Photoprism
+      PHOTOPRISM_UMASK: "0002"
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
-      - chadburn.enabled=true
-      - chadburn.job-exec.photoprism-backup.schedule=@every 12h
-      - chadburn.job-exec.photoprism-backup.command=photoprism backup -a -i -f
-      - chadburn.job-exec.photoprism-import.schedule=@every 1h
-      - chadburn.job-exec.photoprism-import.command=photoprism import
-      - chadburn.job-exec.photoprism-maintain.schedule=@every 24h
-      - chadburn.job-exec.photoprism-maintain.command=/app/scripts/maintain
     deploy:
       resources:
         reservations:
@@ -136,12 +134,10 @@ services:
     image: redis:alpine@sha256:62b5498c91778f738f0efbf0a6fd5b434011235a3e7b5f2ed4a2c0c63bb1c786
     container_name: redis
     volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/redis:/data
-    networks:
-      - default
+      - redis-data:/data
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 20s
       timeout: 3s
     deploy:
@@ -155,13 +151,8 @@ services:
       - "6379"
     init: true
 
-networks:
-  default:
-    name: ${COMPOSE_PROJECT_NAME:?}
-  proxy-files:
-    name: proxy-files
-
 volumes:
+  redis-data: {}
   nfs-photos:
     driver_opts:
       type: nfs
@@ -173,10 +164,10 @@ volumes:
       o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
       device: ":/documents"
 
-secrets:
-  paperless-dbpass:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/paperless/dbpass
-
 configs:
   photoprism-maintenance:
-    file: ${CONFIGS:?}/${COMPOSE_PROJECT_NAME:?}/photoprism-maintenance
+    file: ./photoprism-maintenance
+
+secrets:
+  paperless-dbpass:
+    environment: PAPERLESS_DBPASS

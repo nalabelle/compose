@@ -16,8 +16,6 @@ services:
       MARIADB_AUTO_UPGRADE: "1"
       MARIADB_INITDB_SKIP_TZINFO: "1"
       MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mariadb-password
-    networks:
-      - default
     command:
       - --innodb-buffer-pool-size=512M
       - --transaction-isolation=READ-COMMITTED
@@ -28,15 +26,10 @@ services:
       - --innodb-lock-wait-timeout=120
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
       timeout: 5s
       retries: 5
-    labels:
-      - chadburn.enabled=true
-      - chadburn.job-exec.${COMPOSE_PROJECT_NAME:?}-mariadb-backup.schedule=@every
-        12h
-      - chadburn.job-exec.${COMPOSE_PROJECT_NAME:?}-mariadb-backup.command=/usr/local/bin/db-backup
     deploy:
       resources:
         reservations:
@@ -55,8 +48,8 @@ services:
 
 secrets:
   mariadb-password:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/common/mariadb/password
+    environment: MARIADB_ROOT_PASSWORD
 
 configs:
   mariadb-backup:
-    file: ${CONFIGS:?}/common/mariadb/db-backup
+    file: ./mariadb/db-backup

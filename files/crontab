@@ -1,0 +1,13 @@
+# shellcheck shell=bash disable=SC2034,SC2035
+SHELL=/bin/bash
+CRON_TZ=America/Los_Angeles
+
+# Photoprism jobs
+0 */12 * * *    docker exec -t photoprism photoprism backup -a -i -f
+0 * * * *       docker exec -t photoprism photoprism import
+0 0 * * *       docker exec -t photoprism /app/scripts/maintain
+
+# MariaDB backup job
+0 */12 * * *    docker exec -t files-mariadb /usr/local/bin/db-backup
+# Postgres backup job
+0 */12 * * *    docker exec -t files-postgres /usr/local/bin/db-backup
