@@ -4,6 +4,7 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 .DEFAULT_GOAL:=help
+
 print-%:
 	@echo $*=$($*)
 showdeps-%:
@@ -23,10 +24,15 @@ help:
 		| sort
 
 .PHONY: clean
-clean: down
+clean:: down
 	@# Help: Remove all generated files and docker containers/volumes
 	rm -f .env
 	docker rm --volumes
+
+.PHONY: secrets
+secrets::
+	@# Help: Load secrets from 1password - to be overriden by specific Makefiles
+	@true
 
 .env: .env.tpl $(wildcard .env.local)
 	@# Help: Load secrets from 1password
@@ -40,7 +46,7 @@ pull: compose.yaml .env
 	docker compose -f $< pull
 
 .PHONY: dev-recreate
-dev-recreate: compose.yaml .env
+dev-recreate: compose.yaml .env secrets
 	@# Help: Run docker compose in dev mode, recreating containers
 	@if [ -f compose.dev.yaml ]; then \
 		docker compose -f compose.yaml -f compose.dev.yaml up --force-recreate --remove-orphans -d; \
@@ -49,7 +55,7 @@ dev-recreate: compose.yaml .env
 	fi
 
 .PHONY: dev
-dev: compose.yaml .env
+dev: compose.yaml .env secrets
 	@# Help: Run docker compose in dev mode
 	@if [ -f compose.dev.yaml ]; then \
 		docker compose -f compose.yaml -f compose.dev.yaml up --remove-orphans -d; \
@@ -58,12 +64,12 @@ dev: compose.yaml .env
 	fi
 
 .PHONY: deploy
-deploy: compose.yaml .env
+deploy: compose.yaml .env secrets
 	@# Help: docker compose up
 	docker compose -f $< up  --remove-orphans -d
 
 .PHONY: deploy-recreate
-deploy-recreate: compose.yaml .env
+deploy-recreate: compose.yaml .env secrets
 	@# Help: docker compose deploy, recreating containers
 	docker compose -f $< up  --remove-orphans --force-recreate -d
 
@@ -71,3 +77,9 @@ deploy-recreate: compose.yaml .env
 down: compose.yaml .env
 	@# Help: docker compose remove
 	docker compose down --remove-orphans
+
+
+# Generic rule to process any template file
+%.yaml: %.template.yaml
+	@# Help: Generate config from template
+	op inject -f -i $< -o $@
