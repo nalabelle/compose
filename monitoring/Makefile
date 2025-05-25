@@ -8,5 +8,5 @@ clean::
 
 # Make secrets depend on all template targets
 secrets:: $(TEMPLATE_TARGETS)
-	@true
+	chmod 644 alertmanager-config.yaml
 
