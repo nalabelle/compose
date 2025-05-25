@@ -65,17 +65,17 @@ dev: compose.yaml .env secrets
 	fi
 
 .PHONY: deploy
-deploy: compose.yaml .env secrets
+deploy:: compose.yaml .env secrets
 	@# Help: docker compose up
 	docker compose -f $< up  --remove-orphans -d
 
 .PHONY: deploy-recreate
-deploy-recreate: compose.yaml .env secrets
+deploy-recreate:: compose.yaml .env secrets
 	@# Help: docker compose deploy, recreating containers
 	docker compose -f $< up  --remove-orphans --force-recreate -d
 
 .PHONY: down
-down: compose.yaml .env
+down:: compose.yaml .env
 	@# Help: docker compose remove
 	docker compose down --remove-orphans
 
