@@ -2,4 +2,4 @@
 SHELL=/bin/bash
 CRON_TZ=America/Los_Angeles
 
-0 */6 * * *     docker exec kopia -t /usr/local/bin/kopia-backup
+0 */6 * * *     docker exec -t kopia /usr/local/bin/kopia-backup

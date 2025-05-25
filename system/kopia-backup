@@ -3,6 +3,7 @@ set -eu
 set -o pipefail
 
 kopia repository connect server \
+  --url="$KOPIA_SERVER_ADDRESS" \
   --override-hostname="compose"
 
 for dir in /volumes/*/; do
