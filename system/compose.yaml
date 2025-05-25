@@ -34,7 +34,7 @@ services:
           cpus: "0.01"
           memory: 32M
         limits:
-          memory: 64M
+          memory: 256M
     expose:
       - "12345"
     hostname: ${HOSTNAME:?}-alloy
