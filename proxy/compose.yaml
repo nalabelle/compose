@@ -1,27 +1,9 @@
 services:
-  tailscale:
-    image: tailscale/tailscale:latest
-    container_name: tailscale
-    environment:
-      #- TS_SERVE_CONFIG=/config/ts-serve.json
-      - TS_AUTHKEY
-      - TS_HOSTNAME=${TS_HOSTNAME:-${HOSTNAME:?}}
-      - TS_STATE_DIR=/var/lib/tailscale
-      - TS_USERSPACE=false
-    volumes:
-      - tailscale-data:/var/lib/tailscale
-      - /dev/net/tun:/dev/net/tun
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    restart: unless-stopped
-
   traefik:
     image:
       "traefik:v3.2@sha256:d12741b971f5c833919db2b680191dc23d5d96ef17e41a914e3\
       c593a8c663ac4"
     container_name: traefik
-    network_mode: service:ts-traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       # Holds the ssl cert, which can be regenerated
