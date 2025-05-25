@@ -1,0 +1,10 @@
+# Disallow all yaml
+*.yaml
+*.yml
+
+# Allow compose files and templates
+!compose*.yaml
+!*template.yaml
+
+# Allow specific yaml
+!alerts.yaml

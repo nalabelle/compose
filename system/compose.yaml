@@ -5,6 +5,8 @@ services:
     image: registry-1.docker.io/grafana/alloy:v1.8.3@sha256:ab04df3936e4d71d31b6f55e0c58a7e749091f59635dd8c2bc731ba1b6c93701
     container_name: ${HOSTNAME:?}-alloy
     privileged: true
+    environment:
+      - ALLOY_REMOTE_WRITE_URL
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro

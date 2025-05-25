@@ -1,0 +1,84 @@
+name: monitoring
+
+services:
+  alertmanager:
+    image: registry-1.docker.io/prom/alertmanager:v0.28.1@sha256:27c475db5fb156cab31d5c18a4251ac7ed567746a2483ff264516437a39b15ba
+    container_name: alertmanager
+    secrets:
+      - source: alertmanager
+        target: /config/alertmanager.yaml
+    command:
+      - --web.external-url=https://${HOSTNAME:?}-alertmanager.${DOMAIN:?}
+      - --config.file=/config/alertmanager.yaml
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.alertmanager.rule=Host(`${HOSTNAME:?}-alertmanager.${DOMAIN:?}`)
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 32M
+        limits:
+          memory: 64M
+    expose:
+      - "9093"
+
+  metrics:
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.117.1@sha256:2ec9b49446cb36cff751d2920de34f3fd80e9d90ea460ce469c1e57878bff55a
+    container_name: metrics
+    configs:
+      - source: scrape-configs
+        target: /config/prometheus.yaml
+    command:
+      - -retentionPeriod=${METRICS_RETENTION:-30d}
+      - -promscrape.config=/config/prometheus.yaml
+      - -storageDataPath=/storage
+      - -vmalert.proxyURL=http://vmalert:8880
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.metrics.rule=Host(`${HOSTNAME:?}-metrics.${DOMAIN:?}`)
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 128M
+    expose:
+      - "8428"
+
+  vmalert:
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.117.1@sha256:abd648ad8a474beb5139f3e414444f0b8de6c2562f355f0c8d077a0e1683b8f4
+    container_name: vmalert
+    configs:
+      - source: alerts
+        target: /alerts/docker.yaml
+    command:
+      - -datasource.url=http://metrics:8428
+      - -remoteRead.url=http://metrics:8428
+      - -remoteWrite.url=http://metrics:8428
+      - -notifier.url=http://alertmanager:9093
+      - -external.url=https://${HOSTNAME:?}-metrics.${DOMAIN:?}
+      - -rule=/alerts/docker.yaml
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 32M
+        limits:
+          memory: 64M
+    expose:
+      - "8880"
+
+secrets:
+  alertmanager:
+    file: alertmanager-config.yaml
+
+configs:
+  alerts:
+    file: alerts.yaml
+  scrape-configs:
+    file: scrape-configs.yaml

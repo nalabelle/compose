@@ -1,0 +1,73 @@
+groups:
+  - name: Dead Ringer
+    rules:
+      - alert: PushMonitor
+        expr: 1
+        annotations:
+          summary: "Always firing alert"
+          description: "Ensures the alerting component is working"
+  - name: Hosts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 15m
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 15 minutes."
+  - name: Backups
+    rules:
+      - alert: PBSSnapshotStale
+        annotations:
+          summary: "PBS Snapshot {{ $labels.vm_id}} stale"
+          description: "PBS Snapshot {{ $labels.vm_id}} hasn't been successful in over 1 week."
+        for: 5m
+        expr: |
+          (time() - max by(vm_id) (pbs_snapshot_vm_last_timestamp{vm_id=~"101|102|104|107"}[5m])) / 3600 > 168
+      - alert: KopiaBackupStaleCompose
+        annotations:
+          summary: "Kopia Compose Backup {{ $labels.host }}:{{ $labels.path }} stale"
+          description:
+            "Kopia Backup {{ $labels.user }}@{{ $labels.host}}:{{ $labels.path }} hasn't been
+            successful in over 1 week."
+        for: 5m
+        expr: |
+          (time() - max by(host, path, user) (kopia_backup_run{host=~"compose",path!~"/system-*"}[5m])) / 3600 > 168
+      - alert: KopiaBackupStaleFileserver
+        annotations:
+          summary: "Kopia Fileserver Backup {{ $labels.host }}:{{ $labels.path }} stale"
+          description:
+            "Kopia Backup {{ $labels.user }}@{{ $labels.host}}:{{ $labels.path }} hasn't been
+            successful in over 1 week."
+        for: 5m
+        expr: |
+          (time() - max by(host, path, user) (kopia_backup_run{host=~"files"}[5m])) / 3600 > 168
+      - alert: KopiaBackupStaleDesktop
+        annotations:
+          summary: "Kopia Backup {{ $labels.host }}:{{ $labels.path }} for desktop stale"
+          description:
+            "Kopia Backup {{ $labels.user }}@{{ $labels.host}}:{{ $labels.path }} hasn't been
+            successful in over 2 weeks."
+        for: 5m
+        expr: |
+          (time() - max by(host, path, user) (kopia_backup_run{host=~"doyle"}[5m])) / 3600 > 336
+      - alert: ZFSSnapshotStale
+        annotations:
+          summary: "ZFS Snapshot {{ $labels.pool}}:{{ $labels.volume }} stale"
+          description:
+            "ZFS Snapshot {{ $labels.pool}}:{{ $labels.volume }} hasn't been successful in over 72
+            hours."
+        for: 5m
+        expr: |
+          label_replace(
+            (
+              time()
+                -
+              max(zfs_snapshot_latest_time_seconds{volume!="None"}[5m]) by (pool,volume)
+            ) / 3600,
+            "volume",
+            "$1",
+            "volume",
+            "/(.*)"
+          )
+            >
+          72
