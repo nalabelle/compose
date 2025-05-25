@@ -34,10 +34,11 @@ secrets::
 	@# Help: Load secrets from 1password - to be overriden by specific Makefiles
 	@true
 
-.env: .env.tpl $(wildcard .env.local)
+.env: .env.tpl $(wildcard .env.local) $(wildcard ../.env)
 	@# Help: Load secrets from 1password
 	@HOSTNAME=$${HOSTNAME:-$$(hostname)} && \
-	op inject -f -i .env.tpl -o .env && \
+	{ test -f ../.env && cat ../.env; true; } > .env
+	{ op inject -i .env.tpl; true; } >> .env
 	{ test -f .env.local && echo "" && echo "# LOCAL OVERRIDES" && cat .env.local; true; } >> .env
 
 .PHONY: pull
