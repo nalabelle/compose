@@ -8,12 +8,11 @@ services:
       - source: alertmanager
         target: /config/alertmanager.yaml
     command:
-      - --web.external-url=https://${HOSTNAME:?}-alertmanager.${DOMAIN:?}
+      - --web.external-url=https://alertmanager.${DOMAIN:?}
       - --config.file=/config/alertmanager.yaml
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.alertmanager.rule=Host(`${HOSTNAME:?}-alertmanager.${DOMAIN:?}`)
     deploy:
       resources:
         reservations:
@@ -38,7 +37,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.metrics.rule=Host(`${HOSTNAME:?}-metrics.${DOMAIN:?}`)
     deploy:
       resources:
         reservations:
@@ -60,7 +58,7 @@ services:
       - -remoteRead.url=http://metrics:8428
       - -remoteWrite.url=http://metrics:8428
       - -notifier.url=http://alertmanager:9093
-      - -external.url=https://${HOSTNAME:?}-metrics.${DOMAIN:?}
+      - -external.url=https://metrics.${DOMAIN:?}
       - -rule=/alerts/docker.yaml
     restart: unless-stopped
     deploy:
