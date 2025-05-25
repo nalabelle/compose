@@ -21,6 +21,7 @@ services:
       "traefik:v3.2@sha256:d12741b971f5c833919db2b680191dc23d5d96ef17e41a914e3\
       c593a8c663ac4"
     container_name: traefik
+    network_mode: service:ts-traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       # Holds the ssl cert, which can be regenerated
