@@ -1,4 +1,4 @@
-name: proxy
+name: system
 services:
   traefik:
     volumes:
