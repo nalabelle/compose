@@ -6,4 +6,4 @@ CRON_TZ=America/Los_Angeles
 19 */12 * * *   docker exec -t media-postgres /usr/local/bin/db-backup
 
 # ytld-sub job
-19 */12 * * *   docker exec -t ytld-sub /config/scheduled-task
+19 */12 * * *   docker exec -t ytdl-sub /config/scheduled-task
