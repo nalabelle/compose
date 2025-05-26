@@ -1,0 +1,4 @@
+services:
+  miniflux-sidekick:
+    profiles:
+      - norun

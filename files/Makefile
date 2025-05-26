@@ -4,9 +4,14 @@ include ../compose.mk
 	@# Help: Create /etc/cron.d/compose-files
 	@test -d /etc/cron.d && cp crontab /etc/cron.d/compose-files
 
-.PHONY: init-db
-init-db: .env
+init-db:: .env
 	@# Help: Initialize database users for Paperless and PhotoPrism
+	@echo "Starting PostgreSQL and MariaDB containers..."
+	@docker compose up postgres mariadb -d
+	@echo "Waiting for PostgreSQL to be ready..."
+	@until docker exec files-postgres pg_isready -U postgres; do sleep 1; done
+	@echo "Waiting for MariaDB to be ready..."
+	@until docker exec files-mariadb mysqladmin ping -h localhost --silent; do sleep 1; done
 	@echo "Initializing database users..."
 	@set -a; source .env; set +a; \
 	docker exec files-postgres /usr/local/bin/db-init paperless paperless "$${PAPERLESS_DBPASS}" && \
@@ -16,8 +21,5 @@ init-db: .env
 down::
 	rm -f /etc/cron.d/compose-files
 
-# Add init-db to all deployment targets
-deploy:: init-db /etc/cron.d/compose-files
-deploy-recreate:: init-db /etc/cron.d/compose-files
-dev:: init-db
-dev-recreate:: init-db
+deploy:: /etc/cron.d/compose-files
+deploy-recreate:: /etc/cron.d/compose-files

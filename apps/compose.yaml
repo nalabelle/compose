@@ -1,7 +1,7 @@
 name: apps
 
 include:
-  - path: ./common/compose.postgres.yaml
+  - path: ../common/postgres/compose.yaml
 
 services:
   grist:
@@ -11,17 +11,13 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grist:/persist
     environment:
       - APP_HOME_URL=https://grist.${DOMAIN:?}
-      - GRIST_SINGLE_ORG=${ORG:?}
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
+      - GRIST_SINGLE_ORG=${GRIST_ORG:?}
     entrypoint:
       - node
       - ./sandbox/supervisor.mjs
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -39,9 +35,6 @@ services:
     container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     healthcheck:
       test:
@@ -57,7 +50,6 @@ services:
       timeout: 3s
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -85,9 +77,6 @@ services:
       - POLLING_FREQUENCY=180 #Minutes
       - POLLING_PARSING_ERROR_LIMIT=99
       - RUN_MIGRATIONS=1
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     healthcheck:
       test:
@@ -99,7 +88,6 @@ services:
       - metrics-job=miniflux
       - scrape-port=8080
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -113,15 +101,18 @@ services:
 
   miniflux-sidekick:
     image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1746559476@sha256:132707a226bae54e0a742f477ad967a44f13d2da11ce27f1e425743f14d62b1e
-    container_name: miniflux-sidekick
+    environment:
+      MF_API_ENDPOINT: http://miniflux:8080
+      MF_API_KEY: ${MINIFLUX_SIDEKICK_API_KEY:?}
+      MF_ENVIRONMENT: prod
+      MF_KILLFILE_PATH: /config/killfile
+      MF_LOG_LEVEL: debug
+      MF_REFRESH_INTERVAL: "*/1 * * * *"
     depends_on:
       miniflux:
         condition: service_healthy
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick:/config
-    env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick/env
-    networks:
-      - default
     restart: unless-stopped
     deploy:
       resources:
@@ -134,7 +125,6 @@ services:
 
   redis:
     image: redis:alpine@sha256:62b5498c91778f738f0efbf0a6fd5b434011235a3e7b5f2ed4a2c0c63bb1c786
-    container_name: redis
     networks:
       - default
     restart: unless-stopped
@@ -159,6 +149,14 @@ services:
   wallabag:
     image: wallabag/wallabag@sha256:9989e05769885aef0b316508b728580460c7713e435cc0b02c16e7b06e17bb6a
     container_name: wallabag
+    environment:
+      SYMFONY__ENV__DATABASE_DRIVER: pdo_pgsql
+      SYMFONY__ENV__DATABASE_HOST: postgres
+      SYMFONY__ENV__DATABASE_NAME: wallabag
+      SYMFONY__ENV__DATABASE_PASSWORD: ${WALLABAG_DATABASE_PASSWORD:?}
+      SYMFONY__ENV__DATABASE_PORT: 5432
+      SYMFONY__ENV__DATABASE_USER: ${WALLABAG_DATABASE_USER:?}
+      SYMFONY__ENV__DOMAIN_NAME: https://wallabag.${DOMAIN:?}
     depends_on:
       postgres:
         condition: service_healthy
@@ -171,10 +169,6 @@ services:
       - source: wallabag_99-custom
         target: /etc/php81/conf.d/99-custom.ini
         mode: 444
-    env_file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/wallabag/env
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     healthcheck:
       test:
@@ -190,7 +184,6 @@ services:
       timeout: 3s
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -206,12 +199,10 @@ networks:
   default:
     name: ${COMPOSE_PROJECT_NAME:?}
     enable_ipv6: true
-  proxy-apps:
-    name: proxy-apps
 
 secrets:
   miniflux-database_url:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/miniflux/database_url
+    environment: MINIFLUX_DATABASE_URL
 
 configs:
   wallabag_99-custom:

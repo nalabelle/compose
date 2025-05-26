@@ -37,9 +37,21 @@ secrets::
 .env: .env.tpl $(wildcard .env.local) $(wildcard ../.env)
 	@# Help: Load secrets from 1password
 	@HOSTNAME=$${HOSTNAME:-$$(hostname)} && \
-	{ test -f ../.env && cat ../.env; true; } > .env
-	{ op inject -i .env.tpl; true; } >> .env
-	{ test -f .env.local && echo "" && echo "# LOCAL OVERRIDES" && cat .env.local; true; } >> .env
+	TMP_ENV=$$(mktemp) && \
+	{ test -f ../.env && cat ../.env; true; } > $$TMP_ENV && \
+	if op inject -i .env.tpl >> $$TMP_ENV; then \
+		{ test -f .env.local && echo "" && echo "# LOCAL OVERRIDES" && cat .env.local; true; } >> $$TMP_ENV && \
+		mv $$TMP_ENV .env; \
+	else \
+		rm -f $$TMP_ENV; \
+		echo "Error: op inject failed, .env not created"; \
+		exit 1; \
+	fi
+
+.PHONY: init-db
+init-db::
+	@# Help: Initialize database users - to be overridden by specific Makefiles
+	@true
 
 .PHONY: pull
 pull: compose.yaml .env
@@ -47,7 +59,7 @@ pull: compose.yaml .env
 	docker compose -f $< pull
 
 .PHONY: dev-recreate
-dev-recreate:: compose.yaml .env secrets
+dev-recreate:: compose.yaml .env secrets init-db
 	@# Help: Run docker compose in dev mode, recreating containers
 	@if [ -f compose.dev.yaml ]; then \
 		CMD="docker compose -f compose.yaml -f compose.dev.yaml up --force-recreate --remove-orphans -d"; \
@@ -60,7 +72,7 @@ dev-recreate:: compose.yaml .env secrets
 	fi
 
 .PHONY: dev
-dev:: compose.yaml .env secrets
+dev:: compose.yaml .env secrets init-db
 	@# Help: Run docker compose in dev mode
 	@if [ -f compose.dev.yaml ]; then \
 		CMD="docker compose -f compose.yaml -f compose.dev.yaml up --remove-orphans -d"; \
@@ -73,17 +85,17 @@ dev:: compose.yaml .env secrets
 	fi
 
 .PHONY: deploy
-deploy:: compose.yaml .env secrets
+deploy:: compose.yaml .env secrets init-db
 	@# Help: docker compose up
 	docker compose -f $< up  --remove-orphans -d -V
 
 .PHONY: deploy-recreate
-deploy-recreate:: compose.yaml .env secrets
+deploy-recreate:: compose.yaml .env secrets init-db
 	@# Help: docker compose deploy, recreating containers
 	docker compose -f $< up  --remove-orphans --force-recreate -d -V
 
 .PHONY: down
-down:: compose.yaml .env
+dev-down:: compose.yaml .env
 	@# Help: docker compose remove
 	@if [ -f compose.dev.yaml ]; then \
 		CMD="docker compose -f compose.yaml -f compose.dev.yaml down --remove-orphans -v"; \
@@ -94,6 +106,11 @@ down:: compose.yaml .env
 		echo "$$CMD"; \
 		eval "$$CMD"; \
 	fi
+
+.PHONY: down
+down:: compose.yaml .env
+	@# Help: docker compose remove
+	docker compose -f compose.yaml down --remove-orphans -v
 
 
 # Generic rule to process any template file
