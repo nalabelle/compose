@@ -1,7 +1,7 @@
 name: media
 
 include:
-  - path: common/compose.postgres.yaml
+  - path: ../common/postgres/compose.yaml
 
 services:
   audiobookshelf:
@@ -13,14 +13,9 @@ services:
       - nfs-podcasts:/podcasts
     environment:
       - PORT=13378
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.services.audiobookshelf.loadbalancer.server.port=13378
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -30,7 +25,6 @@ services:
           memory: 1.5G
     expose:
       - "13378"
-    init: true
 
   bazarr:
     image: ghcr.io/linuxserver/bazarr:1.5.2@sha256:558d6ddf36cd87bac5d4fb2ee8488730c4f65718961ef4ca7073062378aa7641
@@ -40,9 +34,6 @@ services:
       - nfs-downloads:/downloads
       - nfs-movies:/media/movies
       - nfs-television:/media/television
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --no-update=true
       - --config=/config
@@ -52,7 +43,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -64,35 +54,6 @@ services:
       - "6767"
     init: true
 
-  bazarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
-    container_name: bazarr-exporter
-    secrets:
-      - bazarr-api-key
-    environment:
-      - PORT=9707
-      - URL=http://bazarr:6767
-      - API_KEY_FILE=/run/secrets/bazarr-api-key
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
-    command:
-      - bazarr
-    restart: unless-stopped
-    labels:
-      - metrics-job=bazarr
-      - scrape-port=9707
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 64M
-        limits:
-          memory: 128M
-    expose:
-      - "9707"
-    init: false
-
   lidarr:
     image: ghcr.io/linuxserver/lidarr:2.11.2@sha256:3a7d5f70fec9f694eedfef7241a5cf6e2723bf280f1320d8f6b7fba44b14032e
     container_name: lidarr
@@ -102,9 +63,6 @@ services:
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/lidarr:/config
       - nfs-music:/media/music
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
       - -data=/config
@@ -113,7 +71,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -125,45 +82,11 @@ services:
       - "8686"
     init: true
 
-  lidarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
-    container_name: lidarr-exporter
-    depends_on:
-      - lidarr
-    secrets:
-      - lidarr-api-key
-    environment:
-      - PORT=9707
-      - URL=http://lidarr:8686
-      - API_KEY_FILE=/run/secrets/lidarr-api-key
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
-    command:
-      - lidarr
-    restart: unless-stopped
-    labels:
-      - metrics-job=lidarr
-      - scrape-port=9707
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 64M
-        limits:
-          memory: 128M
-    expose:
-      - "9707"
-    init: false
-
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:1.35.1@sha256:85718606c75bc0924921cb2df05b0f81c8a691952d44a5bc9f9946254493d1b4
     container_name: prowlarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr:/config
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
       - -data=/config
@@ -172,7 +95,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -184,37 +106,6 @@ services:
       - "9696"
     init: true
 
-  prowlarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
-    container_name: prowlarr-exporter
-    depends_on:
-      - prowlarr
-    secrets:
-      - prowlarr-api-key
-    environment:
-      - PORT=9707
-      - URL=http://prowlarr:9696
-      - API_KEY_FILE=/run/secrets/prowlarr-api-key
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
-    command:
-      - prowlarr
-    restart: unless-stopped
-    labels:
-      - metrics-job=prowlarr
-      - scrape-port=9707
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 64M
-        limits:
-          memory: 128M
-    expose:
-      - "9709"
-    init: false
-
   radarr:
     image: ghcr.io/linuxserver/radarr:5.22.4@sha256:105b7ffb9e88880a55a3fcd6116542f19af21aae8884a4e276e007d2816bbacb
     container_name: radarr
@@ -225,9 +116,6 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/radarr:/config
       - nfs-downloads:/downloads
       - nfs-movies:/media/movies
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
       - -data=/config
@@ -236,7 +124,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -248,46 +135,12 @@ services:
       - "7878"
     init: true
 
-  radarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
-    container_name: radarr-exporter
-    depends_on:
-      - radarr
-    secrets:
-      - radarr-api-key
-    environment:
-      - PORT=9707
-      - URL=http://radarr:7878
-      - API_KEY_FILE=/run/secrets/radarr-api-key
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
-    command:
-      - radarr
-    restart: unless-stopped
-    labels:
-      - metrics-job=radarr
-      - scrape-port=9707
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 64M
-        limits:
-          memory: 128M
-    expose:
-      - "9707"
-    init: false
-
   sabnzbd:
     image: ghcr.io/linuxserver/sabnzbd:4.5.1@sha256:913d57a64e9c9039c758b8f80e13226c3e226f7ffec34fbc56702421ace4c48c
     container_name: sabnzbd
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd:/config
       - nfs-downloads:/downloads
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --config-file
       - /config/sabnzbd.ini
@@ -298,7 +151,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -310,37 +162,6 @@ services:
       - "8080"
     init: true
 
-  sabnzbd-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
-    container_name: sabnzbd-exporter
-    depends_on:
-      - sabnzbd
-    secrets:
-      - sabnzbd-api-key
-    environment:
-      - PORT=9707
-      - URL=http://sabnzbd:8080
-      - API_KEY_FILE=/run/secrets/sabnzbd-api-key
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
-    command:
-      - sabnzbd
-    restart: unless-stopped
-    labels:
-      - metrics-job=sabnzbd
-      - scrape-port=9707
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 64M
-        limits:
-          memory: 128M
-    expose:
-      - "9707"
-    init: false
-
   sonarr:
     image: ghcr.io/linuxserver/sonarr:4.0.14@sha256:cdf5eb3cfa207d46b066bfbb41b03576c67a1f6ecc8aba19146d0f7349ec79dc
     container_name: sonarr
@@ -351,9 +172,6 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/sonarr:/config
       - nfs-downloads:/downloads
       - nfs-television:/media/television
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - -nobrowser
       - -data=/config
@@ -362,7 +180,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -373,37 +190,6 @@ services:
     expose:
       - "8989"
     init: true
-
-  sonarr-exporter:
-    image: ghcr.io/onedr0p/exportarr:v2.2.0@sha256:320b0ea7399f4b9af4741dcdddd7d40c05c36b0359679305d8a54df4e97065df
-    container_name: sonarr-exporter
-    depends_on:
-      - sonarr
-    secrets:
-      - sonarr-api-key
-    environment:
-      - PORT=9707
-      - URL=http://sonarr:8989
-      - API_KEY_FILE=/run/secrets/sonarr-api-key
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
-    command:
-      - sonarr
-    restart: unless-stopped
-    labels:
-      - metrics-job=sonarr
-      - scrape-port=9707
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 64M
-        limits:
-          memory: 128M
-    expose:
-      - "9707"
-    init: false
   ytdl-sub:
     image: ghcr.io/jmbannon/ytdl-sub:2025.05.05@sha256:623c47a0fc8121b6bac5baea6de779aa7dfa797707a339ad9f4aab2f9b2201f2
     container_name: ytdl-sub
@@ -415,16 +201,10 @@ services:
       - PUID=3005
       - PGID=100
       - TZ=America/Los_Angeles
-    networks:
-      - default
     entrypoint:
       - sleep
       - infinity
     restart: unless-stopped
-    labels:
-      - chadburn.enabled=true
-      - chadburn.job-exec.yt-dlp.schedule=@every 12h
-      - chadburn.job-exec.yt-dlp.command=/config/scheduled-task
     deploy:
       resources:
         reservations:
@@ -433,12 +213,6 @@ services:
         limits:
           memory: 1G
     init: false
-
-networks:
-  default:
-    name: ${COMPOSE_PROJECT_NAME:?}
-  proxy-media:
-    name: proxy-media
 
 volumes:
   nfs-downloads:
@@ -471,17 +245,3 @@ volumes:
       type: nfs
       o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
       device: ":/podcasts"
-
-secrets:
-  bazarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/bazarr-api-key
-  lidarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/lidarr-api-key
-  prowlarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/prowlarr-api-key
-  radarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/radarr-api-key
-  sabnzbd-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/sabnzbd-api-key
-  sonarr-api-key:
-    file: ${SECRETS:?}/${COMPOSE_PROJECT_NAME:?}/sonarr-api-key

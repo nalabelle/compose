@@ -1,0 +1,45 @@
+# Development compose file for media services
+# Replaces NFS volumes with local Docker volumes
+
+services:
+  audiobookshelf:
+    volumes:
+      - local-podcasts:/podcasts
+
+  bazarr:
+    volumes:
+      - local-downloads:/downloads
+      - local-movies:/media/movies
+      - local-television:/media/television
+
+  lidarr:
+    volumes:
+      - local-music:/media/music
+
+  radarr:
+    volumes:
+      - local-downloads:/downloads
+      - local-movies:/media/movies
+
+  sabnzbd:
+    volumes:
+      - local-downloads:/downloads
+
+  sonarr:
+    volumes:
+      - local-downloads:/downloads
+      - local-television:/media/television
+
+  ytdl-sub:
+    volumes:
+      - local-downloads:/downloads
+      - local-internet:/internet
+
+# Define local volumes
+volumes: !override
+  local-downloads: {}
+  local-internet: {}
+  local-movies: {}
+  local-music: {}
+  local-television: {}
+  local-podcasts: {}
