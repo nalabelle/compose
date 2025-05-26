@@ -98,7 +98,8 @@ services:
     init: true
 
   traefik:
-    image: "traefik:v3.2@sha256:d12741b971f5c833919db2b680191dc23d5d96ef17e41a914e3\
+    image:
+      "traefik:v3.2@sha256:d12741b971f5c833919db2b680191dc23d5d96ef17e41a914e3\
       c593a8c663ac4"
     container_name: traefik
     volumes:
@@ -147,9 +148,9 @@ services:
       traefik.http.routers.traefik.rule: Host(`${HOSTNAME:?}.${DOMAIN:?}`)
       traefik.http.routers.traefik.service: traefik
       traefik.http.services.traefik.loadbalancer.server.port: "8080"
-      #traefik.tls.stores.default.defaultgeneratedcert.resolver: "letsencrypt"
-      #traefik.tls.stores.default.defaultgeneratedcert.domain.main: "${DOMAIN:?}"
-      #traefik.tls.stores.default.defaultgeneratedcert.domain.sans: "*.${DOMAIN:?}"
+      traefik.tls.stores.default.defaultgeneratedcert.resolver: "letsencrypt"
+      traefik.tls.stores.default.defaultgeneratedcert.domain.main: "${DOMAIN:?}"
+      traefik.tls.stores.default.defaultgeneratedcert.domain.sans: "*.${DOMAIN:?}"
     deploy:
       resources:
         reservations:
