@@ -40,7 +40,7 @@ services:
     privileged: true
 
   kopia:
-    image: kopia/kopia:latest@sha256:615b786bdb46d5a9301338983e8077e5be0f1c643b7a3188c8732989104accf4
+    image: kopia/kopia:latest@sha256:0c55a361a353f69a121572920e7af3eb54b014f99df1f2fd8a595adcc33c2904
     container_name: kopia
     volumes:
       - ${VOLUMES:?}:/volumes:ro
@@ -68,7 +68,7 @@ services:
     init: true
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:3c69ee4af37c4efc954a29aeeb063f2194f3764851239e1fdbaa39c9dfe1157d
+    image: registry-1.docker.io/library/docker:cli@sha256:f4ca5cab1815946d04c814d564828af0869c2fc23a7ef014d07cab1694d93cae
     container_name: oom
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro

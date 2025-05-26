@@ -7,7 +7,7 @@
     "gnumake@4.4.1",
     "_1password-cli@2.31.0",
     "nodejs@22.14.0",
-    "lazydocker@latest"
+    "lazydocker@0.24.1"
   ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true"

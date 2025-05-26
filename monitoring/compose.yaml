@@ -24,7 +24,7 @@ services:
       - "9093"
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.117.1@sha256:2ec9b49446cb36cff751d2920de34f3fd80e9d90ea460ce469c1e57878bff55a
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.118.0@sha256:25c778fe3570e93917433cc074f41edbbdab57f8f297e5243d27139b48ca606f
     container_name: metrics
     configs:
       - source: scrape-configs
@@ -48,7 +48,7 @@ services:
       - "8428"
 
   vmalert:
-    image: registry-1.docker.io/victoriametrics/vmalert:v1.117.1@sha256:abd648ad8a474beb5139f3e414444f0b8de6c2562f355f0c8d077a0e1683b8f4
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.118.0@sha256:58dc7ccc2866ede730a5d821bc8c201cf0540981c42809f1c29804a3c851477e
     container_name: vmalert
     configs:
       - source: alerts
