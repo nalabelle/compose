@@ -124,7 +124,7 @@ services:
     init: true
 
   stirling:
-    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest-ultra-lite
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest-ultra-lite@sha256:caa8440ea33bf0f5cf42ae3bec7e6538479100655c8cfd9b622fb1b987ff26d3
     container_name: stirling
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/stirling/trainingData:/usr/share/tessdata
