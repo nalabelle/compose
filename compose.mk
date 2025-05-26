@@ -93,7 +93,7 @@ $(COMPOSE_CRONTAB): crontab
 deploy:: compose.yaml pre-deploy
 	@# Help: docker compose up
 	@if [ -f crontab ]; then $(MAKE) $(COMPOSE_CRONTAB); fi
-	docker compose -f compose.yaml up  --remove-orphans -d -V
+	docker compose -f compose.yaml up  --remove-orphans -d
 
 .PHONY: deploy-recreate
 deploy-recreate:: compose.yaml pre-deploy
@@ -118,7 +118,7 @@ dev-down:: compose.yaml .env
 down:: compose.yaml .env
 	@# Help: docker compose remove
 	@if [ -f crontab ]; then rm -f $(COMPOSE_CRONTAB); fi
-	docker compose -f compose.yaml down --remove-orphans -v
+	docker compose -f compose.yaml down --remove-orphans
 
 
 # Generic rule to process any template file

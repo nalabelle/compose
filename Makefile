@@ -7,8 +7,7 @@ lint-ci:
 
 .PHONY: deploy
 deploy::
-	@# Help: Deploy all compose projects
-	@bin/deploy
+	@true
 
 .PHONY: docker-clean
 .ONESHELL: docker-clean
@@ -19,7 +18,6 @@ docker-clean:
 	@docker system prune -af
 	@docker volume prune -af
 	@docker image prune -f
-
 
 .PHONY: docker-prune
 docker-prune:
