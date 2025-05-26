@@ -1,8 +1,0 @@
-{
-  "name": "cicd",
-  "version": "1.0.0",
-  "private": true,
-  "devDependencies": {
-    "dclint": "2.2.2"
-  }
-}

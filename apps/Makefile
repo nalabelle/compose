@@ -11,4 +11,3 @@ pre-deploy:: .env
 	docker exec apps-postgres /usr/local/bin/db-init wallabag "$${WALLABAG_DATABASE_USER}" "$${WALLABAG_DATABASE_PASSWORD}" && \
 	docker exec apps-postgres /usr/local/bin/db-init miniflux miniflux "$${MINIFLUX_POSTGRES_PASSWORD}" && \
 	echo "Database initialization completed."
-

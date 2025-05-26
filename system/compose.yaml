@@ -3,10 +3,7 @@ name: system
 services:
   alloy:
     image: registry-1.docker.io/grafana/alloy:v1.8.3@sha256:ab04df3936e4d71d31b6f55e0c58a7e749091f59635dd8c2bc731ba1b6c93701
-    container_name: ${HOSTNAME:?}-alloy
-    privileged: true
-    environment:
-      - ALLOY_REMOTE_WRITE_URL
+    container_name: ${HOSTNAME:?}-alloy #dclint disable-line service-container-name-regex
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -20,6 +17,8 @@ services:
     secrets:
       - source: alloy-api-key
         target: /etc/alloy/api-key
+    environment:
+      - ALLOY_REMOTE_WRITE_URL
     command:
       - run
       - --server.http.listen-addr=0.0.0.0:12345
@@ -38,6 +37,7 @@ services:
     expose:
       - "12345"
     hostname: ${HOSTNAME:?}-alloy
+    privileged: true
 
   kopia:
     image: kopia/kopia:latest@sha256:615b786bdb46d5a9301338983e8077e5be0f1c643b7a3188c8732989104accf4
@@ -88,6 +88,9 @@ services:
           memory: 30M
     init: true
 
+volumes:
+  kopia-cache: {}
+
 secrets:
   alloy-api-key:
     environment: ALLOY_API_KEY
@@ -97,6 +100,3 @@ configs:
     file: ./alloy.config
   kopia-backup:
     file: ./kopia-backup
-
-volumes:
-  kopia-cache: {}

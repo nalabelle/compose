@@ -7,7 +7,7 @@ pre-deploy:: .env
 	@echo "Waiting for PostgreSQL to be ready..."
 	@until docker exec files-postgres pg_isready -U postgres; do sleep 1; done
 	@echo "Waiting for MariaDB to be ready..."
-	@until docker exec files-mariadb mysqladmin ping -h localhost --silent; do sleep 1; done
+	@until [ "$$(docker inspect --format='{{.State.Health.Status}}' files-mariadb)" = "healthy" ]; do sleep 1; done
 	@echo "Initializing database users..."
 	@set -a; source .env; set +a; \
 	docker exec files-postgres /usr/local/bin/db-init paperless paperless "$${PAPERLESS_DBPASS}" && \

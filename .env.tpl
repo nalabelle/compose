@@ -7,4 +7,3 @@
 # General
 #HOSTNAME=
 #VOLUMES=
-#SECRETS=${PWD}/_secrets

@@ -1,20 +1,9 @@
 include compose.mk
 
-node_modules: package.json
-	npm ci
-	touch $@
-
-.PHONY: lintfix
-lintfix: node_modules lint-ci
-	@# Help: Run all linters
-	@echo "Running dclint..."
-	@npx dclint . --recursive --fix --exclude .devbox volumes .cache _secrets
-	@echo "Done"
-
 .PHONY: lint-ci
 lint-ci:
 	@# Help: Run all linters in CI mode
-	SKIP=lintfix pre-commit run --all-files
+	pre-commit run --all-files
 
 .PHONY: deploy
 deploy::

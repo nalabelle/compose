@@ -1,3 +1,4 @@
+name: home-automation
 services:
   home-assistant:
     volumes:
@@ -5,4 +6,4 @@ services:
 
 volumes:
   local-security: {}
-  nfs-security: !override {}
+  nfs-security: {}

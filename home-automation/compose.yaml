@@ -11,9 +11,9 @@ services:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/go2rtc:/config
     ports:
       # rtsp
-      - "8554:8554"
+      - "0.0.0.0:8554:8554"
       # webrtc
-      - "8555:8555"
+      - "0.0.0.0:8555:8555"
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -69,7 +69,7 @@ services:
     image: registry-1.docker.io/library/eclipse-mosquitto:2.0.21@sha256:94f5a3d7deafa59fa3440d227ddad558f59d293c612138de841eec61bfa4d353
     container_name: mosquitto
     ports:
-      - "1883:1883"
+      - "0.0.0.0:1883:1883"
     command:
       - -c
       - /mosquitto-no-auth.conf

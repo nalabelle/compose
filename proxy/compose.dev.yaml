@@ -1,17 +1,18 @@
+name: proxy
 services:
-  tailscale:
-    profiles:
-      - disable
   traefik:
-    secrets: !reset []
-    environment: !reset {}
     volumes:
       - $HOME/.local/config/certs/_wildcard.compose.localhost-key.pem:/etc/traefik/certs/key.pem
       - $HOME/.local/config/certs/_wildcard.compose.localhost.pem:/etc/traefik/certs/cert.pem
       # Mount a dynamic configuration file for static TLS configuration
       - ./dev/traefik-dynamic.yaml:/etc/traefik/dynamic/conf.yaml
+    secrets:
+      - source: fake
+        target: /run/secrets/traefik-cf_dns_api_token
+      - source: fake
+        target: /run/secrets/traefik-cf_zone_api_token
     ports:
-      - "8080:8080"
+      - "0.0.0.0:8080:8080"
     command:
       - --log.level=DEBUG
       - --accesslog=true
@@ -31,5 +32,9 @@ services:
       - --providers.file.watch=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
-      - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName }}.${DOMAIN:?}`)
-    labels: !reset {}
+      - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName
+        }}.${DOMAIN:?}`)
+
+secrets:
+  fake:
+    file: /dev/null

@@ -1,4 +1,11 @@
+name: files
 services:
+  paperless:
+    volumes:
+      - local-documents:/documents
+  photoprism:
+    volumes:
+      - local-photos:/photos
   stirling:
     volumes:
       - local-inbox:/pipeline/watchedFolders
@@ -7,5 +14,7 @@ services:
 volumes:
   local-inbox: {}
   local-processed: {}
-  nfs-photos: !override {}
-  nfs-documents: !override {}
+  local-documents: {}
+  local-photos: {}
+  nfs-photos: {}
+  nfs-documents: {}

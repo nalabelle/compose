@@ -101,6 +101,11 @@ services:
 
   miniflux-sidekick:
     image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1746559476@sha256:132707a226bae54e0a742f477ad967a44f13d2da11ce27f1e425743f14d62b1e
+    depends_on:
+      miniflux:
+        condition: service_healthy
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick:/config
     environment:
       MF_API_ENDPOINT: http://miniflux:8080
       MF_API_KEY: ${MINIFLUX_SIDEKICK_API_KEY:?}
@@ -108,11 +113,6 @@ services:
       MF_KILLFILE_PATH: /config/killfile
       MF_LOG_LEVEL: debug
       MF_REFRESH_INTERVAL: "*/1 * * * *"
-    depends_on:
-      miniflux:
-        condition: service_healthy
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick:/config
     restart: unless-stopped
     deploy:
       resources:
@@ -149,14 +149,6 @@ services:
   wallabag:
     image: wallabag/wallabag@sha256:9989e05769885aef0b316508b728580460c7713e435cc0b02c16e7b06e17bb6a
     container_name: wallabag
-    environment:
-      SYMFONY__ENV__DATABASE_DRIVER: pdo_pgsql
-      SYMFONY__ENV__DATABASE_HOST: postgres
-      SYMFONY__ENV__DATABASE_NAME: wallabag
-      SYMFONY__ENV__DATABASE_PASSWORD: ${WALLABAG_DATABASE_PASSWORD:?}
-      SYMFONY__ENV__DATABASE_PORT: 5432
-      SYMFONY__ENV__DATABASE_USER: ${WALLABAG_DATABASE_USER:?}
-      SYMFONY__ENV__DOMAIN_NAME: https://wallabag.${DOMAIN:?}
     depends_on:
       postgres:
         condition: service_healthy
@@ -169,6 +161,14 @@ services:
       - source: wallabag_99-custom
         target: /etc/php81/conf.d/99-custom.ini
         mode: 444
+    environment:
+      SYMFONY__ENV__DATABASE_DRIVER: pdo_pgsql
+      SYMFONY__ENV__DATABASE_HOST: postgres
+      SYMFONY__ENV__DATABASE_NAME: wallabag
+      SYMFONY__ENV__DATABASE_PASSWORD: ${WALLABAG_DATABASE_PASSWORD:?}
+      SYMFONY__ENV__DATABASE_PORT: 5432
+      SYMFONY__ENV__DATABASE_USER: ${WALLABAG_DATABASE_USER:?}
+      SYMFONY__ENV__DOMAIN_NAME: https://wallabag.${DOMAIN:?}
     restart: unless-stopped
     healthcheck:
       test:

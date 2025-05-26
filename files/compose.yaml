@@ -53,58 +53,6 @@ services:
       - "8000"
     init: false
 
-  stirling:
-    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest-ultra-lite
-    container_name: stirling
-    expose:
-      - "8080"
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/stirling/trainingData:/usr/share/tessdata
-      - type: tmpfs
-        target: /configs
-      - type: tmpfs
-        target: /customFiles
-      - type: tmpfs
-        target: /logs
-      - source: nfs-documents
-        target: /pipeline/watchedFolders
-        type: volume
-        volume:
-          subpath: _inbox
-      - source: nfs-documents
-        target: /pipeline/finishedfolders
-        type: volume
-        volume:
-          subpath: _processed
-    restart: unless-stopped
-    environment:
-      LANGS: "en_GB,en_US,es_US"
-      DOCKER_ENABLE_SECURITY: "false"
-      SECURITY_ENABLELOGIN: "false"
-      SYSTEM_DEFAULTLOCALE: en-US
-      SYSTEM_GOOGLEVISIBILITY: "false"
-      SYSTEM_ENABLEANALYTICS: "false"
-      SHOW_SURVEY: "false"
-    labels:
-      - traefik.enable=true
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 128M
-        limits:
-          memory: 256M
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -f http://localhost:8080/api/v1/info/status | grep -q 'UP'"
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
   photoprism:
     image: registry-1.docker.io/photoprism/photoprism:latest@sha256:19fdf0d52676d07abe63376a3b2d07779cac010a1bfca563af11968abd2df218
     container_name: photoprism
@@ -135,6 +83,12 @@ services:
       PHOTOPRISM_STORAGE_PATH: /photos/Photoprism
       PHOTOPRISM_UMASK: "0002"
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:2342" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     labels:
       - traefik.enable=true
     deploy:
@@ -147,12 +101,6 @@ services:
     expose:
       - "2342"
     init: false
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:2342"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
 
   redis:
     image: redis:alpine@sha256:62b5498c91778f738f0efbf0a6fd5b434011235a3e7b5f2ed4a2c0c63bb1c786
@@ -161,7 +109,7 @@ services:
       - redis-data:/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 20s
       timeout: 3s
     deploy:
@@ -174,6 +122,58 @@ services:
     expose:
       - "6379"
     init: true
+
+  stirling:
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest-ultra-lite
+    container_name: stirling
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/stirling/trainingData:/usr/share/tessdata
+      - type: tmpfs
+        target: /configs
+      - type: tmpfs
+        target: /customFiles
+      - type: tmpfs
+        target: /logs
+      - source: nfs-documents
+        target: /pipeline/watchedFolders
+        type: volume
+        volume:
+          subpath: _inbox
+      - source: nfs-documents
+        target: /pipeline/finishedfolders
+        type: volume
+        volume:
+          subpath: _processed
+    environment:
+      LANGS: "en_GB,en_US,es_US"
+      DOCKER_ENABLE_SECURITY: "false"
+      SECURITY_ENABLELOGIN: "false"
+      SYSTEM_DEFAULTLOCALE: en-US
+      SYSTEM_GOOGLEVISIBILITY: "false"
+      SYSTEM_ENABLEANALYTICS: "false"
+      SHOW_SURVEY: "false"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:8080/api/v1/info/status | grep -q 'UP'"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - traefik.enable=true
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 128M
+        limits:
+          memory: 256M
+    expose:
+      - "8080"
 
 volumes:
   redis-data: {}
@@ -188,10 +188,10 @@ volumes:
       o: "addr=${FILEHOST:?},nfsvers=4,rw,soft,noatime,nodiratime"
       device: ":/documents"
 
-configs:
-  photoprism-maintenance:
-    file: ./photoprism-maintenance
-
 secrets:
   paperless-dbpass:
     environment: PAPERLESS_DBPASS
+
+configs:
+  photoprism-maintenance:
+    file: ./photoprism-maintenance

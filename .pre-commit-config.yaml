@@ -17,14 +17,13 @@ repos:
     hooks:
       - id: shfmt
         alias: shfmt-fix
+  - repo: https://github.com/docker-compose-linter/pre-commit-dclint
+    rev: v2.2.2
+    hooks:
+      - id: dclint
+        files: (docker-)?compose\..*ya?ml$
+        args: [--fix]
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.10.0.1
     hooks:
       - id: shellcheck
-  - repo: local
-    hooks:
-      - id: lintfix
-        name: make lintfix
-        language: system
-        entry: make lintfix
-        files: compose\..*yaml$

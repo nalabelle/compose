@@ -9,4 +9,3 @@ clean::
 # Make pre-deploy depend on all template targets
 pre-deploy:: $(TEMPLATE_TARGETS)
 	chmod 644 alertmanager-config.yaml
-

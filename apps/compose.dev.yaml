@@ -1,3 +1,4 @@
+name: apps
 services:
   miniflux-sidekick:
     profiles:

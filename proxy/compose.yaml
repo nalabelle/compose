@@ -1,7 +1,16 @@
+name: proxy
 services:
+  auto_docker_proxy:
+    image: ghcr.io/obeone/traefik_network_connector:sha256-b7cf582c0ca4eaf33d95ae97d3eb07f0767a7f6cc2d3f59675997c5509ea63a3.sig
+    container_name: auto-docker-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    configs:
+      - source: auto-docker-proxy-config
+        target: /usr/src/app/config.yaml
+    restart: unless-stopped
   traefik:
-    image:
-      "traefik:v3.2@sha256:d12741b971f5c833919db2b680191dc23d5d96ef17e41a914e3\
+    image: "traefik:v3.2@sha256:d12741b971f5c833919db2b680191dc23d5d96ef17e41a914e3\
       c593a8c663ac4"
     container_name: traefik
     volumes:
@@ -15,8 +24,8 @@ services:
       CF_DNS_API_TOKEN_FILE: /run/secrets/traefik-cf_dns_api_token
       CF_ZONE_API_TOKEN_FILE: /run/secrets/traefik-cf_zone_api_token
     ports:
-      - "443:443"
-      - "80:80"
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
       #- "8080:8080"
     command:
       - --log.level=DEBUG
@@ -42,17 +51,17 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN:?}
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
-      - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName }}.${DOMAIN:?}`)
+      - --providers.docker.defaultrule=Host(`{{ normalize .ContainerName
+        }}.${DOMAIN:?}`)
     restart: unless-stopped
     labels:
       traefik.enable: "true"
       traefik.http.routers.traefik.rule: Host(`${HOSTNAME:?}.${DOMAIN:?}`)
       traefik.http.routers.traefik.service: traefik
       traefik.http.services.traefik.loadbalancer.server.port: "8080"
-
-      traefik.tls.stores.default.defaultgeneratedcert.resolver: "letsencrypt"
-      traefik.tls.stores.default.defaultgeneratedcert.domain.main: "${DOMAIN:?}"
-      traefik.tls.stores.default.defaultgeneratedcert.domain.sans: "*.${DOMAIN:?}"
+      #traefik.tls.stores.default.defaultgeneratedcert.resolver: "letsencrypt"
+      #traefik.tls.stores.default.defaultgeneratedcert.domain.main: "${DOMAIN:?}"
+      #traefik.tls.stores.default.defaultgeneratedcert.domain.sans: "*.${DOMAIN:?}"
     deploy:
       resources:
         reservations:
@@ -62,19 +71,9 @@ services:
           memory: 96M
     init: true
 
-  auto_docker_proxy:
-    container_name: auto-docker-proxy
-    image: obeoneorg/traefik_network_connector
-    configs:
-      - source: auto-docker-proxy-config
-        target: /usr/src/app/config.yaml
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-
-configs:
-  auto-docker-proxy-config:
-    file: config.yaml
+volumes:
+  traefik-data: {}
+  tailscale-data: {}
 
 secrets:
   traefik-cf_dns_api_token:
@@ -82,6 +81,6 @@ secrets:
   traefik-cf_zone_api_token:
     environment: CF_ZONE_API_TOKEN
 
-volumes:
-  traefik-data: {}
-  tailscale-data: {}
+configs:
+  auto-docker-proxy-config:
+    file: config.yaml

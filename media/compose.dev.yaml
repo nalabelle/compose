@@ -1,5 +1,6 @@
 # Development compose file for media services
 # Replaces NFS volumes with local Docker volumes
+name: media
 
 services:
   audiobookshelf:
@@ -36,7 +37,7 @@ services:
       - local-internet:/internet
 
 # Define local volumes
-volumes: !override
+volumes:
   local-downloads: {}
   local-internet: {}
   local-movies: {}
