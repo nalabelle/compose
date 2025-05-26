@@ -1,10 +1,6 @@
 include ../compose.mk
 
-/etc/cron.d/compose-files:
-	@# Help: Create /etc/cron.d/compose-files
-	@test -d /etc/cron.d && cp crontab /etc/cron.d/compose-files
-
-init-db:: .env
+pre-deploy:: .env
 	@# Help: Initialize database users for Paperless and PhotoPrism
 	@echo "Starting PostgreSQL and MariaDB containers..."
 	@docker compose up postgres mariadb -d
@@ -17,9 +13,3 @@ init-db:: .env
 	docker exec files-postgres /usr/local/bin/db-init paperless paperless "$${PAPERLESS_DBPASS}" && \
 	docker exec files-mariadb /usr/local/bin/db-init photoprism photoprism "$${PHOTOPRISM_DB_PASSWORD}" && \
 	echo "Database initialization completed."
-
-down::
-	rm -f /etc/cron.d/compose-files
-
-deploy:: /etc/cron.d/compose-files
-deploy-recreate:: /etc/cron.d/compose-files

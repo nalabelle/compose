@@ -1,7 +1,7 @@
 name: home-automation
 
 include:
-  - path: common/compose.postgres.yaml # home-assistant database
+  - path: ../common/postgres/compose.yaml # home-assistant database
 
 services:
   go2rtc:
@@ -14,14 +14,10 @@ services:
       - "8554:8554"
       # webrtc
       - "8555:8555"
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.services.go2rtc.loadbalancer.server.port=1984
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -31,7 +27,6 @@ services:
           memory: 64M
     expose:
       - "1984"
-    init: false
 
   home-assistant:
     image: ghcr.io/home-assistant/home-assistant:2025.5@sha256:aa0d85544d00f135e6db6ab81f3ba3775e02715526fb524f0c8c67eaba31002b
@@ -45,9 +40,6 @@ services:
       - nfs-security:/mnt/security
     environment:
       - MPLCONFIGDIR=/tmp/matplotlib
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     command:
       - --config
       - /config
@@ -59,8 +51,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.services.home-assistant.loadbalancer.server.port=8123
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
       - metrics-job=home-assistant
       - scrape-port=8123
       - scrape-path=/api/prometheus
@@ -80,8 +70,6 @@ services:
     container_name: mosquitto
     ports:
       - "1883:1883"
-    networks:
-      - default
     command:
       - -c
       - /mosquitto-no-auth.conf
@@ -102,13 +90,9 @@ services:
     container_name: tasmoadmin
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/tasmoadmin:/data
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -118,7 +102,6 @@ services:
           memory: 64M
     expose:
       - "80"
-    init: false
 
   zigbee2mqtt:
     image: ghcr.io/koenkk/zigbee2mqtt:2.3.0@sha256:42de8c55dc578a8404a18c43aeb2b7c75be7988179abe9a8195d99a9e7ebb917
@@ -127,14 +110,9 @@ services:
       - mosquitto
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/zigbee2mqtt:/app/data
-    networks:
-      - default
-      - proxy-${COMPOSE_PROJECT_NAME:?}
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.services.zigbee2mqtt.loadbalancer.server.port=8080
-      - traefik.docker.network=proxy-${COMPOSE_PROJECT_NAME:?}
     deploy:
       resources:
         reservations:
@@ -146,13 +124,6 @@ services:
       - ${ZIGBEE_DEVICE:?}:/dev/zigbee
     expose:
       - "8080"
-    init: false
-
-networks:
-  default:
-    name: ${COMPOSE_PROJECT_NAME:?}
-  proxy-home-automation:
-    name: proxy-home-automation
 
 volumes:
   nfs-security:

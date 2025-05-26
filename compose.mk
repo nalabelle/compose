@@ -5,6 +5,10 @@ MAKEFLAGS += --no-builtin-rules
 
 .DEFAULT_GOAL:=help
 
+# Define crontab path based on current directory name
+COMPOSE_CRONTAB_NAME ?= $(shell basename $(CURDIR))
+COMPOSE_CRONTAB ?= /etc/cron.d/compose-$(COMPOSE_CRONTAB_NAME)
+
 print-%:
 	@echo $*=$($*)
 showdeps-%:
@@ -29,11 +33,6 @@ clean:: down
 	rm -f .env
 	docker rm --volumes
 
-.PHONY: secrets
-secrets::
-	@# Help: Load secrets from 1password - to be overriden by specific Makefiles
-	@true
-
 .env: .env.tpl $(wildcard .env.local) $(wildcard ../.env)
 	@# Help: Load secrets from 1password
 	@HOSTNAME=$${HOSTNAME:-$$(hostname)} && \
@@ -48,9 +47,9 @@ secrets::
 		exit 1; \
 	fi
 
-.PHONY: init-db
-init-db::
-	@# Help: Initialize database users - to be overridden by specific Makefiles
+.PHONY: pre-deploy
+pre-deploy:: .env
+	@# Help: Run pre-deployment tasks
 	@true
 
 .PHONY: pull
@@ -59,7 +58,7 @@ pull: compose.yaml .env
 	docker compose -f $< pull
 
 .PHONY: dev-recreate
-dev-recreate:: compose.yaml .env secrets init-db
+dev-recreate:: compose.yaml pre-deploy
 	@# Help: Run docker compose in dev mode, recreating containers
 	@if [ -f compose.dev.yaml ]; then \
 		CMD="docker compose -f compose.yaml -f compose.dev.yaml up --force-recreate --remove-orphans -d"; \
@@ -72,7 +71,7 @@ dev-recreate:: compose.yaml .env secrets init-db
 	fi
 
 .PHONY: dev
-dev:: compose.yaml .env secrets init-db
+dev:: compose.yaml pre-deploy
 	@# Help: Run docker compose in dev mode
 	@if [ -f compose.dev.yaml ]; then \
 		CMD="docker compose -f compose.yaml -f compose.dev.yaml up --remove-orphans -d"; \
@@ -84,15 +83,23 @@ dev:: compose.yaml .env secrets init-db
 		eval "$$CMD"; \
 	fi
 
+
+# Install crontab if it exists (will only run if crontab file changed)
+$(COMPOSE_CRONTAB): crontab
+	@# Help: Install crontab file to /etc/cron.d/
+	@test -d /etc/cron.d && cp $< $@
+
 .PHONY: deploy
-deploy:: compose.yaml .env secrets init-db
+deploy:: compose.yaml pre-deploy
 	@# Help: docker compose up
-	docker compose -f $< up  --remove-orphans -d -V
+	@if [ -f crontab ]; then $(MAKE) $(COMPOSE_CRONTAB); fi
+	docker compose -f compose.yaml up  --remove-orphans -d -V
 
 .PHONY: deploy-recreate
-deploy-recreate:: compose.yaml .env secrets init-db
+deploy-recreate:: compose.yaml pre-deploy
 	@# Help: docker compose deploy, recreating containers
-	docker compose -f $< up  --remove-orphans --force-recreate -d -V
+	@if [ -f crontab ]; then $(MAKE) $(COMPOSE_CRONTAB); fi
+	docker compose -f compose.yaml up  --remove-orphans --force-recreate -d -V
 
 .PHONY: down
 dev-down:: compose.yaml .env
@@ -110,6 +117,7 @@ dev-down:: compose.yaml .env
 .PHONY: down
 down:: compose.yaml .env
 	@# Help: docker compose remove
+	@if [ -f crontab ]; then rm -f $(COMPOSE_CRONTAB); fi
 	docker compose -f compose.yaml down --remove-orphans -v
 
 

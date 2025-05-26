@@ -1,6 +1,6 @@
 include ../compose.mk
 
-init-db:: .env
+pre-deploy:: .env
 	@# Help: Initialize database users for Wallabag and Miniflux
 	@echo "Starting PostgreSQL container..."
 	@docker compose up postgres -d

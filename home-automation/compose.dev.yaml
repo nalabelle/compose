@@ -1,0 +1,8 @@
+services:
+  home-assistant:
+    volumes:
+      - local-security:/mnt/security
+
+volumes:
+  local-security: {}
+  nfs-security: !override {}
