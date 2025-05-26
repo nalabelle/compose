@@ -1,7 +1,7 @@
 name: proxy
 services:
   auto_docker_proxy:
-    image: ghcr.io/obeone/traefik_network_connector:sha256-b7cf582c0ca4eaf33d95ae97d3eb07f0767a7f6cc2d3f59675997c5509ea63a3.sig
+    image: ghcr.io/obeone/traefik_network_connector@sha256:b7cf582c0ca4eaf33d95ae97d3eb07f0767a7f6cc2d3f59675997c5509ea63a3
     container_name: auto-docker-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
