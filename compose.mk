@@ -5,9 +5,6 @@ MAKEFLAGS += --no-builtin-rules
 
 .DEFAULT_GOAL:=help
 
-# Define crontab path based on current directory name
-COMPOSE_CRONTAB_NAME ?= $(shell basename $(CURDIR))
-COMPOSE_CRONTAB ?= /etc/cron.d/compose-$(COMPOSE_CRONTAB_NAME)
 
 print-%:
 	@echo $*=$($*)
@@ -84,21 +81,14 @@ dev:: compose.yaml pre-deploy
 	fi
 
 
-# Install crontab if it exists (will only run if crontab file changed)
-$(COMPOSE_CRONTAB): crontab
-	@# Help: Install crontab file to /etc/cron.d/
-	@test -d /etc/cron.d && cp $< $@
-
 .PHONY: deploy
 deploy:: compose.yaml pre-deploy
 	@# Help: docker compose up
-	@if [ -f crontab ]; then $(MAKE) $(COMPOSE_CRONTAB); fi
 	docker compose -f compose.yaml up  --remove-orphans -d
 
 .PHONY: deploy-recreate
 deploy-recreate:: compose.yaml pre-deploy
 	@# Help: docker compose deploy, recreating containers
-	@if [ -f crontab ]; then $(MAKE) $(COMPOSE_CRONTAB); fi
 	docker compose -f compose.yaml up  --remove-orphans --force-recreate -d -V
 
 .PHONY: down
@@ -117,7 +107,6 @@ dev-down:: compose.yaml .env
 .PHONY: down
 down:: compose.yaml .env
 	@# Help: docker compose remove
-	@if [ -f crontab ]; then rm -f $(COMPOSE_CRONTAB); fi
 	docker compose -f compose.yaml down --remove-orphans
 
 

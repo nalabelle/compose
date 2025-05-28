@@ -1,6 +1,0 @@
-# shellcheck shell=bash disable=SC2034,SC2035
-SHELL=/bin/bash
-CRON_TZ=America/Los_Angeles
-
-# Postgres backup job
-45 */12 * * *    docker exec -t home-automation-postgres /usr/local/bin/db-backup

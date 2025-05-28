@@ -91,6 +91,18 @@ services:
       start_period: 60s
     labels:
       - traefik.enable=true
+      - deck-chores.backup.command=sh -c "photoprism backup -a -i -f >
+        /proc/1/fd/1 2> /proc/1/fd/2"
+      - deck-chores.backup.cron=*/12 0 0
+      - deck-chores.backup.jitter=30m
+      - deck-chores.import.command=sh -c "photoprism import > /proc/1/fd/1 2>
+        /proc/1/fd/2"
+      - deck-chores.import.cron=* 0 0
+      - deck-chores.import.jitter=5m
+      - deck-chores.maintain.command=sh -c "/app/scripts/maintain > /proc/1/fd/1
+        2> /proc/1/fd/2"
+      - deck-chores.maintain.cron=0 0 0
+      - deck-chores.maintain.jitter=30m
     deploy:
       resources:
         reservations:

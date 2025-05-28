@@ -18,6 +18,10 @@ mkdir -p "${WORK_DIR}"
 mariadb-backup --backup --target-dir="$WORK_DIR"
 mariadb-backup --prepare --target-dir="$WORK_DIR"
 
-rm -r "$BACKUP"
-mkdir -p "$BACKUP"
-mv -t "$BACKUP/" "${WORK_DIR}/"
+# Safely remove old backup contents instead of the directory itself
+if [ -d "$BACKUP" ]; then
+  rm -rf "${BACKUP:?}"/*
+else
+  mkdir -p "$BACKUP"
+fi
+mv "$WORK_DIR"/* "$BACKUP/"
