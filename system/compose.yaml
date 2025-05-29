@@ -65,6 +65,27 @@ services:
           memory: 64M
     init: true
 
+  dozzle:
+    image: amir20/dozzle:v8@sha256:0c21a86916ae55dd80a488d1125585709c9ac5a9c1807e684f22b2e1b057cd51
+    container_name: ${HOSTNAME:?}-dozzle #dclint disable-line service-container-name-regex
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      DOZZLE_NO_ANALYTICS: "true"
+    ports:
+      - "0.0.0.0:7007:7007"
+    command:
+      - agent
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 16M
+        limits:
+          memory: 64M
+    init: true
+
   kopia:
     image: kopia/kopia:latest@sha256:0c55a361a353f69a121572920e7af3eb54b014f99df1f2fd8a595adcc33c2904
     container_name: kopia
