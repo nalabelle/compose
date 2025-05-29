@@ -23,6 +23,24 @@ services:
     expose:
       - "9093"
 
+  dozzle:
+    image: amir20/dozzle:v8@sha256:0c21a86916ae55dd80a488d1125585709c9ac5a9c1807e684f22b2e1b057cd51
+    container_name: dozzle
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 16M
+        limits:
+          memory: 64M
+    expose:
+      - "8080"
+
   metrics:
     image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.118.0@sha256:25c778fe3570e93917433cc074f41edbbdab57f8f297e5243d27139b48ca606f
     container_name: metrics
