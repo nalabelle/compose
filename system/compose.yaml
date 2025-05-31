@@ -49,7 +49,7 @@ services:
     restart: unless-stopped
 
   deck-chores:
-    image: funkyfuture/deck-chores:src-commit-d0b2ff6@sha256:d0143cc6b7be4a7d794e41bc4c3a73917ea2eaff32d5ad7ea2edb4f2dec5c507
+    image: funkyfuture/deck-chores:src-commit-d0b2ff6@sha256:bbfda17531a517c132c5f748f89e309d2d83b2d75dad303916a1b1ecfc8eba6d
     container_name: deck-chores
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -66,7 +66,7 @@ services:
     init: true
 
   dozzle:
-    image: amir20/dozzle:v8@sha256:0c21a86916ae55dd80a488d1125585709c9ac5a9c1807e684f22b2e1b057cd51
+    image: amir20/dozzle:v8@sha256:3d13a8c66f40d6ad34c7864bc5826f3121bdc470bc141f4e64888b66a26cc482
     container_name: ${HOSTNAME:?}-dozzle #dclint disable-line service-container-name-regex
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -120,7 +120,7 @@ services:
     init: true
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:f4ca5cab1815946d04c814d564828af0869c2fc23a7ef014d07cab1694d93cae
+    image: registry-1.docker.io/library/docker:cli@sha256:3fe9ca46e820f75a459b1a2c6074d7a6a17fe7798caa7421350da408faf4210f
     container_name: oom
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
