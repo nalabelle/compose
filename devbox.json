@@ -5,7 +5,7 @@
     "shellcheck@0.10.0",
     "shfmt@3.11.0",
     "gnumake@4.4.1",
-    "_1password-cli@2.31.0",
+    "_1password-cli@2.31.1",
     "nodejs@24.1.0",
     "lazydocker@0.24.1"
   ],
