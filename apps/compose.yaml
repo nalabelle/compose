@@ -99,21 +99,24 @@ services:
       - "8080"
     init: true
 
-  miniflux-sidekick:
-    image: ghcr.io/nalabelle/miniflux-sidekick:0.1.1746559476@sha256:132707a226bae54e0a742f477ad967a44f13d2da11ce27f1e425743f14d62b1e
+  miniflux-filter:
+    image: ghcr.io/nalabelle/miniflux-filter:sha-4e90dc7
+    container_name: miniflux-filter
     depends_on:
       miniflux:
         condition: service_healthy
     volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-sidekick:/config
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/miniflux-filter:/app/rules
     environment:
-      MF_API_ENDPOINT: http://miniflux:8080
-      MF_API_KEY: ${MINIFLUX_SIDEKICK_API_KEY:?}
-      MF_ENVIRONMENT: prod
-      MF_KILLFILE_PATH: /config/killfile
-      MF_LOG_LEVEL: debug
-      MF_REFRESH_INTERVAL: "*/1 * * * *"
+      MINIFLUX_URL: http://miniflux:8080
+      MINIFLUX_API_TOKEN: ${MINIFLUX_FILTER_API_TOKEN:?}
+      MINIFLUX_FILTER_WEB_ENABLED: "true"
+      MINIFLUX_FILTER_WEB_PORT: "8080"
+      MINIFLUX_FILTER_POLL_INTERVAL: "120"
+      MINIFLUX_FILTER_RULES_DIR: /app/rules
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
     deploy:
       resources:
         reservations:
@@ -121,6 +124,8 @@ services:
           memory: 20M
         limits:
           memory: 128M
+    expose:
+      - "8080"
     init: true
 
   redis:
