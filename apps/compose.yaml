@@ -100,7 +100,7 @@ services:
     init: true
 
   miniflux-filter:
-    image: ghcr.io/nalabelle/miniflux-filter:sha-4e90dc7
+    image: ghcr.io/nalabelle/miniflux-filter:sha-4e90dc7@sha256:c91ad1dc2ad67e8bfb67520b65819c868b6e2d0184f4a86cca922507e7d5d092
     container_name: miniflux-filter
     depends_on:
       miniflux:
