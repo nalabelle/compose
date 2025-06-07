@@ -24,7 +24,7 @@ services:
       - "9093"
 
   dozzle:
-    image: amir20/dozzle:v8@sha256:0c21a86916ae55dd80a488d1125585709c9ac5a9c1807e684f22b2e1b057cd51
+    image: amir20/dozzle:v8@sha256:4e4a7ab10dc2db42d401755c780a510072e9b453251529e2457539f9a823400a
     container_name: dozzle
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -42,7 +42,7 @@ services:
       - "8080"
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.118.0@sha256:25c778fe3570e93917433cc074f41edbbdab57f8f297e5243d27139b48ca606f
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.119.0@sha256:8ec80a03ea601d1da0e497de8973220f7834138ca814419a1b1171d1d84b7a07
     container_name: metrics
     configs:
       - source: scrape-configs
@@ -66,7 +66,7 @@ services:
       - "8428"
 
   vmalert:
-    image: registry-1.docker.io/victoriametrics/vmalert:v1.118.0@sha256:58dc7ccc2866ede730a5d821bc8c201cf0540981c42809f1c29804a3c851477e
+    image: registry-1.docker.io/victoriametrics/vmalert:v1.119.0@sha256:16b49513037b3ed6ece60ff25822bd12496235c2e3f531a602f9e3372620b479
     container_name: vmalert
     configs:
       - source: alerts
