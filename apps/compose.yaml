@@ -212,4 +212,4 @@ secrets:
 configs:
   wallabag_99-custom:
     content: |
-      memory_limit=800M
+      memory_limit=${WALLABAG_MEMORY_LIMIT:?}
