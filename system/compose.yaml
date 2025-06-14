@@ -105,8 +105,7 @@ services:
     entrypoint: sleep
     restart: unless-stopped
     labels:
-      - deck-chores.backup.command=sh -c "/usr/local/bin/kopia-backup >
-        /proc/1/fd/1 2> /proc/1/fd/2"
+      - deck-chores.backup.command=/usr/local/bin/kopia-backup
       - deck-chores.backup.cron=*/6 0 0
       - deck-chores.backup.jitter=60m
     user: "0:0"
