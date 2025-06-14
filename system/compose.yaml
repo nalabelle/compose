@@ -39,7 +39,7 @@ services:
     hostname: ${HOSTNAME:?}-alloy
     privileged: true
   auto_docker_proxy:
-    image: ghcr.io/obeone/traefik_network_connector@sha256:b7cf582c0ca4eaf33d95ae97d3eb07f0767a7f6cc2d3f59675997c5509ea63a3
+    image: ghcr.io/obeone/traefik_network_connector@sha256:dd55937fb3c36b4b7e971e5148728611609b5c675432692250742fe9e515232d
     container_name: auto-docker-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -66,7 +66,7 @@ services:
     init: true
 
   dozzle:
-    image: amir20/dozzle:v8@sha256:4e4a7ab10dc2db42d401755c780a510072e9b453251529e2457539f9a823400a
+    image: amir20/dozzle:v8@sha256:fb4a914897aafdf7af86ff6f8d8914241b580aeb56c781c848f411eb110fd77e
     container_name: ${HOSTNAME:?}-dozzle #dclint disable-line service-container-name-regex
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -119,7 +119,7 @@ services:
     init: true
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:c2e49a065e45c462dda70b65b1a50a74c75804091fae15b7e4fbec6b114996d1
+    image: registry-1.docker.io/library/docker:cli@sha256:5d3725f5d2f52aafe8a2c49668a43eb7c681a5535a206ba28eccfd8a3013de86
     container_name: oom
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
