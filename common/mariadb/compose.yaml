@@ -32,8 +32,7 @@ services:
       timeout: 5s
       retries: 5
     labels:
-      - deck-chores.backup.command=sh -c "/usr/local/bin/db-backup >
-        /proc/1/fd/1 2> /proc/1/fd/2"
+      - deck-chores.backup.command=/usr/local/bin/db-backup
       - deck-chores.backup.cron=*/12 0 0
       - deck-chores.backup.jitter=120m
     deploy:
