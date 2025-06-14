@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.http.services.audiobookshelf.loadbalancer.server.port=13378
     deploy:
       resources:
         reservations:
@@ -206,8 +207,7 @@ services:
       - infinity
     restart: unless-stopped
     labels:
-      - deck-chores.scheduled-task.command=sh -c "/config/scheduled-task >
-        /proc/1/fd/1 2> /proc/1/fd/2"
+      - deck-chores.scheduled-task.command=/config/scheduled-task
       - deck-chores.scheduled-task.cron=*/12 0 0
       - deck-chores.scheduled-task.jitter=90m
     deploy:
