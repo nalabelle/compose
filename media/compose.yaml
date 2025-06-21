@@ -5,7 +5,7 @@ include:
 
 services:
   audiobookshelf:
-    image: ghcr.io/advplyr/audiobookshelf:2.24.0@sha256:4e3ea23c551706c6d7934e2b48e9c4015a60ef5d70f965d3f4e5b68d59ef6c95
+    image: ghcr.io/advplyr/audiobookshelf:2.25.1@sha256:5154518d8215f8e795fde1c1561080b450af8a6bc0c0bd60c2a920084bf930d6
     container_name: audiobookshelf
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/audiobookshelf/config:/config
@@ -108,7 +108,7 @@ services:
     init: true
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:5.25.0@sha256:36e43720c130ec2d3ed80726d2134af3c6644729f4750abc830fdda7fa71d1e1
+    image: ghcr.io/linuxserver/radarr:5.26.2@sha256:07a474b61394553e047ad43a1a78c1047fc99be0144c509dd91e3877f402ebcb
     container_name: radarr
     depends_on:
       postgres:
@@ -164,7 +164,7 @@ services:
     init: true
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:4.0.14@sha256:de67e5b682fedcc4ac34f28a5697931c680c959ea65f8111b0cce17bc698c0b2
+    image: ghcr.io/linuxserver/sonarr:4.0.15@sha256:1156329d544b38bd1483add75c9b72c559f20e1ca043fd2d6376c2589d38951f
     container_name: sonarr
     depends_on:
       postgres:
@@ -192,7 +192,7 @@ services:
       - "8989"
     init: true
   ytdl-sub:
-    image: ghcr.io/jmbannon/ytdl-sub:2025.06.12@sha256:b6d935cc6191d2d25843412aaec4830ecc16f0b8b9652b9d608f75c17cd29c43
+    image: ghcr.io/jmbannon/ytdl-sub:2025.06.19@sha256:382ffbe893d08625ae991786223cc2b850fe52fd76f7c1f3f071824db9b5fd9e
     container_name: ytdl-sub
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdl-sub:/config
