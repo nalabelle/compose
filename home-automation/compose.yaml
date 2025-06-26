@@ -85,24 +85,6 @@ services:
           memory: 64M
     init: true
 
-  tasmoadmin:
-    image: ghcr.io/tasmoadmin/tasmoadmin:v4.3.0@sha256:9e18fc87a061b5f0eb78d0f255e98815a61959a4e1c5d8706a7537e047930ea1
-    container_name: tasmoadmin
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/tasmoadmin:/data
-    restart: unless-stopped
-    labels:
-      - traefik.enable=true
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 32M
-        limits:
-          memory: 64M
-    expose:
-      - "80"
-
   zigbee2mqtt:
     image: ghcr.io/koenkk/zigbee2mqtt:2.4.0@sha256:dd7479e5416c4b95725333d0a69ff504bcbda9a7a3431e5d5dd1e27c16465cdd
     container_name: zigbee2mqtt
