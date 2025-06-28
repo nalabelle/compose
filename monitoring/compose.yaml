@@ -1,28 +1,6 @@
 name: monitoring
 
 services:
-  alertmanager:
-    image: registry-1.docker.io/prom/alertmanager:v0.28.1@sha256:27c475db5fb156cab31d5c18a4251ac7ed567746a2483ff264516437a39b15ba
-    container_name: alertmanager
-    secrets:
-      - source: alertmanager
-        target: /config/alertmanager.yaml
-    command:
-      - --web.external-url=https://alertmanager.${DOMAIN:?}
-      - --config.file=/config/alertmanager.yaml
-    restart: unless-stopped
-    labels:
-      - traefik.enable=true
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 32M
-        limits:
-          memory: 64M
-    expose:
-      - "9093"
-
   dozzle:
     image: amir20/dozzle:v8@sha256:7ba6766590e4a6a7b20676a29697666b37f9871d26283e91bcbf18c609fa70a9
     container_name: dozzle
@@ -51,7 +29,8 @@ services:
       - -retentionPeriod=${METRICS_RETENTION:-30d}
       - -promscrape.config=/config/prometheus.yaml
       - -storageDataPath=/storage
-      - -vmalert.proxyURL=http://vmalert:8880
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/metrics:/storage
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -65,36 +44,61 @@ services:
     expose:
       - "8428"
 
-  vmalert:
-    image: registry-1.docker.io/victoriametrics/vmalert:v1.119.0@sha256:b71a9bbf98c7846fac1291ca23f8c8f17a0dec5cda04b1008c1c49f3aba9fd4a
-    container_name: vmalert
-    configs:
-      - source: alerts
-        target: /alerts/docker.yaml
+  grafana:
+    image: grafana/grafana:12.0.2
+    container_name: grafana
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SERVER_ROOT_URL=https://grafana.${DOMAIN:?}
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/grafana_admin_password
+      - GF_FEATURE_TOGGLES_ENABLE=publicDashboards
+      - GF_UNIFIED_ALERTING_ENABLED=true
+      - PAGERDUTY_INTEGRATION_KEY__FILE=/run/secrets/pagerduty_integration_key
+    secrets:
+      - grafana_admin_password
+      - source: pagerduty_integration_key
+        target: pagerduty_integration_key
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.05"
+          memory: 128M
+        limits:
+          memory: 256M
+    expose:
+      - "3000"
+
+  push-monitor:
+    image: curlimages/curl:latest
+    container_name: push-monitor
     command:
-      - -datasource.url=http://metrics:8428
-      - -remoteRead.url=http://metrics:8428
-      - -remoteWrite.url=http://metrics:8428
-      - -notifier.url=http://alertmanager:9093
-      - -external.url=https://metrics.${DOMAIN:?}
-      - -rule=/alerts/docker.yaml
+      [
+        "sh",
+        "-c",
+        "while true; do curl -fsS $PUSH_MONITOR_URL || true; sleep 60; done"
+      ]
     restart: unless-stopped
     deploy:
       resources:
         reservations:
           cpus: "0.01"
-          memory: 32M
+          memory: 8M
         limits:
-          memory: 64M
-    expose:
-      - "8880"
+          memory: 16M
 
 secrets:
-  alertmanager:
-    file: alertmanager-config.yaml
+  grafana_admin_password:
+    file: ${GRAFANA_ADMIN_PASSWORD_FILE}
+  pagerduty_integration_key:
+    file: ${PAGERDUTY_INTEGRATION_KEY_FILE}
 
 configs:
-  alerts:
-    file: alerts.yaml
   scrape-configs:
     file: scrape-configs.yaml
