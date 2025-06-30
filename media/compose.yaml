@@ -28,7 +28,7 @@ services:
       - "13378"
 
   bazarr:
-    image: ghcr.io/linuxserver/bazarr:1.5.2@sha256:a92ba81b9405942d0b5c01e2707ba8fb99ab059dd800d1dc0e8f52f62ddf74dd
+    image: ghcr.io/linuxserver/bazarr:1.5.2@sha256:b515d79a4f7aa4bbbdfe45376d996a9bae2794faa16aca5a2beab0dba0c0b074
     container_name: bazarr
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/bazarr:/config
@@ -192,7 +192,7 @@ services:
       - "8989"
     init: true
   ytdl-sub:
-    image: ghcr.io/jmbannon/ytdl-sub:2025.06.19@sha256:382ffbe893d08625ae991786223cc2b850fe52fd76f7c1f3f071824db9b5fd9e
+    image: ghcr.io/jmbannon/ytdl-sub:2025.06.27@sha256:32f210ca6bfa738ab5f8970d6426a3f59b3ccfc099c781f7c1aae3e4fd3d3b4a
     container_name: ytdl-sub
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/ytdl-sub:/config
