@@ -2,7 +2,7 @@ name: system
 
 services:
   alloy:
-    image: registry-1.docker.io/grafana/alloy:v1.9.1@sha256:b5fc87ff9a8941d6ed3ae5f099d9cb8598b3cd42fef9a8af128ed782258b4017
+    image: registry-1.docker.io/grafana/alloy:v1.9.2@sha256:5039cc7a3cbde07120e757decc40f8f55f82c9bd0db45892a8b0e0c9a3371f4b
     container_name: ${HOSTNAME:?}-alloy #dclint disable-line service-container-name-regex
     volumes:
       - /:/rootfs:ro
@@ -66,7 +66,7 @@ services:
     init: true
 
   dozzle:
-    image: amir20/dozzle:v8@sha256:7ba6766590e4a6a7b20676a29697666b37f9871d26283e91bcbf18c609fa70a9
+    image: amir20/dozzle:v8@sha256:36707d180462e764eac81aac793f8352296048404fa4dea1f280fa3cefa7fce3
     container_name: ${HOSTNAME:?}-dozzle #dclint disable-line service-container-name-regex
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -119,7 +119,7 @@ services:
     init: true
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:0e97e06d5cc205d4dc6d949dbd3e175c4759c804917e5caebecab91be1961392
+    image: registry-1.docker.io/library/docker:cli@sha256:be316e9f9a158bdd04d175cac7867be4561d9718c8f45331ba09f839854d6ac4
     container_name: oom
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
