@@ -2,16 +2,23 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-      - id: check-yaml
-        args: [--allow-multiple-documents]
-      - id: end-of-file-fixer
-        exclude: ^secrets/media/.+-api-key$
-      - id: trailing-whitespace
-      - id: check-merge-conflict
+      - id: fix-byte-order-marker
+      - id: check-case-conflict
       - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
       - id: check-shebang-scripts-are-executable
       - id: check-symlinks
       - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+        additional_dependencies: ["ruamel.yaml>=0.18.0"]
+      - id: end-of-file-fixer
+        exclude: ^secrets/media/.+-api-key$
+      - id: mixed-line-ending
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.10.0-1
     hooks:
@@ -23,6 +30,13 @@ repos:
       - id: dclint
         files: (docker-)?compose\..*ya?ml$
         args: [--fix]
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: forbid-binary
+      - id: script-must-have-extension
+        exclude: \.envrc$
+      - id: script-must-not-have-extension
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.10.0.1
     hooks:

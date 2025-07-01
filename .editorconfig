@@ -1,18 +1,32 @@
-# EditorConfig is awesome: https://EditorConfig.org
-
-# top-most EditorConfig file
 root = true
 
 [*]
-# Normally, I'd go for 100, but dclint wants 80
-max_line_length = 80
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
-end_of_line = lf
-charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
+# dclint wants 80
+max_line_length = 80
 
-[{Makefile,**.mk}]
-# Use tabs for indentation (Makefiles require tabs)
+[[shell]]
+switch_case_indent = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{py,pyi}]
+indent_size = 4
+
+[*.{go,rs}]
 indent_style = tab
+
+[Makefile]
+indent_style = tab
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.json]
+indent_size = 2
