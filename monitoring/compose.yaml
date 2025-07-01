@@ -19,37 +19,16 @@ services:
     expose:
       - "8080"
 
-  metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.119.0@sha256:393cd7b4062f9e1cfc9a3b6a3dae74820e4b30ee5c4fe3af7ab2687aad8bceb5
-    container_name: metrics
-    configs:
-      - source: scrape-configs
-        target: /config/prometheus.yaml
-    command:
-      - -retentionPeriod=${METRICS_RETENTION:-30d}
-      - -promscrape.config=/config/prometheus.yaml
-      - -storageDataPath=/storage
-    volumes:
-      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/metrics:/storage
-    restart: unless-stopped
-    labels:
-      - traefik.enable=true
-    deploy:
-      resources:
-        reservations:
-          cpus: "0.01"
-          memory: 64M
-        limits:
-          memory: 128M
-    expose:
-      - "8428"
-
   grafana:
     image: grafana/grafana:12.0.2
     container_name: grafana
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grafana:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
+    secrets:
+      - grafana_admin_password
+      - source: pagerduty_integration_key
+        target: pagerduty_integration_key
     environment:
       - GF_SERVER_ROOT_URL=https://grafana.${DOMAIN:?}
       - GF_AUTH_ANONYMOUS_ENABLED=false
@@ -58,10 +37,6 @@ services:
       - GF_FEATURE_TOGGLES_ENABLE=publicDashboards
       - GF_UNIFIED_ALERTING_ENABLED=true
       - PAGERDUTY_INTEGRATION_KEY__FILE=/run/secrets/pagerduty_integration_key
-    secrets:
-      - grafana_admin_password
-      - source: pagerduty_integration_key
-        target: pagerduty_integration_key
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -75,8 +50,33 @@ services:
     expose:
       - "3000"
 
+  metrics:
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.119.0@sha256:393cd7b4062f9e1cfc9a3b6a3dae74820e4b30ee5c4fe3af7ab2687aad8bceb5
+    container_name: metrics
+    volumes:
+      - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/metrics:/storage
+    configs:
+      - source: scrape-configs
+        target: /config/prometheus.yaml
+    command:
+      - -retentionPeriod=${METRICS_RETENTION:-30d}
+      - -promscrape.config=/config/prometheus.yaml
+      - -storageDataPath=/storage
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.01"
+          memory: 64M
+        limits:
+          memory: 128M
+    expose:
+      - "8428"
+
   push-monitor:
-    image: curlimages/curl:latest
+    image: curlimages/curl:8.11.0
     container_name: push-monitor
     command:
       [
