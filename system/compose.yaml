@@ -119,7 +119,7 @@ services:
     init: true
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:b12bfbd55890aaed2c7cc032e95ade7596bb8314da4347c64e126ec2a06d371b
+    image: registry-1.docker.io/library/docker:cli@sha256:a44265680064552a8c1e25aeb05b12c8b5951105f69d2faf2733d099091e866e
     container_name: oom
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
