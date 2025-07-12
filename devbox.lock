@@ -312,51 +312,51 @@
         }
       }
     },
-    "shfmt@3.11.0": {
-      "last_modified": "2025-03-11T17:52:14Z",
-      "resolved": "github:NixOS/nixpkgs/0d534853a55b5d02a4ababa1d71921ce8f0aee4c#shfmt",
+    "shfmt@3.12.0": {
+      "last_modified": "2025-07-07T11:34:27Z",
+      "resolved": "github:NixOS/nixpkgs/0acc6a91343eb987397c27044a8d1fbcb374c265#shfmt",
       "source": "devbox-search",
-      "version": "3.11.0",
+      "version": "3.12.0",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/dpz2228wk87vdskpbq8v5mj3mhccmkyj-shfmt-3.11.0",
+              "path": "/nix/store/pdg1iqylzn7lvkwzr9gng77fpiyxhfh5-shfmt-3.12.0",
               "default": true
             }
           ],
-          "store_path": "/nix/store/dpz2228wk87vdskpbq8v5mj3mhccmkyj-shfmt-3.11.0"
+          "store_path": "/nix/store/pdg1iqylzn7lvkwzr9gng77fpiyxhfh5-shfmt-3.12.0"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/s7qsx4qrmhbigw4q49a6cjlgzgzhlxnk-shfmt-3.11.0",
+              "path": "/nix/store/2hnzp290g8mz93hpknsql8ahp8ckzgg9-shfmt-3.12.0",
               "default": true
             }
           ],
-          "store_path": "/nix/store/s7qsx4qrmhbigw4q49a6cjlgzgzhlxnk-shfmt-3.11.0"
+          "store_path": "/nix/store/2hnzp290g8mz93hpknsql8ahp8ckzgg9-shfmt-3.12.0"
         },
         "x86_64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/r7941fj3jpspv8qp1l0w35h2pyjg26b5-shfmt-3.11.0",
+              "path": "/nix/store/y6shv7rd16w0d11ylw9n57n2crj7wgds-shfmt-3.12.0",
               "default": true
             }
           ],
-          "store_path": "/nix/store/r7941fj3jpspv8qp1l0w35h2pyjg26b5-shfmt-3.11.0"
+          "store_path": "/nix/store/y6shv7rd16w0d11ylw9n57n2crj7wgds-shfmt-3.12.0"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/vbmfndxpvgxryk8byym2wvmgpxpssp0a-shfmt-3.11.0",
+              "path": "/nix/store/ndavvg1hf6lvdbjjay9pk5f4zniak9lk-shfmt-3.12.0",
               "default": true
             }
           ],
-          "store_path": "/nix/store/vbmfndxpvgxryk8byym2wvmgpxpssp0a-shfmt-3.11.0"
+          "store_path": "/nix/store/ndavvg1hf6lvdbjjay9pk5f4zniak9lk-shfmt-3.12.0"
         }
       }
     }
