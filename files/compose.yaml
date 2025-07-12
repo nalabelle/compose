@@ -54,7 +54,7 @@ services:
     init: false
 
   photoprism:
-    image: registry-1.docker.io/photoprism/photoprism:latest@sha256:19fdf0d52676d07abe63376a3b2d07779cac010a1bfca563af11968abd2df218
+    image: registry-1.docker.io/photoprism/photoprism:latest@sha256:2ba3a774ca1acc498096d7a5cb50df9cfecb7e3117a617d648093ff74eec2793
     container_name: photoprism
     depends_on:
       mariadb:
@@ -112,7 +112,7 @@ services:
     init: false
 
   redis:
-    image: redis:alpine@sha256:48501c5ad00d5563bc30c075c7bcef41d7d98de3e9a1e6c752068c66f0a8463b
+    image: redis:alpine@sha256:73734b014e53b3067916918b70718ca188c16895511a272a020c9a71084eecda
     container_name: redis
     volumes:
       - redis-data:/data
@@ -133,7 +133,7 @@ services:
     init: true
 
   stirling:
-    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest-ultra-lite@sha256:caa8440ea33bf0f5cf42ae3bec7e6538479100655c8cfd9b622fb1b987ff26d3
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest-ultra-lite@sha256:47c91c9080308674ecb6be7c1e280c743240cef1f478af4cdad4a1b5ba636aa3
     container_name: stirling
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/stirling/trainingData:/usr/share/tessdata
