@@ -31,7 +31,7 @@ services:
 
   # used to be libreddit, swapped to redlib
   libreddit:
-    image: quay.io/redlib/redlib:latest@sha256:b945c6e15d27c93c9c89f331960838f2f20f2acae82a47f29afded67f508e920
+    image: quay.io/redlib/redlib:latest@sha256:27d2f43dc935447c4ae9ca8428b50ba8bd21e2ade30f3e36df1ab3cdf0b1aa0f
     container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
@@ -129,7 +129,7 @@ services:
     init: true
 
   redis:
-    image: redis:alpine@sha256:73734b014e53b3067916918b70718ca188c16895511a272a020c9a71084eecda
+    image: redis:alpine@sha256:25c0ae32c6c2301798579f5944af53729766a18eff5660bbef196fc2e6214a9c
     networks:
       - default
     restart: unless-stopped

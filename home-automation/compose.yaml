@@ -29,7 +29,7 @@ services:
       - "1984"
 
   home-assistant:
-    image: ghcr.io/home-assistant/home-assistant:2025.7@sha256:e876528e4159974e844bbf3555e67ff48d73a78bf432b717dd9d178328230b40
+    image: ghcr.io/home-assistant/home-assistant:2025.7@sha256:90e105ff097717556df4e87da3b825af85b181c763ca2b8d840aeae5d34a083c
     container_name: home-assistant
     depends_on:
       postgres:
@@ -66,7 +66,7 @@ services:
     init: true
 
   mosquitto:
-    image: registry-1.docker.io/library/eclipse-mosquitto:2.0.22@sha256:75042dd2dd262dff9eb29c47da26d8ee57211a7bc6fc51bae55badc5fc9f6724
+    image: registry-1.docker.io/library/eclipse-mosquitto:2.0.22@sha256:d219d3a72847f3aed6a1d66975972d3b17f86e39e8f6f6b86b4088b879c1a2d6
     container_name: mosquitto
     ports:
       - "0.0.0.0:1883:1883"
