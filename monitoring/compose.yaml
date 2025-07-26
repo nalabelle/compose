@@ -2,7 +2,7 @@ name: monitoring
 
 services:
   dozzle:
-    image: amir20/dozzle:v8@sha256:c8f75291f9946ff9f0627a86cec49f24f34e81ca8669b65ac1f3f78be6a2ff49
+    image: amir20/dozzle:v8@sha256:b6791e8893adce2ea73512b618e0bca2370e77f1ef32848bf6478663633cc31d
     container_name: dozzle
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -20,7 +20,7 @@ services:
       - "8080"
 
   grafana:
-    image: grafana/grafana:12.0.2@sha256:b5b59bfc7561634c2d7b136c4543d702ebcc94a3da477f21ff26f89ffd4214fa
+    image: grafana/grafana:12.1.0@sha256:6ac590e7cabc2fbe8d7b8fc1ce9c9f0582177b334e0df9c927ebd9670469440f
     container_name: grafana
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grafana:/var/lib/grafana
@@ -51,7 +51,7 @@ services:
       - "3000"
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.121.0@sha256:4f65d40da793ee125f7fbf9f882114520b0168949c4b9fb2c11403168d9dc3f9
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.122.0@sha256:0156d3e9c4be6a29dbb45b6b551a1a09d48fed3858143f1e3e0ad16d6e875cc9
     container_name: metrics
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/metrics:/storage
