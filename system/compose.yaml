@@ -2,7 +2,7 @@ name: system
 
 services:
   alloy:
-    image: registry-1.docker.io/grafana/alloy:v1.10.0@sha256:1bc130e909116a4bf950eb5187a346007d3b796f96832b529acb14a64e41230f
+    image: registry-1.docker.io/grafana/alloy:v1.10.1@sha256:582f5a5169cd67a2bdbf98777c1a6f596203f573cdef5c021749fd3279605768
     container_name: ${HOSTNAME:?}-alloy #dclint disable-line service-container-name-regex
     volumes:
       - /:/rootfs:ro
@@ -119,7 +119,7 @@ services:
     init: true
 
   oom:
-    image: registry-1.docker.io/library/docker:cli@sha256:a07d3db92e0ca51de11fd47c9b45257a7c3d64a5b6dae2393382a86a100f42a5
+    image: registry-1.docker.io/library/docker:cli@sha256:d87c674b7f01043207f1badc6e86e1f8bc33a90981c2f31f3e0f57c1ecb0c5cc
     container_name: oom
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro

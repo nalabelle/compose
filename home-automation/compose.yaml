@@ -29,7 +29,7 @@ services:
       - "1984"
 
   home-assistant:
-    image: ghcr.io/home-assistant/home-assistant:2025.7@sha256:9682a29fdfde74dd67c78d724105a9c11cb2affaf350192b0a89447f958547df
+    image: ghcr.io/home-assistant/home-assistant:2025.8@sha256:35c4134b1d0d83cb91bfe2da29fd4ca2c009e58993a345ef0922e61317c0c6ca
     container_name: home-assistant
     depends_on:
       postgres:
@@ -86,7 +86,7 @@ services:
     init: true
 
   zigbee2mqtt:
-    image: ghcr.io/koenkk/zigbee2mqtt:2.5.1@sha256:1e639d3144960f246dcecc21d993169fd6844b5817e939bca498b2abf2c23159
+    image: ghcr.io/koenkk/zigbee2mqtt:2.6.0@sha256:472f4f5ed5d4258056093ea5745bc0ada37628b667d7db4fb12c2ffea74b2703
     container_name: zigbee2mqtt
     depends_on:
       - mosquitto

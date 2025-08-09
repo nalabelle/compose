@@ -5,7 +5,7 @@ include:
 
 services:
   grist:
-    image: registry-1.docker.io/gristlabs/grist:1.6.1@sha256:d9d35c82799bfa2e0438bb60385fb0b550465dabde2a6e0ceca8afec1aae3305
+    image: registry-1.docker.io/gristlabs/grist:1.7.1@sha256:be6d84c8919c48bdaa0a52abbb3c32ebed1db59e17d339124d21c4191681cfaf
     container_name: grist
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/grist:/persist
@@ -31,7 +31,7 @@ services:
 
   # used to be libreddit, swapped to redlib
   libreddit:
-    image: quay.io/redlib/redlib:latest@sha256:e6e13e60f492a8c28994ec2d9b9e0053f562074d25d760851df1fa7859b6bee7
+    image: quay.io/redlib/redlib:latest@sha256:3908c592bba4a17d32516277504c42284600bd826cf1c1f9a309fdedc7bdd27a
     container_name: libreddit
     environment:
       - REDLIB_DEFAULT_THEME=black
@@ -62,7 +62,7 @@ services:
     init: true
 
   miniflux:
-    image: miniflux/miniflux:latest@sha256:ae3a397ca765d9011ce00f2bfeb1f29bf8e6199c38b2883d41ec80f66cd3be50
+    image: miniflux/miniflux:latest@sha256:d8e0f95eaa319211642e22e7ee78f59b1c224071b40670635ad29c4f04e7b036
     container_name: miniflux
     depends_on:
       postgres:
@@ -129,7 +129,7 @@ services:
     init: true
 
   redis:
-    image: redis:alpine@sha256:25c0ae32c6c2301798579f5944af53729766a18eff5660bbef196fc2e6214a9c
+    image: redis:alpine@sha256:7521abdff715d396aa482183942f3fe643344287c29ccb66eee16ac08a92190f
     networks:
       - default
     restart: unless-stopped
