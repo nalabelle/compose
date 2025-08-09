@@ -112,7 +112,7 @@ services:
     init: false
 
   redis:
-    image: redis:alpine@sha256:25c0ae32c6c2301798579f5944af53729766a18eff5660bbef196fc2e6214a9c
+    image: redis:alpine@sha256:7521abdff715d396aa482183942f3fe643344287c29ccb66eee16ac08a92190f
     container_name: redis
     volumes:
       - redis-data:/data
@@ -133,7 +133,7 @@ services:
     init: true
 
   stirling:
-    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest-ultra-lite@sha256:e2eb4bd132138e50e1ba540a8e3e18c59c2721fee00d2ed42277338c158f51e9
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest-ultra-lite@sha256:03b71084a7d506850644f2fac081490059c8ea0c711784bb7cc66d5cc843fd3d
     container_name: stirling
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/stirling/trainingData:/usr/share/tessdata

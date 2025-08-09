@@ -51,7 +51,7 @@ services:
       - "3000"
 
   metrics:
-    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.122.0@sha256:0156d3e9c4be6a29dbb45b6b551a1a09d48fed3858143f1e3e0ad16d6e875cc9
+    image: registry-1.docker.io/victoriametrics/victoria-metrics:v1.123.0@sha256:e47c14e6bacd79eaa05a032f263dca91a157f1618de65f8f1f1617e44ebd3757
     container_name: metrics
     volumes:
       - ${VOLUMES:?}/${COMPOSE_PROJECT_NAME:?}/metrics:/storage
